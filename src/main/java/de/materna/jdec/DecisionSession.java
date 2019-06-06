@@ -52,7 +52,7 @@ public class DecisionSession implements Closeable {
 		return true;
 	}
 
-	public Map<String, Object> executeModel(Map<String, Object> inputs, String... decisions) {
+	public Map<String, Object> executeModel(Map<String, ?> inputs, String... decisions) {
 		// We need to copy all key-value-pairs from the given HashMap<String, Object> into the context
 		DMNContext context = runtime.newContext();
 		for (Map.Entry<String, ?> entry : inputs.entrySet()) {
