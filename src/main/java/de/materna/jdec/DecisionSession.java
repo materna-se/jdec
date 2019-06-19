@@ -1,5 +1,8 @@
 package de.materna.jdec;
 
+import de.materna.jdec.beans.ImportResult;
+import de.materna.jdec.exceptions.ImportException;
+import de.materna.jdec.helpers.ImportHelper;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
@@ -10,6 +13,7 @@ import org.kie.dmn.api.core.DMNContext;
 import org.kie.dmn.api.core.DMNDecisionResult;
 import org.kie.dmn.api.core.DMNModel;
 import org.kie.dmn.api.core.DMNRuntime;
+import org.kie.dmn.api.core.event.*;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -21,7 +25,7 @@ public class DecisionSession implements Closeable {
 	private DMNRuntime runtime;
 	private DMNModel model;
 
-	public boolean importModel(String decision) {
+	public ImportResult importModel(String decision) throws ImportException {
 		// Get the KieServices instance from the kie ServiceRegistry
 		KieServices kieServices = KieServices.Factory.get();
 
@@ -34,20 +38,21 @@ public class DecisionSession implements Closeable {
 		// KieBuilder is a builder for the KieModule
 		KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem);
 
-		// KieModule is a container for the resources in the KieContainer
-		KieModule kieModule = kieBuilder.getKieModule();
+		try {
+			// KieModule is a container for the resources in the KieContainer
+			KieModule kieModule = kieBuilder.getKieModule();
 
-		// KieContainer contains all KieBases of the models in the KieModule
-		KieContainer kieContainer = kieServices.newKieContainer(kieModule.getReleaseId());
+			// KieContainer contains all KieBases of the models in the KieModule
+			KieContainer kieContainer = kieServices.newKieContainer(kieModule.getReleaseId());
 
-		// KieSession allows the application to establish a connection with the drools engine
-		// The state is kept across invocations
-		KieSession kieSession = kieContainer.newKieSession();
+			// KieSession allows the application to establish a connection with the drools engine
+			// The state is kept across invocations
+			KieSession kieSession = kieContainer.newKieSession();
 
-		// Get the KieRuntime through the established connection
-		runtime = kieSession.getKieRuntime(DMNRuntime.class);
-		// Since we've only added one model to the KieFileSystem, we are only interested in the model at index 0
-		model = runtime.getModels().get(0);
+			// Get the KieRuntime through the established connection
+			runtime = kieSession.getKieRuntime(DMNRuntime.class);
+			// Since we've only added one model to the KieFileSystem, we are only interested in the model at index 0
+			model = runtime.getModels().get(0);
 
 		return true;
 	}
