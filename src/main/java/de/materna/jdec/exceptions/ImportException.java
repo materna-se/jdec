@@ -1,24 +1,21 @@
 package de.materna.jdec.exceptions;
 
+import de.materna.jdec.beans.ImportResult;
 import org.kie.api.builder.Message;
 
 import java.util.List;
 
 public class ImportException extends RuntimeException {
-	private List<Message> messages;
+	private ImportResult result;
 
 	public ImportException() {
 	}
 
-	public ImportException(List<Message> messages) {
-		this.messages = messages;
+	public ImportException(ImportResult result) {
+		this.result = result;
 	}
 
-	public List<Message> getMessages() {
-		return messages;
-	}
-
-	public void setMessages(List<Message> messages) {
-		this.messages = messages;
+	public ImportResult getResult() {
+		return result;
 	}
 }
