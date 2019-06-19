@@ -53,7 +53,11 @@ public class DecisionSession implements Closeable {
 			// Since we've only added one model to the KieFileSystem, we are only interested in the model at index 0
 			model = runtime.getModels().get(0);
 
-		return true;
+			return new ImportResult(kieBuilder.getResults().getMessages());
+		}
+		catch (RuntimeException exception) {
+			throw new ImportException(new ImportResult(kieBuilder.getResults().getMessages()));
+		}
 	}
 
 	public Map<String, Object> executeModel(Map<String, ?> inputs, String... decisions) {
