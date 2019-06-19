@@ -2,7 +2,6 @@ package de.materna.jdec;
 
 import de.materna.jdec.beans.ImportResult;
 import de.materna.jdec.exceptions.ImportException;
-import de.materna.jdec.helpers.ImportHelper;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
