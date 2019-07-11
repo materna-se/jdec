@@ -1,7 +1,9 @@
 package de.materna.jdec;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import de.materna.jdec.beans.ImportResult;
 import de.materna.jdec.exceptions.ImportException;
+import de.materna.jdec.helpers.SerializationHelper;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
@@ -12,10 +14,10 @@ import org.kie.dmn.api.core.DMNContext;
 import org.kie.dmn.api.core.DMNDecisionResult;
 import org.kie.dmn.api.core.DMNModel;
 import org.kie.dmn.api.core.DMNRuntime;
-import org.kie.dmn.api.core.event.*;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +92,11 @@ public class DecisionSession implements Closeable {
 		}
 
 		return outputs;
+	}
+
+	public Map<String, Object> executeModel(String inputs, String... decisions) {
+		return executeModel(SerializationHelper.getInstance().toClass(inputs, new TypeReference<HashMap<String, Object>>() {
+		}), decisions);
 	}
 
 	public void close() throws IOException {
