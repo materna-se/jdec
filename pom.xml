@@ -7,7 +7,7 @@
 	<version>1.1.0</version>
 
 	<name>jDEC</name>
-	<description>🤔 Libary that offers a unified interface to Drools and Java decisions</description>
+	<description>🤔 Library that offers a unified interface to Drools and Java decisions</description>
 	<url>https://github.com/materna-se/jdec</url>
 
 	<developers>
@@ -41,6 +41,7 @@
 			<version>7.21.0.Final</version>
 		</dependency>
 
+		<!-- Jackson -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
