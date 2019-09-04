@@ -7,7 +7,7 @@ jDEC is now published to the Maven Central Repository. To get the latest version
 <dependency>
     <groupId>com.github.materna-se</groupId>
     <artifactId>jdec</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.5</version>
 </dependency>
 ```
 
