@@ -57,7 +57,9 @@ public class DecisionSession implements Closeable {
 
 			return new ImportResult(kieBuilder.getResults().getMessages());
 		}
-		catch (RuntimeException exception) {
+		catch (Exception exception) {
+			exception.printStackTrace();
+
 			throw new ImportException(new ImportResult(kieBuilder.getResults().getMessages()));
 		}
 	}
