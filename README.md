@@ -7,11 +7,11 @@ jDEC is now published to the Maven Central Repository. To get the latest version
 <dependency>
     <groupId>com.github.materna-se</groupId>
     <artifactId>jdec</artifactId>
-    <version>1.2.5</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
 **Gradle:**
 ```gradle
-compile group: 'com.github.materna-se', name: 'jdec', version: '1.2.5'
+compile group: 'com.github.materna-se', name: 'jdec', version: '1.3.0'
 ```
