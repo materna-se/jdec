@@ -19,12 +19,12 @@ class DecisionSessionTest {
 		String decision = new String(Files.readAllBytes(decisionPath));
 
 		DecisionSession decisionSession = new DecisionSession();
-		decisionSession.importModel(decision);
+		decisionSession.importModel("main", decision);
 
 		Map<String, Object> inputs = new HashMap<>();
 		inputs.put("Employment Status", "UNEMPLOYED");
 
-		Map<String, Object> outputs = decisionSession.executeModel(inputs);
+		Map<String, Object> outputs = decisionSession.executeModel("https://github.com/kiegroup/kie-dmn", "0003-input-data-string-allowed-values", inputs);
 		System.out.println("executeHashMap(): " + outputs);
 
 		Assertions.assertTrue(outputs.containsKey("Employment Status Statement"));
@@ -38,7 +38,17 @@ class DecisionSessionTest {
 
 		Assertions.assertThrows(ImportException.class, () -> {
 			DecisionSession decisionSession = new DecisionSession();
-			decisionSession.importModel(decision);
+			decisionSession.importModel("main", decision);
 		});
+	}
+
+
+	@Test
+	void executeDaniel() throws IOException, URISyntaxException {
+		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("camunda.dmn").toURI());
+		String decision = new String(Files.readAllBytes(decisionPath));
+
+		DecisionSession decisionSession = new DecisionSession();
+		decisionSession.importModel("main", decision);
 	}
 }
