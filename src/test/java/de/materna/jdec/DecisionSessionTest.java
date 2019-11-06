@@ -19,7 +19,7 @@ class DecisionSessionTest {
 		String decision = new String(Files.readAllBytes(decisionPath));
 
 		DecisionSession decisionSession = new DecisionSession();
-		decisionSession.importModel("main", decision);
+		decisionSession.importModel("main", "main", decision);
 
 		Map<String, Object> inputs = new HashMap<>();
 		inputs.put("Employment Status", "UNEMPLOYED");
@@ -38,7 +38,7 @@ class DecisionSessionTest {
 
 		Assertions.assertThrows(ImportException.class, () -> {
 			DecisionSession decisionSession = new DecisionSession();
-			decisionSession.importModel("main", decision);
+			decisionSession.importModel("main", "main", decision);
 		});
 	}
 
@@ -49,6 +49,6 @@ class DecisionSessionTest {
 		String decision = new String(Files.readAllBytes(decisionPath));
 
 		DecisionSession decisionSession = new DecisionSession();
-		decisionSession.importModel("main", decision);
+		decisionSession.importModel("main", "main", decision);
 	}
 }

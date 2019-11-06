@@ -26,31 +26,63 @@ public class DecisionSession implements Closeable {
 	private KieBuilder kieBuilder;
 	private DMNRuntime kieRuntime;
 
+	/**
+	 * Creates a KieFileSystem to load decision models dynamically.
+	 */
 	public DecisionSession() {
-		// Get the KieServices instance from the kie ServiceRegistry
 		kieServices = KieServices.Factory.get();
-
-		// To load models dynamically, we have to create our own KieFileSystem
 		kieFileSystem = kieServices.newKieFileSystem();
 	}
 
-	public String readModel(String name) {
-		return new String(kieFileSystem.read("/src/main/resources/" + name + ".dmn"));
+	/**
+	 * Returns the decision model.
+	 *
+	 * @param namespace Namespace of the decision model. It can be extracted with /definitions/@namespace.
+	 * @param name      Name of the decision model. It can be extracted with /definitions/@name.
+	 */
+	public String getModel(String namespace, String name) {
+		return new String(kieFileSystem.read(getPath(name)));
 	}
 
-	public ImportResult importModel(String name, String model) {
-		// The path doesn't have to exist, drools temporarily stores the .dmn file at this location
-		kieFileSystem.write("/src/main/resources/" + name + ".dmn", model);
+	/**
+	 * Imports the decision model.
+	 *
+	 * @param namespace Namespace of the decision model. It can be extracted with /definitions/@namespace.
+	 * @param name      Name of the decision model. It can be extracted with /definitions/@name.
+	 * @param model     Decision model that will be imported.
+	 */
+	public ImportResult importModel(String namespace, String name, String model) {
+		kieFileSystem.write(getPath(name), model);
 
-		return reloadKie();
+		// If the import fails, we'll delete it again so it doesn't affect other decision models.
+		try {
+			return reloadService();
+		}
+		catch (ImportException exception) {
+			kieFileSystem.delete(getPath(name));
+			return reloadService();
+		}
 	}
 
-	public void deleteModel(String name) {
-		kieFileSystem.delete("/src/main/resources/" + name + ".dmn");
+	/**
+	 * Deletes the decision model.
+	 *
+	 * @param namespace Namespace of the decision model. It can be extracted with /definitions/@namespace.
+	 * @param name      Name of the decision model. It can be extracted with /definitions/@name.
+	 */
+	public void deleteModel(String namespace, String name) {
+		kieFileSystem.delete(getPath(name));
 
-		reloadKie();
+		reloadService();
 	}
 
+	/**
+	 * Executes the decision model.
+	 *
+	 * @param namespace Namespace of the decision model. It can be extracted with /definitions/@namespace.
+	 * @param name      Name of the decision model. It can be extracted with /definitions/@name.
+	 * @param inputs    Inputs that will be sent to the execution engine.
+	 */
 	public Map<String, Object> executeModel(String namespace, String name, Map<String, ?> inputs) {
 		// We need to copy all key-value-pairs from the given HashMap<String, Object> into the context
 		DMNContext context = kieRuntime.newContext();
@@ -76,12 +108,23 @@ public class DecisionSession implements Closeable {
 		return outputs;
 	}
 
+	/**
+	 * Executes the decision model.
+	 *
+	 * @param namespace Namespace of the decision model. It can be extracted with /definitions/@namespace.
+	 * @param name      Name of the decision model. It can be extracted with /definitions/@name.
+	 * @param inputs    Inputs that will be sent to the execution engine.
+	 */
 	public Map<String, Object> executeModel(String namespace, String name, String inputs) {
 		return executeModel(namespace, name, SerializationHelper.getInstance().toClass(inputs, new TypeReference<HashMap<String, Object>>() {
 		}));
 	}
 
-	private ImportResult reloadKie() throws ImportException {
+	private String getPath(String name) {
+		return "/src/main/resources/" + name + ".dmn";
+	}
+
+	private ImportResult reloadService() throws ImportException {
 		try {
 			// KieBuilder is a builder for the KieModule
 			kieBuilder = kieServices.newKieBuilder(kieFileSystem);
