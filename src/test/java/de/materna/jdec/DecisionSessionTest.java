@@ -41,14 +41,4 @@ class DecisionSessionTest {
 			decisionSession.importModel("main", "main", decision);
 		});
 	}
-
-
-	@Test
-	void executeDaniel() throws IOException, URISyntaxException {
-		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("camunda.dmn").toURI());
-		String decision = new String(Files.readAllBytes(decisionPath));
-
-		DecisionSession decisionSession = new DecisionSession();
-		decisionSession.importModel("main", "main", decision);
-	}
 }
