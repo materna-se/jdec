@@ -1,3 +1,13 @@
 ##### IntelliJ #####
-.idea/
-*.iml
+/.idea/
+/*.iml
+
+##### Tests #####
+/src/test/
+!/src/test/java/de/materna/jdec/DecisionSessionTest.java
+
+##### Decision Models #####
+/src/main/resources/
+!/src/main/resources/log4j.properties
+!/src/main/resources/0003-input-data-string-allowed-values.dmn
+!/src/main/resources/0003-input-data-string-allowed-values-invalid-feel.dmn
