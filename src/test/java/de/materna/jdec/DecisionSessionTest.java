@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-class DecisionSessionTest {
+public class DecisionSessionTest {
 	@Test
 	void executeHashMap() throws IOException, URISyntaxException {
 		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values.dmn").toURI());
