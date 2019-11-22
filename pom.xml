@@ -103,8 +103,16 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
+				<artifactId>maven-source-plugin</artifactId>
 				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -133,7 +141,6 @@
 					</execution>
 				</executions>
 				<configuration>
-					<useAgent>true</useAgent>
 					<gpgArguments>
 						<arg>--batch</arg>
 						<arg>--pinentry-mode</arg>
