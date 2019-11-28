@@ -1,6 +1,6 @@
 package de.materna.jdec;
 
-import de.materna.jdec.exceptions.ImportException;
+import de.materna.jdec.model.ImportException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

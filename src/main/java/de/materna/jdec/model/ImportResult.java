@@ -1,4 +1,4 @@
-package de.materna.jdec.beans;
+package de.materna.jdec.model;
 
 import org.kie.api.builder.Message;
 

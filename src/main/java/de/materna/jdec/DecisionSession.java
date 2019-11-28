@@ -1,9 +1,11 @@
 package de.materna.jdec;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import de.materna.jdec.beans.ImportResult;
-import de.materna.jdec.exceptions.ImportException;
-import de.materna.jdec.helpers.SerializationHelper;
+import de.materna.jdec.model.ComplexModelInput;
+import de.materna.jdec.model.ImportResult;
+import de.materna.jdec.drools.DroolsAnalyzer;
+import de.materna.jdec.model.ImportException;
+import de.materna.jdec.serialization.SerializationHelper;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
@@ -42,6 +44,10 @@ public class DecisionSession implements Closeable {
 	 */
 	public String getModel(String namespace, String name) {
 		return new String(kieFileSystem.read(getPath(name)));
+	}
+
+	public ComplexModelInput getInputs(String namespace, String name) {
+		return DroolsAnalyzer.getInputs(kieRuntime.getModel(namespace, name));
 	}
 
 	/**

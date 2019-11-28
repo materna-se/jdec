@@ -1,9 +1,4 @@
-package de.materna.jdec.exceptions;
-
-import de.materna.jdec.beans.ImportResult;
-import org.kie.api.builder.Message;
-
-import java.util.List;
+package de.materna.jdec.model;
 
 public class ImportException extends RuntimeException {
 	private ImportResult result;

@@ -1,4 +1,4 @@
-package de.materna.jdec.helpers;
+package de.materna.jdec.serialization;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
