@@ -1,10 +1,10 @@
 package de.materna.jdec;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import de.materna.jdec.model.ComplexModelInput;
-import de.materna.jdec.model.ImportResult;
 import de.materna.jdec.drools.DroolsAnalyzer;
+import de.materna.jdec.model.ComplexModelInput;
 import de.materna.jdec.model.ImportException;
+import de.materna.jdec.model.ImportResult;
 import de.materna.jdec.serialization.SerializationHelper;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
@@ -65,8 +65,12 @@ public class DecisionSession implements Closeable {
 			return reloadService();
 		}
 		catch (ImportException exception) {
+			// Before we can throw the exception, we need to delete the imported model.
+			// By doing this, the execution of other models is not affected.
 			kieFileSystem.delete(getPath(name));
-			return reloadService();
+			reloadService();
+
+			throw exception;
 		}
 	}
 
