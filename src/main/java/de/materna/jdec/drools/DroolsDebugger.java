@@ -26,6 +26,7 @@ public class DroolsDebugger {
 		listener = new DMNRuntimeEventListener() {
 			@Override
 			public void beforeEvaluateDecision(BeforeEvaluateDecisionEvent event) {
+				decisions.put(event.getDecision().getName(), new HashMap<>());
 				contexts = new Stack<>();
 			}
 
@@ -55,6 +56,12 @@ public class DroolsDebugger {
 				// Otherwise, we could overwrite context that we cannot see from this level.
 				ModelContext context = contexts.pop();
 				if (context.getValue() == null) {
+					if (contexts.size() == 0) {
+						// If the context has only one level, we need to attach it directly to the decision.
+						decisions.get(event.getNodeName()).put(variableName, cleanResult(event.getExpressionResult()));
+						return;
+					}
+
 					Map<String, Object> value = new HashMap<>();
 					value.put(variableName, cleanResult(event.getExpressionResult()));
 					context.setValue(value);
@@ -62,15 +69,7 @@ public class DroolsDebugger {
 
 				// When we have reached the bottom context, we attach it to the decision.
 				if (contexts.size() == 0) {
-					Map<String, Object> decision = decisions.get(event.getNodeName());
-					if (decision == null) {
-						decision = new HashMap<>();
-						decision.put(context.getName(), context.getValue());
-						decisions.put(event.getNodeName(), decision);
-						return;
-					}
-
-					decision.put(context.getName(), context.getValue());
+					decisions.get(event.getNodeName()).put(context.getName(), context.getValue());
 					return;
 				}
 
@@ -80,8 +79,8 @@ public class DroolsDebugger {
 					parentContext.setValue(context.getValue());
 					return;
 				}
-				Map<String, Object> parentContextValue = parentContext.getValue();
-				for (Map.Entry<String, Object> entry : context.getValue().entrySet()) {
+				Map<String, Object> parentContextValue = (Map<String, Object>) parentContext.getValue();
+				for (Map.Entry<String, Object> entry : ((Map<String, Object>) context.getValue()).entrySet()) {
 					parentContextValue.put(entry.getKey(), entry.getValue());
 				}
 			}
@@ -124,5 +123,9 @@ public class DroolsDebugger {
 
 	public Map<String, Map<String, Object>> getDecisions() {
 		return decisions;
+	}
+
+	public List<String> getMessages() {
+		return messages;
 	}
 }
