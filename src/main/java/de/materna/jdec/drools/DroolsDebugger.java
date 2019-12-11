@@ -11,10 +11,10 @@ import java.util.*;
 public class DroolsDebugger {
 	private DecisionSession decisionSession;
 
-	private List<String> messages = new LinkedList<>();
-
 	private Map<String, Map<String, Object>> decisions = new LinkedHashMap<>();
-	private Stack<ModelContext> contexts;
+	private Stack<String> decisionStack = new Stack<>();
+	private List<String> messages = new LinkedList<>();
+	private Stack<ModelContext> contextStack;
 
 	private DMNRuntimeEventListener listener;
 
@@ -26,63 +26,57 @@ public class DroolsDebugger {
 		listener = new DMNRuntimeEventListener() {
 			@Override
 			public void beforeEvaluateDecision(BeforeEvaluateDecisionEvent event) {
-				decisions.put(event.getDecision().getName(), new HashMap<>());
-				contexts = new Stack<>();
+				decisionStack.push(event.getDecision().getName());
+				decisions.put(decisionStack.peek(), new HashMap<>());
+				contextStack = new Stack<>();
 			}
 
 			@Override
 			public void beforeEvaluateContextEntry(BeforeEvaluateContextEntryEvent event) {
 				String variableName = event.getVariableName();
 				if (variableName.equals("__RESULT__")) {
-					return;
+					//return;
 				}
 
 				// We create a context and put it on the stack.
 				// The name allows us to set the value to a higher context level.
 				ModelContext context = new ModelContext();
 				context.setName(variableName);
-				contexts.push(context);
+				contextStack.push(context);
 			}
 
 			@Override
 			public void afterEvaluateContextEntry(AfterEvaluateContextEntryEvent event) {
 				String variableName = event.getVariableName();
 				if (variableName.equals("__RESULT__")) {
-					return;
+					//return;
 				}
 
 				// When we leave the context, we remove it from the stack.
 				// If the value has not yet been set by a higher context level, we'll do it.
 				// Otherwise, we could overwrite context that we cannot see from this level.
-				ModelContext context = contexts.pop();
+				ModelContext context = contextStack.pop();
 				if (context.getValue() == null) {
-					if (contexts.size() == 0) {
-						// If the context has only one level, we need to attach it directly to the decision.
-						decisions.get(event.getNodeName()).put(variableName, cleanResult(event.getExpressionResult()));
-						return;
-					}
-
-					Map<String, Object> value = new HashMap<>();
-					value.put(variableName, cleanResult(event.getExpressionResult()));
-					context.setValue(value);
+					context.setValue(cleanResult(event.getExpressionResult()));
 				}
 
 				// When we have reached the bottom context, we attach it to the decision.
-				if (contexts.size() == 0) {
-					decisions.get(event.getNodeName()).put(context.getName(), context.getValue());
+				if (contextStack.size() == 0) {
+					decisions.get(decisionStack.peek()).put(context.getName(), context.getValue());
 					return;
 				}
 
 				// If we haven't reached the bottom context, we attach the context to the parent context.
-				ModelContext parentContext = contexts.peek();
+				ModelContext parentContext = contextStack.peek();
+				// If this is the first value, we'll create a map.
 				if (parentContext.getValue() == null) {
-					parentContext.setValue(context.getValue());
+					Map<String, Object> value = new HashMap<>();
+					value.put(context.getName(), context.getValue());
+					parentContext.setValue(value);
 					return;
 				}
 				Map<String, Object> parentContextValue = (Map<String, Object>) parentContext.getValue();
-				for (Map.Entry<String, Object> entry : ((Map<String, Object>) context.getValue()).entrySet()) {
-					parentContextValue.put(entry.getKey(), entry.getValue());
-				}
+				parentContextValue.put(context.getName(), context.getValue());
 			}
 
 			@Override
@@ -91,6 +85,8 @@ public class DroolsDebugger {
 					// noinspection deprecation
 					messages.add(message.getMessage());
 				}
+
+				decisionStack.pop();
 			}
 		};
 		decisionSession.getRuntime().addListener(listener);
@@ -115,7 +111,7 @@ public class DroolsDebugger {
 		}
 
 		if (result instanceof DMNFunctionDefinitionEvaluator.DMNFunction) {
-			return null;
+			return "__FUNCTION_DEFINITION__";
 		}
 
 		return result;
