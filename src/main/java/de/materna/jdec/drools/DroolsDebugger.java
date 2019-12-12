@@ -27,31 +27,21 @@ public class DroolsDebugger {
 			@Override
 			public void beforeEvaluateDecision(BeforeEvaluateDecisionEvent event) {
 				decisionStack.push(event.getDecision().getName());
-				decisions.put(decisionStack.peek(), new HashMap<>());
+				decisions.put(decisionStack.peek(), new LinkedHashMap<>());
 				contextStack = new Stack<>();
 			}
 
 			@Override
 			public void beforeEvaluateContextEntry(BeforeEvaluateContextEntryEvent event) {
-				String variableName = event.getVariableName();
-				if (variableName.equals("__RESULT__")) {
-					//return;
-				}
-
 				// We create a context and put it on the stack.
 				// The name allows us to set the value to a higher context level.
 				ModelContext context = new ModelContext();
-				context.setName(variableName);
+				context.setName(event.getVariableName());
 				contextStack.push(context);
 			}
 
 			@Override
 			public void afterEvaluateContextEntry(AfterEvaluateContextEntryEvent event) {
-				String variableName = event.getVariableName();
-				if (variableName.equals("__RESULT__")) {
-					//return;
-				}
-
 				// When we leave the context, we remove it from the stack.
 				// If the value has not yet been set by a higher context level, we'll do it.
 				// Otherwise, we could overwrite context that we cannot see from this level.
@@ -70,7 +60,7 @@ public class DroolsDebugger {
 				ModelContext parentContext = contextStack.peek();
 				// If this is the first value, we'll create a map.
 				if (parentContext.getValue() == null) {
-					Map<String, Object> value = new HashMap<>();
+					Map<String, Object> value = new LinkedHashMap<>();
 					value.put(context.getName(), context.getValue());
 					parentContext.setValue(value);
 					return;

@@ -7,7 +7,7 @@ import org.kie.dmn.api.core.DMNModel;
 import org.kie.dmn.api.core.DMNType;
 import org.kie.dmn.api.core.ast.InputDataNode;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -25,7 +25,7 @@ public class DroolsAnalyzer {
 	public static ComplexModelInput getInputs(DMNModel model) {
 		ComplexModelInput modelInput = new ComplexModelInput("object", false);
 
-		Map<String, ModelInput> inputs = new HashMap<>();
+		Map<String, ModelInput> inputs = new LinkedHashMap<>();
 		for (InputDataNode inputDataNode : model.getInputs()) {
 			inputs.put(inputDataNode.getName(), getInput(inputDataNode.getType()));
 		}
@@ -78,7 +78,7 @@ public class DroolsAnalyzer {
 	 * @param fields Child Inputs
 	 */
 	private static Map<String, ModelInput> getChildInputs(Map<String, DMNType> fields) {
-		Map<String, ModelInput> inputs = new HashMap<>();
+		Map<String, ModelInput> inputs = new LinkedHashMap<>();
 
 		for (Map.Entry<String, DMNType> entry : fields.entrySet()) {
 			inputs.put(entry.getKey(), getInput(entry.getValue()));
