@@ -5,6 +5,7 @@ import java.util.Map;
 public class ModelContext {
 	private String name;
 	private Object value;
+	private ModelContextState state;
 
 	public ModelContext() {
 	}
@@ -23,5 +24,19 @@ public class ModelContext {
 
 	public void setValue(Object value) {
 		this.value = value;
+	}
+
+	public ModelContextState getState() {
+		return state;
+	}
+
+	public void setState(ModelContextState state) {
+		this.state = state;
+	}
+
+	public enum ModelContextState {
+		UNDEFINED,
+		VALUE,
+		VALUES
 	}
 }
