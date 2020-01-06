@@ -1,12 +1,12 @@
 package de.materna.jdec.model;
 
-public class ImportException extends RuntimeException {
+public class ModelImportException extends RuntimeException {
 	private ImportResult result;
 
-	public ImportException() {
+	public ModelImportException() {
 	}
 
-	public ImportException(ImportResult result) {
+	public ModelImportException(ImportResult result) {
 		this.result = result;
 	}
 

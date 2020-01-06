@@ -1,6 +1,6 @@
 package de.materna.jdec;
 
-import de.materna.jdec.model.ImportException;
+import de.materna.jdec.model.ModelImportException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +36,7 @@ public class DecisionSessionTest {
 		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values-invalid-feel.dmn").toURI());
 		String decision = new String(Files.readAllBytes(decisionPath));
 
-		Assertions.assertThrows(ImportException.class, () -> {
+		Assertions.assertThrows(ModelImportException.class, () -> {
 			DecisionSession decisionSession = new DecisionSession();
 			decisionSession.importModel("main", "main", decision);
 		});

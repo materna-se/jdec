@@ -3,7 +3,7 @@ package de.materna.jdec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import de.materna.jdec.drools.DroolsAnalyzer;
 import de.materna.jdec.model.ComplexModelInput;
-import de.materna.jdec.model.ImportException;
+import de.materna.jdec.model.ModelImportException;
 import de.materna.jdec.model.ImportResult;
 import de.materna.jdec.serialization.SerializationHelper;
 import org.kie.api.KieServices;
@@ -25,7 +25,6 @@ import java.util.Map;
 public class DecisionSession implements Closeable {
 	private KieServices kieServices;
 	private KieFileSystem kieFileSystem;
-	private KieBuilder kieBuilder;
 	private DMNRuntime kieRuntime;
 
 	/**
@@ -34,6 +33,7 @@ public class DecisionSession implements Closeable {
 	public DecisionSession() {
 		kieServices = KieServices.Factory.get();
 		kieFileSystem = kieServices.newKieFileSystem();
+		reloadService();
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class DecisionSession implements Closeable {
 		try {
 			return reloadService();
 		}
-		catch (ImportException exception) {
+		catch (ModelImportException exception) {
 			// Before we can throw the exception, we need to delete the imported model.
 			// By doing this, the execution of other models is not affected.
 			kieFileSystem.delete(getPath(name));
@@ -134,7 +134,9 @@ public class DecisionSession implements Closeable {
 		return "/src/main/resources/" + name + ".dmn";
 	}
 
-	private ImportResult reloadService() throws ImportException {
+	private ImportResult reloadService() throws ModelImportException {
+		KieBuilder kieBuilder = null;
+
 		try {
 			// KieBuilder is a builder for the KieModule
 			kieBuilder = kieServices.newKieBuilder(kieFileSystem);
@@ -157,7 +159,8 @@ public class DecisionSession implements Closeable {
 		catch (Exception exception) {
 			exception.printStackTrace();
 
-			throw new ImportException(new ImportResult(kieBuilder.getResults().getMessages()));
+			// noinspection ConstantConditions
+			throw new ModelImportException(new ImportResult(kieBuilder.getResults().getMessages()));
 		}
 	}
 
@@ -167,7 +170,6 @@ public class DecisionSession implements Closeable {
 
 	public void close() {
 		kieRuntime = null;
-		kieBuilder = null;
 		kieFileSystem = null;
 		kieServices = null;
 	}
