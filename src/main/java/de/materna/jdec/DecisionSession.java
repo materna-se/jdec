@@ -3,8 +3,8 @@ package de.materna.jdec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import de.materna.jdec.drools.DroolsAnalyzer;
 import de.materna.jdec.model.ComplexModelInput;
-import de.materna.jdec.model.ModelImportException;
 import de.materna.jdec.model.ImportResult;
+import de.materna.jdec.model.ModelImportException;
 import de.materna.jdec.serialization.SerializationHelper;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
@@ -14,6 +14,7 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.dmn.api.core.DMNContext;
 import org.kie.dmn.api.core.DMNDecisionResult;
+import org.kie.dmn.api.core.DMNModel;
 import org.kie.dmn.api.core.DMNRuntime;
 
 import java.io.Closeable;
@@ -86,22 +87,22 @@ public class DecisionSession implements Closeable {
 		reloadService();
 	}
 
+
 	/**
 	 * Executes the decision model.
 	 *
-	 * @param namespace Namespace of the decision model. It can be extracted with /definitions/@namespace.
-	 * @param name      Name of the decision model. It can be extracted with /definitions/@name.
-	 * @param inputs    Inputs that will be sent to the execution engine.
+	 * @param model  Decision Model.
+	 * @param inputs Inputs that will be sent to the execution engine.
 	 */
-	public Map<String, Object> executeModel(String namespace, String name, Map<String, ?> inputs) {
-		// We need to copy all key-value-pairs from the given HashMap<String, Object> into the context
+	public Map<String, Object> executeModel(DMNModel model, Map<String, ?> inputs) {
+		// We need to copy all key-value pairs from the given HashMap<String, Object> into the context
 		DMNContext context = kieRuntime.newContext();
 		for (Map.Entry<String, ?> entry : inputs.entrySet()) {
 			context.set(entry.getKey(), entry.getValue());
 		}
 
 		// By calling evaluateAll, the dmn model and the dmn context are sent to the drools engine
-		List<DMNDecisionResult> results = kieRuntime.evaluateAll(kieRuntime.getModel(namespace, name), context).getDecisionResults();
+		List<DMNDecisionResult> results = kieRuntime.evaluateAll(model, context).getDecisionResults();
 
 		// After we've received the results, we need to convert them into a usable format
 		Map<String, Object> outputs = new LinkedHashMap<>();
@@ -125,9 +126,8 @@ public class DecisionSession implements Closeable {
 	 * @param name      Name of the decision model. It can be extracted with /definitions/@name.
 	 * @param inputs    Inputs that will be sent to the execution engine.
 	 */
-	public Map<String, Object> executeModel(String namespace, String name, String inputs) {
-		return executeModel(namespace, name, SerializationHelper.getInstance().toClass(inputs, new TypeReference<HashMap<String, Object>>() {
-		}));
+	public Map<String, Object> executeModel(String namespace, String name, Map<String, ?> inputs) {
+		return executeModel(kieRuntime.getModel(namespace, name), inputs);
 	}
 
 	private String getPath(String name) {
