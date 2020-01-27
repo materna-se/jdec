@@ -26,7 +26,7 @@ public class DroolsDebugger {
 		listener = new DMNRuntimeEventListener() {
 			@Override
 			public void beforeEvaluateDecision(BeforeEvaluateDecisionEvent event) {
-				synchronized (listener) {
+				synchronized (decisionSession.getRuntime()) {
 					decisionStack.push(event.getDecision().getName());
 					decisions.put(decisionStack.peek(), new LinkedHashMap<>());
 					contextStack = new Stack<>();
@@ -35,7 +35,7 @@ public class DroolsDebugger {
 
 			@Override
 			public void beforeEvaluateContextEntry(BeforeEvaluateContextEntryEvent event) {
-				synchronized (listener) {
+				synchronized (decisionSession.getRuntime()) {
 					// We create a context and put it on the stack.
 					// The name allows us to set the value to a higher context level.
 					ModelContext context = new ModelContext();
@@ -47,7 +47,7 @@ public class DroolsDebugger {
 
 			@Override
 			public void afterEvaluateContextEntry(AfterEvaluateContextEntryEvent event) {
-				synchronized (listener) {
+				synchronized (decisionSession.getRuntime()) {
 					// When we leave the context, we remove it from the stack.
 					// If the value has not yet been set by a higher context level, we'll do it.
 					// Otherwise, we could overwrite context that we cannot see from this level.
@@ -114,7 +114,7 @@ public class DroolsDebugger {
 
 			@Override
 			public void afterEvaluateDecision(AfterEvaluateDecisionEvent event) {
-				synchronized (listener) {
+				synchronized (decisionSession.getRuntime()) {
 					for (DMNMessage message : event.getResult().getMessages()) {
 						// noinspection deprecation
 						messages.add(message.getMessage());
