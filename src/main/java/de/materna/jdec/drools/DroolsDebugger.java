@@ -53,7 +53,7 @@ public class DroolsDebugger {
 					// Otherwise, we could overwrite context that we cannot see from this level.
 					ModelContext context = contextStack.pop();
 					if (context.getState() == ModelContext.ModelContextState.UNDEFINED) {
-						context.setValue(cleanResult(event.getExpressionResult()));
+						context.setValue(DroolsHelper.cleanResult(event.getExpressionResult()));
 						context.setState(ModelContext.ModelContextState.VALUE);
 					}
 
@@ -129,27 +129,6 @@ public class DroolsDebugger {
 
 	public void stop() {
 		decisionSession.getRuntime().removeListener(listener);
-	}
-
-	/**
-	 * We need to remove all functions because serializing them is not possible.
-	 */
-	private Object cleanResult(Object result) {
-		if (result instanceof Map) {
-			Map<String, Object> results = (Map<String, Object>) result;
-
-			Map<String, Object> cleanedResults = new LinkedHashMap<>();
-			for (Map.Entry<String, Object> entry : results.entrySet()) {
-				cleanedResults.put(entry.getKey(), cleanResult(entry.getValue()));
-			}
-			return cleanedResults;
-		}
-
-		if (result instanceof DMNFunctionDefinitionEvaluator.DMNFunction) {
-			return "__FUNCTION_DEFINITION__";
-		}
-
-		return result;
 	}
 
 	public Map<String, Map<String, Object>> getDecisions() {
