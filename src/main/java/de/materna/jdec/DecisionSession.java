@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class DecisionSession implements Closeable {
 	private KieServices kieServices;
-	private KieFileSystem kieFileSystem;
+	public KieFileSystem kieFileSystem;
 	private DMNRuntime kieRuntime;
 
 	/**
@@ -68,8 +68,7 @@ public class DecisionSession implements Closeable {
 		catch (ModelImportException exception) {
 			// Before we can throw the exception, we need to delete the imported model.
 			// By doing this, the execution of other models is not affected.
-			kieFileSystem.delete(getPath(name));
-			reloadService();
+			deleteModel(namespace, name);
 
 			throw exception;
 		}
@@ -86,7 +85,6 @@ public class DecisionSession implements Closeable {
 
 		reloadService();
 	}
-
 
 	/**
 	 * Executes the decision model.
