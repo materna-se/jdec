@@ -4,7 +4,7 @@
 
 	<groupId>com.github.materna-se</groupId>
 	<artifactId>jdec</artifactId>
-	<version>1.5.17-SNAPSHOT</version>
+	<version>1.5.31-SNAPSHOT</version>
 
 	<name>jDEC</name>
 	<description>🤔 Library that offers a unified interface to Drools and Java decisions</description>
