@@ -9,6 +9,7 @@ public class ImportResult {
 	private List<String> messages;
 
 	public ImportResult() {
+		this.messages = new LinkedList<>();
 	}
 
 	public ImportResult(List<Message> messages) {
