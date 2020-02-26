@@ -1,4 +1,4 @@
-package de.materna.jdec.drools;
+package de.materna.jdec.dmn;
 
 import org.apache.log4j.Logger;
 import org.kie.dmn.api.core.DMNUnaryTest;

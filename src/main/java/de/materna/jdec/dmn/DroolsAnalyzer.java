@@ -1,4 +1,4 @@
-package de.materna.jdec.drools;
+package de.materna.jdec.dmn;
 
 import de.materna.jdec.model.ComplexModelInput;
 import de.materna.jdec.model.ModelInput;
