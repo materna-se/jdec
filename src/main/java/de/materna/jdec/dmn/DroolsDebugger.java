@@ -1,15 +1,14 @@
-package de.materna.jdec.drools;
+package de.materna.jdec.dmn;
 
-import de.materna.jdec.DecisionSession;
+import de.materna.jdec.DMNDecisionSession;
 import de.materna.jdec.model.ModelContext;
 import org.kie.dmn.api.core.DMNMessage;
 import org.kie.dmn.api.core.event.*;
-import org.kie.dmn.core.ast.DMNFunctionDefinitionEvaluator;
 
 import java.util.*;
 
 public class DroolsDebugger {
-	private DecisionSession decisionSession;
+	private DMNDecisionSession decisionSession;
 
 	private Map<String, Map<String, Object>> decisions = new LinkedHashMap<>();
 	private Stack<String> decisionStack = new Stack<>();
@@ -18,7 +17,7 @@ public class DroolsDebugger {
 
 	private DMNRuntimeEventListener listener;
 
-	public DroolsDebugger(DecisionSession decisionSession) {
+	public DroolsDebugger(DMNDecisionSession decisionSession) {
 		this.decisionSession = decisionSession;
 	}
 
