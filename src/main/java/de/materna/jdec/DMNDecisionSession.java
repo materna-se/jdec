@@ -8,6 +8,7 @@ import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.KieModule;
+import org.kie.api.builder.Message;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.dmn.api.core.DMNContext;
@@ -17,12 +18,13 @@ import org.kie.dmn.api.core.DMNRuntime;
 
 import java.io.Closeable;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 public class DMNDecisionSession implements DecisionSession, Closeable {
-	private KieServices kieServices;
 	public KieFileSystem kieFileSystem;
+	private KieServices kieServices;
 	private DMNRuntime kieRuntime;
 
 	/**
@@ -148,13 +150,21 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 			// Get the KieRuntime through the established connection
 			kieRuntime = kieSession.getKieRuntime(DMNRuntime.class);
 
-			return new ImportResult(kieBuilder.getResults().getMessages());
+			return new ImportResult(convertMessages(kieBuilder.getResults().getMessages()));
 		}
 		catch (Exception exception) {
 			exception.printStackTrace();
 
 			// noinspection ConstantConditions
-			throw new ModelImportException(new ImportResult(kieBuilder.getResults().getMessages()));
+			throw new ModelImportException(new ImportResult(convertMessages(kieBuilder.getResults().getMessages())));
 		}
+	}
+
+	private List<String> convertMessages(List<Message> messages) {
+		List<String> convertedMessages = new LinkedList<>();
+		for (Message message : messages) {
+			convertedMessages.add(message.getText());
+		}
+		return convertedMessages;
 	}
 }

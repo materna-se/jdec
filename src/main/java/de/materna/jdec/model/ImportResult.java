@@ -1,7 +1,5 @@
 package de.materna.jdec.model;
 
-import org.kie.api.builder.Message;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,12 +10,8 @@ public class ImportResult {
 		this.messages = new LinkedList<>();
 	}
 
-	public ImportResult(List<Message> messages) {
-		List<String> convertedMessages = new LinkedList<>();
-		for (Message message : messages) {
-			convertedMessages.add(message.getText());
-		}
-		this.messages = convertedMessages;
+	public ImportResult(List<String> messages) {
+		this.messages = messages;
 	}
 
 	public List<String> getMessages() {
