@@ -1,13 +1,13 @@
 package de.materna.jdec.model;
 
-public class ComplexModelInput extends ModelInput {
+public class ComplexInputStructure extends InputStructure {
 	private Object value;
 
-	public ComplexModelInput(String type) {
+	public ComplexInputStructure(String type) {
 		super(type);
 	}
 
-	public ComplexModelInput(String type, Object value) {
+	public ComplexInputStructure(String type, Object value) {
 		super(type);
 
 		this.value = value;

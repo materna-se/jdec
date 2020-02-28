@@ -1,7 +1,5 @@
 package de.materna.jdec.model;
 
-import java.util.Map;
-
 public class ModelContext {
 	private String name;
 	private Object value;

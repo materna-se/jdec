@@ -1,14 +1,14 @@
 package de.materna.jdec.java;
 
-import de.materna.jdec.model.ComplexModelInput;
+import de.materna.jdec.model.ComplexInputStructure;
 
 import java.util.Map;
 
 public interface DecisionModel {
 	/**
-	 * Returns the input that is required for the decision.
+	 * Returns the input structure that is required for the decision.
 	 */
-	ComplexModelInput getInput();
+	ComplexInputStructure getInputStructure();
 
 	/**
 	 * Executes the decision.

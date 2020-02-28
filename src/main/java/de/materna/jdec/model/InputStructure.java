@@ -4,16 +4,16 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.List;
 
-public class ModelInput {
+public class InputStructure {
 	private String type;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private List<Object> options;
 
-	public ModelInput(String type) {
+	public InputStructure(String type) {
 		this.type = type;
 	}
 
-	public ModelInput(String type, List<Object> options) {
+	public InputStructure(String type, List<Object> options) {
 		this.type = type;
 		this.options = options;
 	}
