@@ -1,6 +1,6 @@
 package de.materna.jdec;
 
-import de.materna.jdec.model.ComplexModelInput;
+import de.materna.jdec.model.ComplexInputStructure;
 import de.materna.jdec.model.ImportResult;
 
 import java.util.Map;
@@ -15,12 +15,12 @@ public interface DecisionSession {
 	String getModel(String namespace, String name);
 
 	/**
-	 * Returns the required inputs.
+	 * Returns the input structure that is required for the decision model.
 	 *
 	 * @param namespace Namespace of the decision model. It can be extracted with /definitions/@namespace.
 	 * @param name      Name of the decision model. It can be extracted with /definitions/@name.
 	 */
-	ComplexModelInput getInputs(String namespace, String name);
+	ComplexInputStructure getInputStructure(String namespace, String name);
 
 	/**
 	 * Imports the decision model.

@@ -1,7 +1,7 @@
 package de.materna.jdec;
 
 import de.materna.jdec.dmn.DroolsAnalyzer;
-import de.materna.jdec.model.ComplexModelInput;
+import de.materna.jdec.model.ComplexInputStructure;
 import de.materna.jdec.model.ImportResult;
 import de.materna.jdec.model.ModelImportException;
 import org.kie.api.KieServices;
@@ -83,8 +83,8 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	//
 
 	@Override
-	public ComplexModelInput getInputs(String namespace, String name) {
-		return DroolsAnalyzer.getInputs(kieRuntime.getModel(namespace, name));
+	public ComplexInputStructure getInputStructure(String namespace, String name) {
+		return DroolsAnalyzer.getComplexInputStructure(kieRuntime.getModel(namespace, name));
 	}
 
 	//
@@ -116,10 +116,6 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 		return outputs;
 	}
 
-	public DMNRuntime getRuntime() {
-		return kieRuntime;
-	}
-
 	public void close() {
 		kieRuntime = null;
 		kieFileSystem = null;
@@ -130,6 +126,11 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 		return "/src/main/resources/" + namespace + "/" + name + ".dmn";
 	}
 
+	/**
+	 * Reloads the service by compiling the decision models.
+	 *
+	 * @return Warnings that occurred during compilation.
+	 */
 	private ImportResult reloadService() throws ModelImportException {
 		KieBuilder kieBuilder = null;
 
@@ -166,5 +167,9 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 			convertedMessages.add(message.getText());
 		}
 		return convertedMessages;
+	}
+
+	public DMNRuntime getRuntime() {
+		return kieRuntime;
 	}
 }
