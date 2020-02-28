@@ -6,12 +6,12 @@ import java.util.Map;
 
 public interface DecisionModel {
 	/**
-	 * Returns the required inputs.
+	 * Returns the input that is required for the decision.
 	 */
-	ComplexModelInput getInputs();
+	ComplexModelInput getInput();
 
 	/**
-	 * Executes the decision model.
+	 * Executes the decision.
 	 */
 	Map<String, Object> executeDecision(Map<String, ?> inputs);
 }
