@@ -1,6 +1,8 @@
 package de.materna.jdec.model;
 
-public class ModelImportException extends RuntimeException {
+import java.io.IOException;
+
+public class ModelImportException extends IOException {
 	private ImportResult result;
 
 	public ModelImportException() {

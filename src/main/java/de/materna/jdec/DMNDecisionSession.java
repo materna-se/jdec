@@ -4,6 +4,7 @@ import de.materna.jdec.dmn.DroolsAnalyzer;
 import de.materna.jdec.model.ComplexInputStructure;
 import de.materna.jdec.model.ImportResult;
 import de.materna.jdec.model.ModelImportException;
+import de.materna.jdec.model.ModelNotFoundException;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
@@ -33,7 +34,11 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	public DMNDecisionSession() {
 		kieServices = KieServices.Factory.get();
 		kieFileSystem = kieServices.newKieFileSystem();
-		compileModels();
+		try {
+			compileModels();
+		}
+		catch (ModelImportException ignored) {
+		}
 	}
 
 	//
@@ -41,15 +46,18 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	//
 
 	@Override
-	public String getModel(String namespace, String name) {
-		return new String(kieFileSystem.read(getPath(namespace, name)));
+	public String getModel(String namespace, String name) throws ModelNotFoundException {
+		byte[] model = kieFileSystem.read(getPath(namespace, name));
+		if (model == null) {
+			throw new ModelNotFoundException();
+		}
+		return new String(model);
 	}
 
 	@Override
-	public ImportResult importModel(String namespace, String name, String model) {
+	public ImportResult importModel(String namespace, String name, String model) throws ModelImportException {
 		kieFileSystem.write(getPath(namespace, name), model);
 
-		// If the compilation fails, we'll delete it again so it doesn't affect other decision models.
 		try {
 			return compileModels();
 		}
@@ -63,7 +71,7 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	}
 
 	@Override
-	public void deleteModel(String namespace, String name) {
+	public void deleteModel(String namespace, String name) throws ModelImportException {
 		kieFileSystem.delete(getPath(namespace, name));
 		compileModels();
 	}
@@ -73,7 +81,7 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	//
 
 	@Override
-	public Map<String, Object> executeModel(String namespace, String name, Map<String, Object> inputs) {
+	public Map<String, Object> executeModel(String namespace, String name, Map<String, Object> inputs) throws ModelNotFoundException {
 		return executeModel(kieRuntime.getModel(namespace, name), inputs);
 	}
 
@@ -82,7 +90,7 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	//
 
 	@Override
-	public ComplexInputStructure getInputStructure(String namespace, String name) {
+	public ComplexInputStructure getInputStructure(String namespace, String name) throws ModelNotFoundException {
 		return DroolsAnalyzer.getComplexInputStructure(kieRuntime.getModel(namespace, name));
 	}
 
