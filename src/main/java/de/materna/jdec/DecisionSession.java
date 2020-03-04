@@ -46,5 +46,5 @@ public interface DecisionSession {
 	 * @param name      Name of the decision model. It can be extracted with /definitions/@name.
 	 * @param inputs    Inputs that will be sent to the execution engine.
 	 */
-	Map<String, Object> executeModel(String namespace, String name, Map<String, ?> inputs);
+	Map<String, Object> executeModel(String namespace, String name, Map<String, Object> inputs);
 }

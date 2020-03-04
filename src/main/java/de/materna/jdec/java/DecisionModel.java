@@ -13,5 +13,5 @@ public interface DecisionModel {
 	/**
 	 * Executes the decision.
 	 */
-	Map<String, Object> executeDecision(Map<String, ?> inputs);
+	Map<String, Object> executeDecision(Map<String, Object> inputs);
 }

@@ -33,7 +33,7 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	public DMNDecisionSession() {
 		kieServices = KieServices.Factory.get();
 		kieFileSystem = kieServices.newKieFileSystem();
-		reloadService();
+		compileModels();
 	}
 
 	//
@@ -49,9 +49,9 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	public ImportResult importModel(String namespace, String name, String model) {
 		kieFileSystem.write(getPath(namespace, name), model);
 
-		// If the import fails, we'll delete it again so it doesn't affect other decision models.
+		// If the compilation fails, we'll delete it again so it doesn't affect other decision models.
 		try {
-			return reloadService();
+			return compileModels();
 		}
 		catch (ModelImportException exception) {
 			// Before we can throw the exception, we need to delete the imported model.
@@ -65,8 +65,7 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	@Override
 	public void deleteModel(String namespace, String name) {
 		kieFileSystem.delete(getPath(namespace, name));
-
-		reloadService();
+		compileModels();
 	}
 
 	//
@@ -74,7 +73,7 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	//
 
 	@Override
-	public Map<String, Object> executeModel(String namespace, String name, Map<String, ?> inputs) {
+	public Map<String, Object> executeModel(String namespace, String name, Map<String, Object> inputs) {
 		return executeModel(kieRuntime.getModel(namespace, name), inputs);
 	}
 
@@ -131,7 +130,7 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	 *
 	 * @return Warnings that occurred during compilation.
 	 */
-	private ImportResult reloadService() throws ModelImportException {
+	private ImportResult compileModels() throws ModelImportException {
 		KieBuilder kieBuilder = null;
 
 		try {
