@@ -82,7 +82,12 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 
 	@Override
 	public Map<String, Object> executeModel(String namespace, String name, Map<String, Object> inputs) throws ModelNotFoundException {
-		return executeModel(kieRuntime.getModel(namespace, name), inputs);
+		DMNModel model = kieRuntime.getModel(namespace, name);
+		if (model == null) {
+			throw new ModelNotFoundException();
+		}
+
+		return executeModel(model, inputs);
 	}
 
 	//
@@ -91,7 +96,12 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 
 	@Override
 	public ComplexInputStructure getInputStructure(String namespace, String name) throws ModelNotFoundException {
-		return DroolsAnalyzer.getComplexInputStructure(kieRuntime.getModel(namespace, name));
+		DMNModel model = kieRuntime.getModel(namespace, name);
+		if (model == null) {
+			throw new ModelNotFoundException();
+		}
+
+		return DroolsAnalyzer.getComplexInputStructure(model);
 	}
 
 	//

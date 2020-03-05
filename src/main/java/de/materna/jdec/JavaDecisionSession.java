@@ -14,7 +14,6 @@ import org.codehaus.commons.compiler.util.resource.Resource;
 import org.codehaus.commons.compiler.util.resource.StringResource;
 import org.codehaus.janino.ClassLoaderIClassLoader;
 import org.codehaus.janino.Compiler;
-import org.codehaus.janino.Mod;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -47,7 +46,7 @@ public class JavaDecisionSession implements DecisionSession {
 	@Override
 	public String getModel(String namespace, String name) throws ModelNotFoundException {
 		String model = models.get(getPath(namespace, name));
-		if(model == null) {
+		if (model == null) {
 			throw new ModelNotFoundException();
 		}
 		return model;
