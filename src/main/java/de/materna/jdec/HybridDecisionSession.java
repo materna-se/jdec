@@ -8,12 +8,12 @@ import de.materna.jdec.model.ModelNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DynamicDecisionSession implements DecisionSession {
+public class HybridDecisionSession implements DecisionSession {
 	private DecisionSession dmnDecisionSession;
 	private DecisionSession javaDecisionSession;
 	private Map<String, DecisionSessionMapping> decisionSessionMapping;
 
-	public DynamicDecisionSession() throws Exception {
+	public HybridDecisionSession() throws Exception {
 		dmnDecisionSession = new DMNDecisionSession();
 		javaDecisionSession = new JavaDecisionSession();
 		decisionSessionMapping = new HashMap<>();

@@ -16,6 +16,7 @@ import org.codehaus.janino.ClassLoaderIClassLoader;
 import org.codehaus.janino.Compiler;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -105,12 +106,19 @@ public class JavaDecisionSession implements DecisionSession {
 			DecisionModel decisionModel = compiledModels.get(getPath(namespace, name));
 			if (decisionModel == null) {
 				decisionModel = (DecisionModel) classLoader.loadClass(namespace + "." + name).getConstructor().newInstance();
+
+				// The decisionSession is injected into the decisionModel using reflection.
+				Field decisionSession = decisionModel.getClass().getSuperclass().getDeclaredField("decisionSession");
+				decisionSession.setAccessible(true);
+				decisionSession.set(decisionModel, this);
+				decisionSession.setAccessible(false);
+
 				compiledModels.put(getPath(namespace, name), decisionModel);
 			}
 
 			return decisionModel;
 		}
-		catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+		catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
 			throw new ModelNotFoundException();
 		}
 	}
