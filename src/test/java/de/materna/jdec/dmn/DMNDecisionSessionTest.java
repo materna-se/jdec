@@ -18,11 +18,11 @@ import java.util.Map;
 public class DMNDecisionSessionTest {
 	@Test
 	void executeHashMap() throws IOException, URISyntaxException {
+		DecisionSession decisionSession = new DMNDecisionSession();
+
 		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values.dmn").toURI());
 		String decision = new String(Files.readAllBytes(decisionPath));
-
-		DecisionSession decisionSession = new DMNDecisionSession();
-		decisionSession.importModel("main", "main", decision);
+		decisionSession.importModel("https://github.com/kiegroup/kie-dmn", "0003-input-data-string-allowed-values", decision);
 
 		Map<String, Object> inputs = new HashMap<>();
 		inputs.put("Employment Status", "UNEMPLOYED");
@@ -36,12 +36,12 @@ public class DMNDecisionSessionTest {
 
 	@Test
 	void executeHashMapWithInvalidFEEL() throws IOException, URISyntaxException {
-		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values-invalid-feel.dmn").toURI());
-		String decision = new String(Files.readAllBytes(decisionPath));
-
 		Assertions.assertThrows(ModelImportException.class, () -> {
 			DecisionSession decisionSession = new DMNDecisionSession();
-			decisionSession.importModel("main", "main", decision);
+
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values-invalid-feel.dmn").toURI());
+			String decision = new String(Files.readAllBytes(decisionPath));
+			decisionSession.importModel("https://github.com/kiegroup/kie-dmn", "0003-input-data-string-allowed-values", decision);
 		});
 	}
 
