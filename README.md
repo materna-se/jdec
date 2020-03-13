@@ -87,13 +87,13 @@ Once the decisions are modeled, they can be used with jDEC. For this purpose, a 
 
 If `DMNDecisionSession` or `HybridDecisionSession` is used, DMN decisions can be imported and executed like this:
 ```java
-DecisionSession decisionSession = new JavaDecisionSession();
-decisionSession.importModel("de.materna.jdec.java.test", "EmploymentStatusDecision", /* Decision Source */);
+DecisionSession decisionSession = new DMNDecisionSession();
+decisionSession.importModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", /* Decision Source */);
 
 Map<String, Object> inputs = new HashMap<>();
 inputs.put("Employment Status", "UNEMPLOYED");
 
-Map<String, Object> outputs = decisionSession.executeModel("de.materna.jdec.java.test", "EmploymentStatusDecision", inputs);
+Map<String, Object> outputs = decisionSession.executeModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", inputs);
 System.out.println("executeHashMap(): " + outputs);
 
 Assertions.assertTrue(outputs.containsKey("Employment Status Statement"));
@@ -102,13 +102,13 @@ Assertions.assertEquals("You are UNEMPLOYED", outputs.get("Employment Status Sta
 
 If `JavaDecisionSession` or `HybridDecisionSession` is used, Java decisions can be imported and executed like this:
 ```java
-DecisionSession decisionSession = new DMNDecisionSession();
-decisionSession.importModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", /* Decision Source */);
+DecisionSession decisionSession = new JavaDecisionSession();
+decisionSession.importModel("de.materna.jdec.java.test", "EmploymentStatusDecision", /* Decision Source */);
 
 Map<String, Object> inputs = new HashMap<>();
 inputs.put("Employment Status", "UNEMPLOYED");
 
-Map<String, Object> outputs = decisionSession.executeModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", inputs);
+Map<String, Object> outputs = decisionSession.executeModel("de.materna.jdec.java.test", "EmploymentStatusDecision", inputs);
 System.out.println("executeHashMap(): " + outputs);
 
 Assertions.assertTrue(outputs.containsKey("Employment Status Statement"));
