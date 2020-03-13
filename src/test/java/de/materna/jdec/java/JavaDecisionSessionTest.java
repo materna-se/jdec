@@ -13,7 +13,7 @@ public class JavaDecisionSessionTest {
 	@Test
 	void executeHashMap() throws Exception {
 		DecisionSession decisionSession = new JavaDecisionSession();
-		decisionSession.importModel("de.materna.jdec.java.test", "JavaDecision", "package de.materna.jdec.java.test;\n" +
+		decisionSession.importModel("de.materna.jdec.java.test", "EmploymentStatusDecision", "package de.materna.jdec.java.test;\n" +
 				"\n" +
 				"import de.materna.jdec.java.DecisionModel;\n" +
 				"import de.materna.jdec.model.ComplexInputStructure;\n" +
@@ -24,7 +24,7 @@ public class JavaDecisionSessionTest {
 				"import java.util.LinkedHashMap;\n" +
 				"import java.util.Map;\n" +
 				"\n" +
-				"public class JavaDecision extends DecisionModel {\n" +
+				"public class EmploymentStatusDecision extends DecisionModel {\n" +
 				"\t@Override\n" +
 				"\tpublic ComplexInputStructure getInputStructure() {\n" +
 				"\t\tMap<String, InputStructure> inputs = new LinkedHashMap<>();\n" +
@@ -46,7 +46,7 @@ public class JavaDecisionSessionTest {
 		Map<String, Object> inputs = new HashMap<>();
 		inputs.put("Employment Status", "UNEMPLOYED");
 
-		Map<String, Object> outputs = decisionSession.executeModel("de.materna.jdec.java.test", "JavaDecision", inputs);
+		Map<String, Object> outputs = decisionSession.executeModel("de.materna.jdec.java.test", "EmploymentStatusDecision", inputs);
 		System.out.println("executeHashMap(): " + outputs);
 
 		Assertions.assertTrue(outputs.containsKey("Employment Status Statement"));
@@ -58,7 +58,7 @@ public class JavaDecisionSessionTest {
 		DecisionSession decisionSession = new JavaDecisionSession();
 
 		Assertions.assertThrows(ModelImportException.class, () -> {
-			decisionSession.importModel("de.materna.jdec.java.test", "JavaDecision", "package de.materna.jdec.java.test;\n" +
+			decisionSession.importModel("de.materna.jdec.java.test", "EmploymentStatusDecision", "package de.materna.jdec.java.test;\n" +
 					"\n" +
 					"import de.materna.jdec.java.DecisionModel;\n" +
 					"import de.materna.jdec.model.ComplexInputStructure;\n" +
@@ -69,7 +69,7 @@ public class JavaDecisionSessionTest {
 					"import java.util.LinkedHashMap;\n" +
 					"import java.util.Map;\n" +
 					"\n" +
-					"public class JavaDecision extends DecisionModel {\n" +
+					"public class EmploymentStatusDecision extends DecisionModel {\n" +
 					"\t@Override\n" +
 					"\tpublic ComplexInputStructure getInputStructure() {\n" +
 					"\t\tMap<String, InputStructure> inputs = new LinkedHashMap<>();\n" +
