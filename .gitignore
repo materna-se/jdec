@@ -3,10 +3,18 @@
 /*.iml
 
 ##### Test #####
-/src/test/
+/src/test/java/de/materna/jdec/*
+
+!/src/test/java/de/materna/jdec/dmn/
+/src/test/java/de/materna/jdec/dmn/*
 !/src/test/java/de/materna/jdec/dmn/DMNDecisionSessionTest.java
+
+!/src/test/java/de/materna/jdec/java/
+/src/test/java/de/materna/jdec/java/*
 !/src/test/java/de/materna/jdec/java/JavaDecisionSessionTest.java
-/src/test/resources/
+
+
+/src/test/resources/*
 !/src/test/resources/log4j.properties
 !/src/test/resources/0003-input-data-string-allowed-values.dmn
 !/src/test/resources/0003-input-data-string-allowed-values-invalid-feel.dmn
