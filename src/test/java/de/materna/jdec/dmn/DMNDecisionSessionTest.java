@@ -52,4 +52,19 @@ public class DMNDecisionSessionTest {
 			decisionSession.getModel("namespace", "name");
 		});
 	}
+
+	@Test
+	void executeExpression() throws IOException {
+		DMNDecisionSession decisionSession = new DMNDecisionSession();
+
+		Map<String, Object> inputs = new HashMap<>();
+		inputs.put("Employment Status", "UNEMPLOYED");
+
+		ExecutionResult executionResult = decisionSession.executeExpression("\"You are \" + Employment Status", inputs);
+		Map<String, Object> outputs = executionResult.getOutputs();
+		System.out.println("executeHashMap(): " + outputs);
+
+		Assertions.assertTrue(outputs.containsKey("main"));
+		Assertions.assertEquals("You are UNEMPLOYED", outputs.get("main"));
+	}
 }
