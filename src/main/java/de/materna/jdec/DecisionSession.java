@@ -1,9 +1,6 @@
 package de.materna.jdec;
 
-import de.materna.jdec.model.ComplexInputStructure;
-import de.materna.jdec.model.ImportResult;
-import de.materna.jdec.model.ModelImportException;
-import de.materna.jdec.model.ModelNotFoundException;
+import de.materna.jdec.model.*;
 
 import java.util.Map;
 
@@ -40,7 +37,7 @@ public interface DecisionSession {
 	 * @param name      Name of the decision model. It can be extracted with /definitions/@name.
 	 * @param inputs    Inputs that will be sent to the execution engine.
 	 */
-	Map<String, Object> executeModel(String namespace, String name, Map<String, Object> inputs) throws ModelNotFoundException;
+	ExecutionResult executeModel(String namespace, String name, Map<String, Object> inputs) throws ModelNotFoundException;
 
 	/**
 	 * Returns the input structure that is required for the decision model.

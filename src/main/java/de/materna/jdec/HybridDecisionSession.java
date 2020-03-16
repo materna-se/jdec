@@ -1,16 +1,13 @@
 package de.materna.jdec;
 
-import de.materna.jdec.model.ComplexInputStructure;
-import de.materna.jdec.model.ImportResult;
-import de.materna.jdec.model.ModelImportException;
-import de.materna.jdec.model.ModelNotFoundException;
+import de.materna.jdec.model.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class HybridDecisionSession implements DecisionSession {
-	private DecisionSession dmnDecisionSession;
-	private DecisionSession javaDecisionSession;
+	private DMNDecisionSession dmnDecisionSession;
+	private JavaDecisionSession javaDecisionSession;
 	private Map<String, DecisionSessionMapping> decisionSessionMapping;
 
 	public HybridDecisionSession() throws Exception {
@@ -19,9 +16,13 @@ public class HybridDecisionSession implements DecisionSession {
 		decisionSessionMapping = new HashMap<>();
 	}
 
+	//
+	// Store
+	//
+
 	@Override
 	public String getModel(String namespace, String name) throws ModelNotFoundException {
-		if(!decisionSessionMapping.containsKey(namespace + name)) {
+		if (!decisionSessionMapping.containsKey(namespace + name)) {
 			throw new ModelNotFoundException();
 		}
 
@@ -50,7 +51,7 @@ public class HybridDecisionSession implements DecisionSession {
 
 	@Override
 	public void deleteModel(String namespace, String name) throws ModelImportException {
-		if(!decisionSessionMapping.containsKey(namespace + name)) {
+		if (!decisionSessionMapping.containsKey(namespace + name)) {
 			return;
 		}
 
@@ -64,9 +65,13 @@ public class HybridDecisionSession implements DecisionSession {
 		}
 	}
 
+	//
+	// Executor
+	//
+
 	@Override
-	public Map<String, Object> executeModel(String namespace, String name, Map<String, Object> inputs) throws ModelNotFoundException {
-		if(!decisionSessionMapping.containsKey(namespace + name)) {
+	public ExecutionResult executeModel(String namespace, String name, Map<String, Object> inputs) throws ModelNotFoundException {
+		if (!decisionSessionMapping.containsKey(namespace + name)) {
 			throw new ModelNotFoundException();
 		}
 
@@ -80,9 +85,13 @@ public class HybridDecisionSession implements DecisionSession {
 		}
 	}
 
+	//
+	// Analyzer
+	//
+
 	@Override
 	public ComplexInputStructure getInputStructure(String namespace, String name) throws ModelNotFoundException {
-		if(!decisionSessionMapping.containsKey(namespace + name)) {
+		if (!decisionSessionMapping.containsKey(namespace + name)) {
 			throw new ModelNotFoundException();
 		}
 
@@ -94,6 +103,18 @@ public class HybridDecisionSession implements DecisionSession {
 			default:
 				throw new ModelNotFoundException();
 		}
+	}
+
+	//
+	// Custom Methods
+	//
+
+	public DMNDecisionSession getDMNDecisionSession() {
+		return dmnDecisionSession;
+	}
+
+	public JavaDecisionSession getJavaDecisionSession() {
+		return javaDecisionSession;
 	}
 
 	private enum DecisionSessionMapping {
