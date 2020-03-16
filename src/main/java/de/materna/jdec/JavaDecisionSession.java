@@ -1,10 +1,7 @@
 package de.materna.jdec;
 
 import de.materna.jdec.java.DecisionModel;
-import de.materna.jdec.model.ComplexInputStructure;
-import de.materna.jdec.model.ImportResult;
-import de.materna.jdec.model.ModelImportException;
-import de.materna.jdec.model.ModelNotFoundException;
+import de.materna.jdec.model.*;
 import org.codehaus.commons.compiler.CompileException;
 import org.codehaus.commons.compiler.CompilerFactoryFactory;
 import org.codehaus.commons.compiler.util.ResourceFinderClassLoader;
@@ -80,8 +77,9 @@ public class JavaDecisionSession implements DecisionSession {
 	//
 
 	@Override
-	public Map<String, Object> executeModel(String namespace, String name, Map<String, Object> inputs) throws ModelNotFoundException {
-		return getInstance(namespace, name).executeDecision(inputs);
+	public ExecutionResult executeModel(String namespace, String name, Map<String, Object> inputs) throws ModelNotFoundException {
+		Map<String, Object> output = getInstance(namespace, name).executeDecision(inputs);
+		return new ExecutionResult(output, null, null);
 	}
 
 	//

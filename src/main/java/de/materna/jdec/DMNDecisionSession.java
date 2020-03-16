@@ -1,10 +1,9 @@
 package de.materna.jdec;
 
 import de.materna.jdec.dmn.DroolsAnalyzer;
-import de.materna.jdec.model.ComplexInputStructure;
-import de.materna.jdec.model.ImportResult;
-import de.materna.jdec.model.ModelImportException;
-import de.materna.jdec.model.ModelNotFoundException;
+import de.materna.jdec.dmn.DroolsDebugger;
+import de.materna.jdec.dmn.DroolsHelper;
+import de.materna.jdec.model.*;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
@@ -16,12 +15,12 @@ import org.kie.dmn.api.core.DMNContext;
 import org.kie.dmn.api.core.DMNDecisionResult;
 import org.kie.dmn.api.core.DMNModel;
 import org.kie.dmn.api.core.DMNRuntime;
+import org.kie.dmn.feel.FEEL;
+import org.kie.dmn.feel.lang.FEELProfile;
+import org.kie.dmn.feel.parser.feel11.profiles.KieExtendedFEELProfile;
 
 import java.io.Closeable;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DMNDecisionSession implements DecisionSession, Closeable {
 	public KieFileSystem kieFileSystem;
@@ -81,7 +80,7 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	//
 
 	@Override
-	public Map<String, Object> executeModel(String namespace, String name, Map<String, Object> inputs) throws ModelNotFoundException {
+	public ExecutionResult executeModel(String namespace, String name, Map<String, Object> inputs) throws ModelNotFoundException {
 		DMNModel model = kieRuntime.getModel(namespace, name);
 		if (model == null) {
 			throw new ModelNotFoundException();
@@ -108,15 +107,18 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	// Custom Methods
 	//
 
-	public Map<String, Object> executeModel(DMNModel model, Map<String, ?> inputs) {
+	public ExecutionResult executeModel(DMNModel model, Map<String, ?> inputs) {
 		// We need to copy all key-value pairs from the given HashMap<String, Object> into the context
 		DMNContext context = kieRuntime.newContext();
 		for (Map.Entry<String, ?> entry : inputs.entrySet()) {
 			context.set(entry.getKey(), entry.getValue());
 		}
 
+		DroolsDebugger debugger = new DroolsDebugger(this);
+		debugger.start();
 		// By calling evaluateAll, the dmn model and the dmn context are sent to the drools engine
 		List<DMNDecisionResult> results = kieRuntime.evaluateAll(model, context).getDecisionResults();
+		debugger.stop();
 
 		// After we've received the results, we need to convert them into a usable format
 		Map<String, Object> outputs = new LinkedHashMap<>();
@@ -130,7 +132,7 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 			outputs.put(decisionResult.getDecisionName(), decisionResult.getResult());
 		}
 
-		return outputs;
+		return new ExecutionResult(outputs, debugger.getDecisions(), debugger.getMessages());
 	}
 
 	public void close() {

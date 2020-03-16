@@ -4,6 +4,7 @@ import de.materna.jdec.DMNDecisionSession;
 import de.materna.jdec.DecisionSession;
 import de.materna.jdec.model.ModelImportException;
 import de.materna.jdec.model.ModelNotFoundException;
+import de.materna.jdec.model.ExecutionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +28,8 @@ public class DMNDecisionSessionTest {
 		Map<String, Object> inputs = new HashMap<>();
 		inputs.put("Employment Status", "UNEMPLOYED");
 
-		Map<String, Object> outputs = decisionSession.executeModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", inputs);
+		ExecutionResult executionResult = decisionSession.executeModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", inputs);
+		Map<String, Object> outputs = executionResult.getOutputs();
 		System.out.println("executeHashMap(): " + outputs);
 
 		Assertions.assertTrue(outputs.containsKey("Employment Status Statement"));
