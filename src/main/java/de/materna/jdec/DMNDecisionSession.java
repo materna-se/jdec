@@ -189,4 +189,18 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	public DMNRuntime getRuntime() {
 		return kieRuntime;
 	}
+
+	public ExecutionResult executeExpression(String model, Map<String, Object> inputs) throws ModelImportException {
+		List<FEELProfile> profiles = new ArrayList<>();
+		profiles.add(new KieExtendedFEELProfile());
+		FEEL feel = FEEL.newInstance(profiles);
+
+		List<String> messages = new LinkedList<>();
+		feel.addListener(feelEvent -> messages.add(feelEvent.getMessage()));
+
+		HashMap<String, Object> decisions = new LinkedHashMap<>();
+		decisions.put("main", DroolsHelper.cleanResult(feel.evaluate(model, inputs)));
+
+		return new ExecutionResult(decisions, null, messages);
+	}
 }
