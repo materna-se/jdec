@@ -53,6 +53,9 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 		return new String(model);
 	}
 
+	/**
+	 * @return Warnings that occurred during compilation.
+	 */
 	@Override
 	public ImportResult importModel(String namespace, String name, String model) throws ModelImportException {
 		kieFileSystem.write(getPath(namespace, name), model);
@@ -175,8 +178,16 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 		catch (Exception exception) {
 			exception.printStackTrace();
 
-			// noinspection ConstantConditions
-			throw new ModelImportException(new ImportResult(convertMessages(kieBuilder.getResults().getMessages())));
+			try {
+				throw new ModelImportException(new ImportResult(convertMessages(kieBuilder.getResults().getMessages())));
+			}
+			catch (Exception e) {
+				exception.printStackTrace();
+
+				List<String> messages = new LinkedList<>();
+				messages.add("Marshalling the decision model failed.");
+				throw new ModelImportException(new ImportResult(messages));
+			}
 		}
 	}
 

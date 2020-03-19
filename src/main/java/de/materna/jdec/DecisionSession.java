@@ -40,7 +40,7 @@ public interface DecisionSession {
 	ExecutionResult executeModel(String namespace, String name, Map<String, Object> inputs) throws ModelNotFoundException;
 
 	/**
-	 * Returns the input structure that is required for the decision model.
+	 * Returns the input structure that is required for executing the decision model.
 	 *
 	 * @param namespace Namespace of the decision model. It can be extracted with /definitions/@namespace.
 	 * @param name      Name of the decision model. It can be extracted with /definitions/@name.
