@@ -48,6 +48,17 @@ public class DMNDecisionSessionTest {
 	}
 
 	@Test
+	void executeHashMapWithInvalidXML() {
+		Assertions.assertThrows(ModelImportException.class, () -> {
+			DecisionSession decisionSession = new DMNDecisionSession();
+
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values-invalid-xml.dmn").toURI());
+			String decision = new String(Files.readAllBytes(decisionPath));
+			decisionSession.importModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", decision);
+		});
+	}
+
+	@Test
 	void getModelNotFound() {
 		Assertions.assertThrows(ModelNotFoundException.class, () -> {
 			DecisionSession decisionSession = new DMNDecisionSession();

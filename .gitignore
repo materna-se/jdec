@@ -22,5 +22,6 @@
 !/src/test/resources/log4j.properties
 !/src/test/resources/0003-input-data-string-allowed-values.dmn
 !/src/test/resources/0003-input-data-string-allowed-values-invalid-feel.dmn
+!/src/test/resources/0003-input-data-string-allowed-values-invalid-xml.dmn
 !/src/test/resources/EmploymentStatusDecision.java
 !/src/test/resources/EmploymentStatusDecision-missing-method.java
