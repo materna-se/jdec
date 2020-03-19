@@ -1,6 +1,7 @@
 ##### IntelliJ #####
 /.idea/
 /*.iml
+/target/
 
 ##### Test #####
 /src/test/java/de/materna/jdec/*
