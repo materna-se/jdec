@@ -68,6 +68,18 @@ Decisions can be modeled with DMN with applications like the [Trisotech Decision
 
 In addition to DMN, the decisions can be modeled with Java by extending the abstract class `DecisionModel`: 
 ```java
+package de.materna.jdec.java.test;
+
+import de.materna.jdec.java.DecisionModel;
+import de.materna.jdec.model.ComplexInputStructure;
+import de.materna.jdec.model.ExecutionResult;
+import de.materna.jdec.model.InputStructure;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class EmploymentStatusDecision extends DecisionModel {
 	@Override
 	public ComplexInputStructure getInputStructure() {
