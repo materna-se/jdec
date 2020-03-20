@@ -1,7 +1,7 @@
 # jDEC
 
 <p align="center">
-  <img src="https://img.shields.io/github/license/materna-se/declab.svg?style=flat-square">
+  <img src="https://img.shields.io/github/license/materna-se/jdec.svg?style=flat-square">
   <img src="https://img.shields.io/circleci/build/github/materna-se/jdec.svg?style=flat-square">
   <img src="https://img.shields.io/maven-central/v/com.github.materna-se/jdec?style=flat-square">
   <img src="https://img.shields.io/nexus/s/com.github.materna-se/jdec?server=https%3A%2F%2Foss.sonatype.org&label=maven-snapshot&style=flat-square">
