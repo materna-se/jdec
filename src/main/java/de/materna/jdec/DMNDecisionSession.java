@@ -4,6 +4,7 @@ import de.materna.jdec.dmn.DroolsAnalyzer;
 import de.materna.jdec.dmn.DroolsDebugger;
 import de.materna.jdec.dmn.DroolsHelper;
 import de.materna.jdec.model.*;
+import org.apache.log4j.Logger;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
@@ -23,6 +24,8 @@ import java.io.Closeable;
 import java.util.*;
 
 public class DMNDecisionSession implements DecisionSession, Closeable {
+	private static final Logger log = Logger.getLogger(DMNDecisionSession.class);
+
 	public KieFileSystem kieFileSystem;
 	private KieServices kieServices;
 	private DMNRuntime kieRuntime;
@@ -176,18 +179,19 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 			return new ImportResult(convertMessages(kieBuilder.getResults().getMessages()));
 		}
 		catch (Exception exception) {
-			exception.printStackTrace();
-
+			List<Message> messages;
 			try {
-				throw new ModelImportException(new ImportResult(convertMessages(kieBuilder.getResults().getMessages())));
+				// May produce a NullPointerException in org.kie.dmn.core.assembler.DMNAssemblerService.
+				messages = kieBuilder.getResults().getMessages();
 			}
 			catch (Exception e) {
-				exception.printStackTrace();
+				if (e.getMessage() == null) {
+					throw new ModelImportException(new ImportResult(Collections.singletonList("Error unmarshalling DMN.")));
+				}
 
-				List<String> messages = new LinkedList<>();
-				messages.add("Marshalling the decision model failed.");
-				throw new ModelImportException(new ImportResult(messages));
+				throw new ModelImportException(new ImportResult(Collections.singletonList(e.getMessage())));
 			}
+			throw new ModelImportException(new ImportResult(convertMessages(messages)));
 		}
 	}
 
