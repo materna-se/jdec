@@ -2,9 +2,9 @@ package de.materna.jdec.dmn;
 
 import de.materna.jdec.DMNDecisionSession;
 import de.materna.jdec.DecisionSession;
+import de.materna.jdec.model.ExecutionResult;
 import de.materna.jdec.model.ModelImportException;
 import de.materna.jdec.model.ModelNotFoundException;
-import de.materna.jdec.model.ExecutionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class DMNDecisionSessionTest {
 	@Test
-	void executeHashMap() throws IOException, URISyntaxException {
+	void executeModel() throws IOException, URISyntaxException {
 		DecisionSession decisionSession = new DMNDecisionSession();
 
 		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values.dmn").toURI());
@@ -37,7 +37,7 @@ public class DMNDecisionSessionTest {
 	}
 
 	@Test
-	void executeHashMapWithInvalidFEEL() {
+	void executeModelWithInvalidFEEL() {
 		Assertions.assertThrows(ModelImportException.class, () -> {
 			DecisionSession decisionSession = new DMNDecisionSession();
 
@@ -48,14 +48,17 @@ public class DMNDecisionSessionTest {
 	}
 
 	@Test
-	void executeHashMapWithInvalidXML() {
-		Assertions.assertThrows(ModelImportException.class, () -> {
+	void executeModelWithInvalidXML() throws IOException, URISyntaxException {
+		try {
 			DecisionSession decisionSession = new DMNDecisionSession();
 
 			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values-invalid-xml.dmn").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
 			decisionSession.importModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", decision);
-		});
+		}
+		catch (ModelImportException e) {
+			Assertions.assertTrue(e.getResult().getMessages().get(0).contains("Error unmarshalling"));
+		}
 	}
 
 	@Test
@@ -64,6 +67,28 @@ public class DMNDecisionSessionTest {
 			DecisionSession decisionSession = new DMNDecisionSession();
 			decisionSession.getModel("namespace", "name");
 		});
+	}
+
+	@Test
+	void importDuplicateModel() throws Exception {
+		try {
+			DecisionSession decisionSession = new DMNDecisionSession();
+
+			{
+				Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values.dmn").toURI());
+				String decision = new String(Files.readAllBytes(decisionPath));
+				decisionSession.importModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", decision);
+			}
+
+			{
+				Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values.dmn").toURI());
+				String decision = new String(Files.readAllBytes(decisionPath));
+				decisionSession.importModel("https://github.com/agilepro/dmn-tcK", "0003-input-data-string-allowed-values", decision);
+			}
+		}
+		catch (ModelImportException e) {
+			Assertions.assertTrue(e.getResult().getMessages().get(0).contains("Duplicate model name"));
+		}
 	}
 
 	@Test
