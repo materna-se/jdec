@@ -133,7 +133,7 @@ public class DMNDecisionSessionTest {
 		System.out.println("getContext(): " + context);
 
 		Assertions.assertTrue(outputs.containsKey("ParentDecision"));
-		Assertions.assertEquals(BigDecimal.valueOf(3), outputs.get("ParentDecision"));
+		Assertions.assertEquals(BigDecimal.valueOf(4), outputs.get("ParentDecision"));
 
 		Assertions.assertTrue(outputs.containsKey("importchild.ChildDecision"));
 		Assertions.assertEquals(BigDecimal.valueOf(2), outputs.get("importchild.ChildDecision"));

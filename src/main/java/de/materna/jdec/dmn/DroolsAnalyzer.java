@@ -73,7 +73,7 @@ public class DroolsAnalyzer {
 
 	/**
 	 * Creates a list of all child inputs.
-	 * If they have a complex type, they are resolved by getInput().
+	 * If it contains a complex type, it is resolved by getInput().
 	 *
 	 * @param fields Child Inputs
 	 */
