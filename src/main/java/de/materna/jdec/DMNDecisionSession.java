@@ -121,7 +121,7 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 		}
 
 		DroolsDebugger debugger = new DroolsDebugger(this);
-		debugger.start();
+		debugger.start(model.getNamespace(), model.getName());
 		// By calling evaluateAll, the dmn model and the dmn context are sent to the drools engine
 		List<DMNDecisionResult> results = kieRuntime.evaluateAll(model, context).getDecisionResults();
 		debugger.stop();

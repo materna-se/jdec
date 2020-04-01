@@ -21,12 +21,15 @@ public class DroolsDebugger {
 		this.decisionSession = decisionSession;
 	}
 
-	public void start() {
+	public void start(String namespace, String name) {
 		listener = new DMNRuntimeEventListener() {
 			@Override
 			public void beforeEvaluateDecision(BeforeEvaluateDecisionEvent event) {
 				synchronized (decisionSession.getRuntime()) {
-					decisionStack.push(event.getDecision().getName());
+
+					// If the model name of the evaluated decision does not match the main model name, we need to prefix it.
+					String modelName = event.getDecision().getModelName();
+					decisionStack.push(modelName.equals(name) ? "" : modelName + event.getDecision().getName());
 					decisions.put(decisionStack.peek(), new LinkedHashMap<>());
 					contextStack = new Stack<>();
 				}
