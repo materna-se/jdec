@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -89,6 +90,60 @@ public class DMNDecisionSessionTest {
 		catch (ModelImportException e) {
 			Assertions.assertTrue(e.getResult().getMessages().get(0).contains("Duplicate model name"));
 		}
+	}
+
+	@Test
+	void importMultipleModels() throws Exception {
+		DecisionSession decisionSession = new DMNDecisionSession();
+
+		{
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("import-child-child.dmn").toURI());
+			String decision = new String(Files.readAllBytes(decisionPath));
+			decisionSession.importModel("importchildchild", "importchildchild", decision);
+		}
+
+		{
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("import-child.dmn").toURI());
+			String decision = new String(Files.readAllBytes(decisionPath));
+			decisionSession.importModel("importchild", "importchild", decision);
+		}
+
+		{
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("import-parent.dmn").toURI());
+			String decision = new String(Files.readAllBytes(decisionPath));
+			decisionSession.importModel("importparent", "importparent", decision);
+		}
+
+		Map<String, Object> inputs = new HashMap<>();
+		inputs.put("ParentInput", 1);
+
+		Map<String, Object> childInputs = new HashMap<>();
+		childInputs.put("ChildInput", 1);
+
+		Map<String, Object> childChildInputs = new HashMap<>();
+		childChildInputs.put("ChildChildInput", 1);
+		childInputs.put("importchildchild", childChildInputs);
+
+		inputs.put("importchild", childInputs);
+
+		ExecutionResult executionResult = decisionSession.executeModel("importparent", "importparent", inputs);
+		Map<String, Object> outputs = executionResult.getOutputs();
+		System.out.println("getOutputs(): " + outputs);
+		Map<String, Map<String, Object>> context = executionResult.getContext();
+		System.out.println("getContext(): " + context);
+
+		Assertions.assertTrue(outputs.containsKey("ParentDecision"));
+		Assertions.assertEquals(BigDecimal.valueOf(3), outputs.get("ParentDecision"));
+
+		Assertions.assertTrue(outputs.containsKey("importchild.ChildDecision"));
+		Assertions.assertEquals(BigDecimal.valueOf(2), outputs.get("importchild.ChildDecision"));
+
+		Assertions.assertTrue(outputs.containsKey("importchildchild.ChildChildDecision"));
+		Assertions.assertEquals(BigDecimal.valueOf(1), outputs.get("importchildchild.ChildChildDecision"));
+
+		Assertions.assertTrue(context.containsKey("ParentDecision"));
+		Assertions.assertTrue(context.containsKey("importchild.ChildDecision"));
+		Assertions.assertTrue(context.containsKey("importchildchild.ChildChildDecision"));
 	}
 
 	@Test

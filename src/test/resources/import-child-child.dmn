@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dmn="http://www.omg.org/spec/DMN/20151101/dmn.xsd" xmlns:feel="http://www.omg.org/spec/FEEL/20140401" xmlns:layout="https://products.bfs-intra.net/milestones/vr/spec/20170328/dmndi.xsd" xsi:schemaLocation="http://www.omg.org/spec/DMN/20151101/dmn.xsd http://www.omg.org/spec/DMN/20151101/dmn.xsd" id="_oSpEYG91EeqdqrI5Cyo7SA" name="importchildchild" exporter="ACTICO Modeler" namespace="importchildchild">
+  <dmn:extensionElements>
+    <layout:container id="_oSsuwG91EeqdqrI5Cyo7SA" name="import-child-child" type="Dmn" href="#_oSpEYG91EeqdqrI5Cyo7SA">
+      <layout:node id="_vgWoQG91EeqdqrI5Cyo7SA" type="2009" href="#_vgUzEG91EeqdqrI5Cyo7SA">
+        <layout:location x="400" y="110"/>
+      </layout:node>
+      <layout:node id="_w0aRIG91EeqdqrI5Cyo7SA" type="2003" href="#_w0ZDAG91EeqdqrI5Cyo7SA">
+        <layout:location x="356" y="302"/>
+      </layout:node>
+      <layout:edge id="_x8Zz8G91EeqdqrI5Cyo7SA" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_vgUzEG91EeqdqrI5Cyo7SA$_w0ZDAG91EeqdqrI5Cyo7SA" source="#_w0aRIG91EeqdqrI5Cyo7SA" target="#_vgWoQG91EeqdqrI5Cyo7SA">
+        <layout:bendpoints points="[10, -8, -250, 185]$[288, -199, 28, -6]"/>
+        <layout:sourceAnchor id="(0.4,0.23333333333333334)"/>
+        <layout:targetAnchor id="(0.768,0.35555555555555557)"/>
+      </layout:edge>
+      <layout:DiContainerStyle/>
+    </layout:container>
+  </dmn:extensionElements>
+  <dmn:decision id="_vgUzEG91EeqdqrI5Cyo7SA" name="ChildChildDecision">
+    <dmn:extensionElements>
+      <layout:container id="_P4FIEG93EeqF14gIQ9FpDw" name="" type="DMN_Expression" href="#_vgUzEG91EeqdqrI5Cyo7SA"/>
+    </dmn:extensionElements>
+    <dmn:variable id="_vgUzEW91EeqdqrI5Cyo7SA" name="ChildChildDecision"/>
+    <dmn:informationRequirement>
+      <dmn:requiredInput href="#_w0ZDAG91EeqdqrI5Cyo7SA"/>
+    </dmn:informationRequirement>
+    <dmn:literalExpression id="_P4IycG93EeqF14gIQ9FpDw">
+      <dmn:text>ChildChildInput</dmn:text>
+    </dmn:literalExpression>
+  </dmn:decision>
+  <dmn:inputData id="_w0ZDAG91EeqdqrI5Cyo7SA" name="ChildChildInput">
+    <dmn:variable id="_w0ZDAW91EeqdqrI5Cyo7SA" name="ChildChildInput" typeRef="feel:number"/>
+  </dmn:inputData>
+</dmn:definitions>

@@ -26,10 +26,9 @@ public class DroolsDebugger {
 			@Override
 			public void beforeEvaluateDecision(BeforeEvaluateDecisionEvent event) {
 				synchronized (decisionSession.getRuntime()) {
-
 					// If the model name of the evaluated decision does not match the main model name, we need to prefix it.
 					String modelName = event.getDecision().getModelName();
-					decisionStack.push(modelName.equals(name) ? "" : modelName + event.getDecision().getName());
+					decisionStack.push((modelName.equals(name) ? "" : modelName + ".") + event.getDecision().getName());
 					decisions.put(decisionStack.peek(), new LinkedHashMap<>());
 					contextStack = new Stack<>();
 				}
