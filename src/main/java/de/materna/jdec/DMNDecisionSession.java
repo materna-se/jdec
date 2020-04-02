@@ -48,8 +48,8 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	//
 
 	@Override
-	public String getModel(String namespace, String name) throws ModelNotFoundException {
-		byte[] model = kieFileSystem.read(getPath(namespace, name));
+	public String getModel(String namespace) throws ModelNotFoundException {
+		byte[] model = kieFileSystem.read(getPath(namespace));
 		if (model == null) {
 			throw new ModelNotFoundException();
 		}
@@ -60,8 +60,8 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	 * @return Warnings that occurred during compilation.
 	 */
 	@Override
-	public ImportResult importModel(String namespace, String name, String model) throws ModelImportException {
-		kieFileSystem.write(getPath(namespace, name), model);
+	public ImportResult importModel(String namespace, String model) throws ModelImportException {
+		kieFileSystem.write(getPath(namespace), model);
 
 		try {
 			return compileModels();
@@ -69,15 +69,15 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 		catch (ModelImportException exception) {
 			// Before we can throw the exception, we need to delete the imported model.
 			// By doing this, the execution of other models is not affected.
-			deleteModel(namespace, name);
+			deleteModel(namespace);
 
 			throw exception;
 		}
 	}
 
 	@Override
-	public void deleteModel(String namespace, String name) throws ModelImportException {
-		kieFileSystem.delete(getPath(namespace, name));
+	public void deleteModel(String namespace) throws ModelImportException {
+		kieFileSystem.delete(getPath(namespace));
 		compileModels();
 	}
 
@@ -86,13 +86,8 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	//
 
 	@Override
-	public ExecutionResult executeModel(String namespace, String name, Map<String, Object> inputs) throws ModelNotFoundException {
-		DMNModel model = kieRuntime.getModel(namespace, name);
-		if (model == null) {
-			throw new ModelNotFoundException();
-		}
-
-		return executeModel(model, inputs);
+	public ExecutionResult executeModel(String namespace, Map<String, Object> inputs) throws ModelNotFoundException {
+		return executeModel(DroolsHelper.getModel(kieRuntime, namespace), inputs);
 	}
 
 	//
@@ -100,13 +95,8 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	//
 
 	@Override
-	public ComplexInputStructure getInputStructure(String namespace, String name) throws ModelNotFoundException {
-		DMNModel model = kieRuntime.getModel(namespace, name);
-		if (model == null) {
-			throw new ModelNotFoundException();
-		}
-
-		return DroolsAnalyzer.getComplexInputStructure(model);
+	public ComplexInputStructure getInputStructure(String namespace) throws ModelNotFoundException {
+		return DroolsAnalyzer.getComplexInputStructure(kieRuntime, namespace);
 	}
 
 	//
@@ -147,8 +137,8 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 		kieServices = null;
 	}
 
-	private String getPath(String namespace, String name) {
-		return "/src/main/resources/" + namespace + "/" + name + ".dmn";
+	private String getPath(String namespace) {
+		return "/src/main/resources/" + namespace + ".dmn";
 	}
 
 	/**

@@ -42,8 +42,8 @@ public class JavaDecisionSession implements DecisionSession {
 	//
 
 	@Override
-	public String getModel(String namespace, String name) throws ModelNotFoundException {
-		String model = models.get(getPath(namespace, name));
+	public String getModel(String namespace) throws ModelNotFoundException {
+		String model = models.get(getPath(namespace));
 		if (model == null) {
 			throw new ModelNotFoundException();
 		}
@@ -51,8 +51,8 @@ public class JavaDecisionSession implements DecisionSession {
 	}
 
 	@Override
-	public ImportResult importModel(String namespace, String name, String model) throws ModelImportException {
-		models.put(getPath(namespace, name), model);
+	public ImportResult importModel(String namespace, String model) throws ModelImportException {
+		models.put(getPath(namespace), model);
 
 		try {
 			return compileModels();
@@ -60,15 +60,15 @@ public class JavaDecisionSession implements DecisionSession {
 		catch (ModelImportException exception) {
 			// Before we can throw the exception, we need to delete the imported model.
 			// By doing this, the execution of other models is not affected.
-			deleteModel(namespace, name);
+			deleteModel(namespace);
 
 			throw exception;
 		}
 	}
 
 	@Override
-	public void deleteModel(String namespace, String name) throws ModelImportException {
-		models.remove(getPath(namespace, name));
+	public void deleteModel(String namespace) throws ModelImportException {
+		models.remove(getPath(namespace));
 		compileModels();
 	}
 
@@ -77,8 +77,8 @@ public class JavaDecisionSession implements DecisionSession {
 	//
 
 	@Override
-	public ExecutionResult executeModel(String namespace, String name, Map<String, Object> inputs) throws ModelNotFoundException {
-		Map<String, Object> output = getInstance(namespace, name).executeDecision(inputs);
+	public ExecutionResult executeModel(String namespace, Map<String, Object> inputs) throws ModelNotFoundException {
+		Map<String, Object> output = getInstance(namespace).executeDecision(inputs);
 		return new ExecutionResult(output, null, null);
 	}
 
@@ -87,23 +87,33 @@ public class JavaDecisionSession implements DecisionSession {
 	//
 
 	@Override
-	public ComplexInputStructure getInputStructure(String namespace, String name) throws ModelNotFoundException {
-		return getInstance(namespace, name).getInputStructure();
+	public ComplexInputStructure getInputStructure(String namespace) throws ModelNotFoundException {
+		return getInstance(namespace).getInputStructure();
 	}
 
 	//
 	// Custom Methods
 	//
 
-	private String getPath(String namespace, String name) {
-		return (namespace == null ? "" : (namespace.replace('.', '/') + "/")) + name + ".java";
+	private String getPath(String namespace) {
+		StringBuilder path = new StringBuilder();
+
+		String[] chunks = namespace.split("\\.");
+		for (int i = 0; i < chunks.length; i++) {
+			path.append(chunks[i]);
+			if (i != chunks.length - 1) { // If it is the last chunk, we need to omit the / at the end.
+				path.append('/');
+			}
+		}
+
+		return path.toString() + ".java";
 	}
 
-	private DecisionModel getInstance(String namespace, String name) throws ModelNotFoundException {
+	private DecisionModel getInstance(String namespace) throws ModelNotFoundException {
 		try {
-			DecisionModel decisionModel = compiledModels.get(getPath(namespace, name));
+			DecisionModel decisionModel = compiledModels.get(getPath(namespace));
 			if (decisionModel == null) {
-				decisionModel = (DecisionModel) classLoader.loadClass(namespace + "." + name).getConstructor().newInstance();
+				decisionModel = (DecisionModel) classLoader.loadClass(namespace).getConstructor().newInstance();
 
 				// The decisionSession is injected into the decisionModel using reflection.
 				Field decisionSession = decisionModel.getClass().getSuperclass().getDeclaredField("decisionSession");
@@ -111,7 +121,7 @@ public class JavaDecisionSession implements DecisionSession {
 				decisionSession.set(decisionModel, this);
 				decisionSession.setAccessible(false);
 
-				compiledModels.put(getPath(namespace, name), decisionModel);
+				compiledModels.put(getPath(namespace), decisionModel);
 			}
 
 			return decisionModel;

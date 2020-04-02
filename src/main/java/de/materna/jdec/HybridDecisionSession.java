@@ -21,45 +21,45 @@ public class HybridDecisionSession implements DecisionSession {
 	//
 
 	@Override
-	public String getModel(String namespace, String name) throws ModelNotFoundException {
-		if (!decisionSessionMapping.containsKey(namespace + name)) {
+	public String getModel(String namespace) throws ModelNotFoundException {
+		if (!decisionSessionMapping.containsKey(namespace)) {
 			throw new ModelNotFoundException();
 		}
 
-		switch (decisionSessionMapping.get(namespace + name)) {
+		switch (decisionSessionMapping.get(namespace)) {
 			case DMN:
-				return dmnDecisionSession.getModel(namespace, name);
+				return dmnDecisionSession.getModel(namespace);
 			case JAVA:
-				return javaDecisionSession.getModel(namespace, name);
+				return javaDecisionSession.getModel(namespace);
 			default:
 				throw new ModelNotFoundException();
 		}
 	}
 
 	@Override
-	public ImportResult importModel(String namespace, String name, String model) throws ModelImportException {
+	public ImportResult importModel(String namespace, String model) throws ModelImportException {
 		if (model.charAt(0) == '<') {
-			ImportResult importResult = dmnDecisionSession.importModel(namespace, name, model);
-			decisionSessionMapping.put(namespace + name, DecisionSessionMapping.DMN);
+			ImportResult importResult = dmnDecisionSession.importModel(namespace, model);
+			decisionSessionMapping.put(namespace, DecisionSessionMapping.DMN);
 			return importResult;
 		}
 
-		ImportResult importResult = javaDecisionSession.importModel(namespace, name, model);
-		decisionSessionMapping.put(namespace + name, DecisionSessionMapping.JAVA);
+		ImportResult importResult = javaDecisionSession.importModel(namespace, model);
+		decisionSessionMapping.put(namespace, DecisionSessionMapping.JAVA);
 		return importResult;
 	}
 
 	@Override
-	public void deleteModel(String namespace, String name) throws ModelImportException {
-		if (!decisionSessionMapping.containsKey(namespace + name)) {
+	public void deleteModel(String namespace) throws ModelImportException {
+		if (!decisionSessionMapping.containsKey(namespace)) {
 			return;
 		}
 
-		switch (decisionSessionMapping.get(namespace + name)) {
+		switch (decisionSessionMapping.get(namespace)) {
 			case DMN:
-				dmnDecisionSession.deleteModel(namespace, name);
+				dmnDecisionSession.deleteModel(namespace);
 			case JAVA:
-				javaDecisionSession.deleteModel(namespace, name);
+				javaDecisionSession.deleteModel(namespace);
 			default:
 				return;
 		}
@@ -70,16 +70,16 @@ public class HybridDecisionSession implements DecisionSession {
 	//
 
 	@Override
-	public ExecutionResult executeModel(String namespace, String name, Map<String, Object> inputs) throws ModelNotFoundException {
-		if (!decisionSessionMapping.containsKey(namespace + name)) {
+	public ExecutionResult executeModel(String namespace, Map<String, Object> inputs) throws ModelNotFoundException {
+		if (!decisionSessionMapping.containsKey(namespace)) {
 			throw new ModelNotFoundException();
 		}
 
-		switch (decisionSessionMapping.get(namespace + name)) {
+		switch (decisionSessionMapping.get(namespace)) {
 			case DMN:
-				return dmnDecisionSession.executeModel(namespace, name, inputs);
+				return dmnDecisionSession.executeModel(namespace, inputs);
 			case JAVA:
-				return javaDecisionSession.executeModel(namespace, name, inputs);
+				return javaDecisionSession.executeModel(namespace, inputs);
 			default:
 				throw new ModelNotFoundException();
 		}
@@ -90,16 +90,16 @@ public class HybridDecisionSession implements DecisionSession {
 	//
 
 	@Override
-	public ComplexInputStructure getInputStructure(String namespace, String name) throws ModelNotFoundException {
-		if (!decisionSessionMapping.containsKey(namespace + name)) {
+	public ComplexInputStructure getInputStructure(String namespace) throws ModelNotFoundException {
+		if (!decisionSessionMapping.containsKey(namespace)) {
 			throw new ModelNotFoundException();
 		}
 
-		switch (decisionSessionMapping.get(namespace + name)) {
+		switch (decisionSessionMapping.get(namespace)) {
 			case DMN:
-				return dmnDecisionSession.getInputStructure(namespace, name);
+				return dmnDecisionSession.getInputStructure(namespace);
 			case JAVA:
-				return javaDecisionSession.getInputStructure(namespace, name);
+				return javaDecisionSession.getInputStructure(namespace);
 			default:
 				throw new ModelNotFoundException();
 		}

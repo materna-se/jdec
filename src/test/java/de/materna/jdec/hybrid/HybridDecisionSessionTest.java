@@ -19,12 +19,12 @@ public class HybridDecisionSessionTest {
 
 		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values.dmn").toURI());
 		String decision = new String(Files.readAllBytes(decisionPath));
-		decisionSession.importModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", decision);
+		decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
 
 		Map<String, Object> inputs = new HashMap<>();
 		inputs.put("Employment Status", "UNEMPLOYED");
 
-		ExecutionResult executionResult = decisionSession.executeModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", inputs);
+		ExecutionResult executionResult = decisionSession.executeModel("https://github.com/agilepro/dmn-tck", inputs);
 		Map<String, Object> output = executionResult.getOutputs();
 		System.out.println("executeHashMap(): " + output);
 
@@ -38,12 +38,12 @@ public class HybridDecisionSessionTest {
 
 		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("EmploymentStatusDecision.java").toURI());
 		String decision = new String(Files.readAllBytes(decisionPath));
-		decisionSession.importModel("de.materna.jdec.java.test", "EmploymentStatusDecision", decision);
+		decisionSession.importModel("de.materna.jdec.java.test.EmploymentStatusDecision", decision);
 
 		Map<String, Object> inputs = new HashMap<>();
 		inputs.put("Employment Status", "UNEMPLOYED");
 
-		ExecutionResult executionResult = decisionSession.executeModel("de.materna.jdec.java.test", "EmploymentStatusDecision", inputs);
+		ExecutionResult executionResult = decisionSession.executeModel("de.materna.jdec.java.test.EmploymentStatusDecision", inputs);
 		Map<String, Object> outputs = executionResult.getOutputs();
 		System.out.println("executeHashMap(): " + outputs);
 
@@ -58,19 +58,19 @@ public class HybridDecisionSessionTest {
 		{
 			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("EmploymentStatusDecision.java").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
-			decisionSession.importModel("de.materna.jdec.java.test", "EmploymentStatusDecision", decision);
+			decisionSession.importModel("de.materna.jdec.java.test.EmploymentStatusDecision", decision);
 		}
 		{
 			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values.dmn").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
-			decisionSession.importModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", decision);
+			decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
 		}
 
 		Map<String, Object> inputs = new HashMap<>();
 		inputs.put("Employment Status", "UNEMPLOYED");
 
 		{
-			ExecutionResult executionResult = decisionSession.executeModel("de.materna.jdec.java.test", "EmploymentStatusDecision", inputs);
+			ExecutionResult executionResult = decisionSession.executeModel("de.materna.jdec.java.test.EmploymentStatusDecision", inputs);
 			Map<String, Object> output = executionResult.getOutputs();
 			System.out.println("executeHashMap(): " + output);
 
@@ -79,7 +79,7 @@ public class HybridDecisionSessionTest {
 		}
 		{
 
-			ExecutionResult executionResult = decisionSession.executeModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", inputs);
+			ExecutionResult executionResult = decisionSession.executeModel("https://github.com/agilepro/dmn-tck", inputs);
 			Map<String, Object> output = executionResult.getOutputs();
 			System.out.println("executeHashMap(): " + output);
 

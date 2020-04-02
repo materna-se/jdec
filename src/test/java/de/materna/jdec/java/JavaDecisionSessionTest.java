@@ -20,12 +20,12 @@ public class JavaDecisionSessionTest {
 
 		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("EmploymentStatusDecision.java").toURI());
 		String decision = new String(Files.readAllBytes(decisionPath));
-		decisionSession.importModel("de.materna.jdec.java.test", "EmploymentStatusDecision", decision);
+		decisionSession.importModel("de.materna.jdec.java.test.EmploymentStatusDecision", decision);
 
 		Map<String, Object> inputs = new HashMap<>();
 		inputs.put("Employment Status", "UNEMPLOYED");
 
-		ExecutionResult executionResult = decisionSession.executeModel("de.materna.jdec.java.test", "EmploymentStatusDecision", inputs);
+		ExecutionResult executionResult = decisionSession.executeModel("de.materna.jdec.java.test.EmploymentStatusDecision", inputs);
 		Map<String, Object> outputs = executionResult.getOutputs();
 		System.out.println("executeHashMap(): " + outputs);
 
@@ -40,7 +40,7 @@ public class JavaDecisionSessionTest {
 		Assertions.assertThrows(ModelImportException.class, () -> {
 			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("EmploymentStatusDecision-missing-method.java").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
-			decisionSession.importModel("de.materna.jdec.java.test", "EmploymentStatusDecision", decision);
+			decisionSession.importModel("de.materna.jdec.java.test.EmploymentStatusDecision", decision);
 		});
 	}
 }

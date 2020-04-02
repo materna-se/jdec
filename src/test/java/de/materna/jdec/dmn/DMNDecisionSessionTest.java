@@ -2,9 +2,11 @@ package de.materna.jdec.dmn;
 
 import de.materna.jdec.DMNDecisionSession;
 import de.materna.jdec.DecisionSession;
+import de.materna.jdec.model.ComplexInputStructure;
 import de.materna.jdec.model.ExecutionResult;
 import de.materna.jdec.model.ModelImportException;
 import de.materna.jdec.model.ModelNotFoundException;
+import de.materna.jdec.serialization.SerializationHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -24,12 +26,12 @@ public class DMNDecisionSessionTest {
 
 		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values.dmn").toURI());
 		String decision = new String(Files.readAllBytes(decisionPath));
-		decisionSession.importModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", decision);
+		decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
 
 		Map<String, Object> inputs = new HashMap<>();
 		inputs.put("Employment Status", "UNEMPLOYED");
 
-		ExecutionResult executionResult = decisionSession.executeModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", inputs);
+		ExecutionResult executionResult = decisionSession.executeModel("https://github.com/agilepro/dmn-tck", inputs);
 		Map<String, Object> outputs = executionResult.getOutputs();
 		System.out.println("executeHashMap(): " + outputs);
 
@@ -44,7 +46,7 @@ public class DMNDecisionSessionTest {
 
 			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values-invalid-feel.dmn").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
-			decisionSession.importModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", decision);
+			decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
 		});
 	}
 
@@ -55,7 +57,7 @@ public class DMNDecisionSessionTest {
 
 			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values-invalid-xml.dmn").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
-			decisionSession.importModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", decision);
+			decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
 		}
 		catch (ModelImportException e) {
 			Assertions.assertTrue(e.getResult().getMessages().get(0).contains("Error unmarshalling"));
@@ -66,7 +68,7 @@ public class DMNDecisionSessionTest {
 	void getModelNotFound() {
 		Assertions.assertThrows(ModelNotFoundException.class, () -> {
 			DecisionSession decisionSession = new DMNDecisionSession();
-			decisionSession.getModel("namespace", "name");
+			decisionSession.getModel("namespace");
 		});
 	}
 
@@ -78,13 +80,13 @@ public class DMNDecisionSessionTest {
 			{
 				Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values.dmn").toURI());
 				String decision = new String(Files.readAllBytes(decisionPath));
-				decisionSession.importModel("https://github.com/agilepro/dmn-tck", "0003-input-data-string-allowed-values", decision);
+				decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
 			}
 
 			{
 				Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values.dmn").toURI());
 				String decision = new String(Files.readAllBytes(decisionPath));
-				decisionSession.importModel("https://github.com/agilepro/dmn-tcK", "0003-input-data-string-allowed-values", decision);
+				decisionSession.importModel("https://github.com/agilepro/dmn-tcK", decision);
 			}
 		}
 		catch (ModelImportException e) {
@@ -94,24 +96,24 @@ public class DMNDecisionSessionTest {
 
 	@Test
 	void importMultipleModels() throws Exception {
-		DecisionSession decisionSession = new DMNDecisionSession();
+		DMNDecisionSession decisionSession = new DMNDecisionSession();
 
 		{
 			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("import-child-child.dmn").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
-			decisionSession.importModel("importchildchild", "importchildchild", decision);
+			decisionSession.importModel("importchildchild", decision);
 		}
 
 		{
 			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("import-child.dmn").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
-			decisionSession.importModel("importchild", "importchild", decision);
+			decisionSession.importModel("importchild", decision);
 		}
 
 		{
 			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("import-parent.dmn").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
-			decisionSession.importModel("importparent", "importparent", decision);
+			decisionSession.importModel("importparent", decision);
 		}
 
 		Map<String, Object> inputs = new HashMap<>();
@@ -123,9 +125,16 @@ public class DMNDecisionSessionTest {
 		Map<String, Object> childChildInputs = new HashMap<>();
 		childChildInputs.put("ChildChildInput", 1);
 		childInputs.put("importchildchild", childChildInputs);
+		inputs.put("importchildchild", childChildInputs);
 
 		inputs.put("importchild", childInputs);
 
+		System.out.println(SerializationHelper.getInstance().toJSON(inputs));
+
+		ComplexInputStructure inputStructure = decisionSession.getInputStructure("importparent");
+		System.out.println(SerializationHelper.getInstance().toJSON(inputStructure));
+
+		/*
 		ExecutionResult executionResult = decisionSession.executeModel("importparent", "importparent", inputs);
 		Map<String, Object> outputs = executionResult.getOutputs();
 		System.out.println("getOutputs(): " + outputs);
@@ -144,6 +153,7 @@ public class DMNDecisionSessionTest {
 		Assertions.assertTrue(context.containsKey("ParentDecision"));
 		Assertions.assertTrue(context.containsKey("importchild.ChildDecision"));
 		Assertions.assertTrue(context.containsKey("importchildchild.ChildChildDecision"));
+		 */
 	}
 
 	@Test
