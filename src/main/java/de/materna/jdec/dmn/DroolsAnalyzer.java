@@ -2,10 +2,12 @@ package de.materna.jdec.dmn;
 
 import de.materna.jdec.model.ComplexInputStructure;
 import de.materna.jdec.model.InputStructure;
+import de.materna.jdec.model.ModelNotFoundException;
 import org.apache.log4j.Logger;
 import org.kie.dmn.api.core.DMNModel;
+import org.kie.dmn.api.core.DMNRuntime;
 import org.kie.dmn.api.core.DMNType;
-import org.kie.dmn.api.core.ast.InputDataNode;
+import org.kie.dmn.model.api.Import;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -19,19 +21,25 @@ public class DroolsAnalyzer {
 
 	/**
 	 * Uses getInputs() to convert all inputs into our own class hierarchy
-	 *
-	 * @param model Decision Model
 	 */
-	public static ComplexInputStructure getComplexInputStructure(DMNModel model) {
+	public static ComplexInputStructure getComplexInputStructure(DMNRuntime runtime, String namespace) throws ModelNotFoundException {
+		DMNModel model = DroolsHelper.getModel(runtime, namespace);
+
 		ComplexInputStructure modelInput = new ComplexInputStructure("object", false);
 
 		Map<String, InputStructure> inputs = new LinkedHashMap<>();
-		for (InputDataNode inputDataNode : model.getInputs()) {
+		// We only want to add the inputs that directly belong to the model.
+		model.getInputs().stream().filter(inputDataNode -> inputDataNode.getModelNamespace().equals(namespace)).forEach(inputDataNode -> {
 			inputs.put(inputDataNode.getName(), getInputStructure(inputDataNode.getType()));
+		});
+		// All other inputs are resolved and added recursively via the import elements attatched to the definition element.
+		for (Import _import : model.getDefinitions().getImport()) {
+			inputs.put(_import.getNamespace(), getComplexInputStructure(runtime, _import.getNamespace()));
 		}
 		modelInput.setValue(inputs);
 
 		return modelInput;
+
 	}
 
 	private static InputStructure getInputStructure(DMNType type) {

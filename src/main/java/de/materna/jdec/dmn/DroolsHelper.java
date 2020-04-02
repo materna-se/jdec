@@ -1,17 +1,26 @@
 package de.materna.jdec.dmn;
 
+import de.materna.jdec.model.ModelNotFoundException;
 import org.apache.log4j.Logger;
+import org.kie.dmn.api.core.DMNModel;
+import org.kie.dmn.api.core.DMNRuntime;
 import org.kie.dmn.api.core.DMNUnaryTest;
 import org.kie.dmn.core.ast.DMNFunctionDefinitionEvaluator;
 import org.kie.dmn.feel.runtime.functions.JavaFunction;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DroolsHelper {
 	private static final Logger log = Logger.getLogger(DroolsHelper.class);
+
+	public static DMNModel getModel(DMNRuntime runtime, String namespace) throws ModelNotFoundException {
+		try {
+			return runtime.getModels().stream().filter(model -> model.getNamespace().equals(namespace)).findFirst().get();
+		}
+		catch (NoSuchElementException e) {
+			throw new ModelNotFoundException();
+		}
+	}
 
 	/**
 	 * Drools does not return a correctly typed list of allowed values
