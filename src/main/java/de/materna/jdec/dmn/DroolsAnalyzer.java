@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.kie.dmn.api.core.DMNModel;
 import org.kie.dmn.api.core.DMNRuntime;
 import org.kie.dmn.api.core.DMNType;
+import org.kie.dmn.api.core.ast.DecisionServiceNode;
 import org.kie.dmn.model.api.Import;
 
 import java.util.LinkedHashMap;
@@ -39,7 +40,6 @@ public class DroolsAnalyzer {
 		modelInput.setValue(inputs);
 
 		return modelInput;
-
 	}
 
 	private static InputStructure getInputStructure(DMNType type) {
