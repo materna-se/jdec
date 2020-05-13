@@ -104,6 +104,10 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	//
 
 	public ExecutionResult executeModel(DMNModel model, Map<String, ?> inputs) {
+		return executeModel(model, null, inputs);
+	}
+
+	public ExecutionResult executeModel(DMNModel model, String decisionServiceName, Map<String, ?> inputs) {
 		// We need to copy all key-value pairs from the given HashMap<String, Object> into the context
 		DMNContext context = kieRuntime.newContext();
 		for (Map.Entry<String, ?> entry : inputs.entrySet()) {
@@ -113,7 +117,7 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 		DroolsDebugger debugger = new DroolsDebugger(this);
 		debugger.start(model.getNamespace(), model.getName());
 		// By calling evaluateAll, the dmn model and the dmn context are sent to the drools engine
-		List<DMNDecisionResult> results = kieRuntime.evaluateAll(model, context).getDecisionResults();
+		List<DMNDecisionResult> results = (decisionServiceName == null ? kieRuntime.evaluateAll(model, context) : kieRuntime.evaluateDecisionService(model, context, decisionServiceName)).getDecisionResults();
 		debugger.stop();
 
 		// After we've received the results, we need to convert them into a usable format
