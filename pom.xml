@@ -33,12 +33,12 @@
 		<dependency>
 			<groupId>org.kie</groupId>
 			<artifactId>kie-ci</artifactId>
-			<version>7.33.0.Final</version>
+			<version>7.37.0.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.kie</groupId>
 			<artifactId>kie-dmn-core</artifactId>
-			<version>7.33.0.Final</version>
+			<version>7.37.0.Final</version>
 		</dependency>
 
 		<!-- Jackson -->
