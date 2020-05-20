@@ -14,12 +14,12 @@ public class DroolsHelper {
 	private static final Logger log = Logger.getLogger(DroolsHelper.class);
 
 	public static DMNModel getModel(DMNRuntime runtime, String namespace) throws ModelNotFoundException {
-		try {
-			return runtime.getModels().stream().filter(model -> model.getNamespace().equals(namespace)).findFirst().get();
-		}
-		catch (NoSuchElementException e) {
+		Optional<DMNModel> optionalModel = runtime.getModels().stream().filter(model -> model.getNamespace().equals(namespace)).findFirst();
+		if (!optionalModel.isPresent()) {
 			throw new ModelNotFoundException();
 		}
+
+		return optionalModel.get();
 	}
 
 	/**
