@@ -129,17 +129,9 @@ public class DMNDecisionSessionTest {
 
 		inputs.put("importchild", childInputs);
 
-		System.out.println(SerializationHelper.getInstance().toJSON(inputs));
-
-		ComplexInputStructure inputStructure = decisionSession.getInputStructure("importparent");
-		System.out.println(SerializationHelper.getInstance().toJSON(inputStructure));
-
-		/*
-		ExecutionResult executionResult = decisionSession.executeModel("importparent", "importparent", inputs);
+		ExecutionResult executionResult = decisionSession.executeModel("importparent", inputs);
 		Map<String, Object> outputs = executionResult.getOutputs();
-		System.out.println("getOutputs(): " + outputs);
 		Map<String, Map<String, Object>> context = executionResult.getContext();
-		System.out.println("getContext(): " + context);
 
 		Assertions.assertTrue(outputs.containsKey("ParentDecision"));
 		Assertions.assertEquals(BigDecimal.valueOf(4), outputs.get("ParentDecision"));
