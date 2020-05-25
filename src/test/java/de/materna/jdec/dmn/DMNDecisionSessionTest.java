@@ -145,7 +145,29 @@ public class DMNDecisionSessionTest {
 		Assertions.assertTrue(context.containsKey("ParentDecision"));
 		Assertions.assertTrue(context.containsKey("importchild.ChildDecision"));
 		Assertions.assertTrue(context.containsKey("importchildchild.ChildChildDecision"));
-		 */
+	}
+
+	@Test
+	void executeDecisionService() throws Exception {
+		DMNDecisionSession decisionSession = new DMNDecisionSession();
+
+		{
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("decision-service.dmn").toURI());
+			String decision = new String(Files.readAllBytes(decisionPath));
+			decisionSession.importModel("decision-service", decision);
+		}
+
+		Map<String, Object> inputs = new HashMap<>();
+		Map<String, Object> childInputs = new HashMap<>();
+		childInputs.put("Name", "John");
+		inputs.put("ChildDecision", childInputs);
+
+		ComplexInputStructure inputStructure = decisionSession.getInputStructure("decision-service", "DecisionService");
+		System.out.println(SerializationHelper.getInstance().toJSON(inputStructure));
+
+		ExecutionResult executionResult = decisionSession.executeModel("decision-service", "DecisionService", inputs);
+		Map<String, Object> outputs = executionResult.getOutputs();
+		System.out.println(outputs);
 	}
 
 	@Test
