@@ -27,5 +27,6 @@
 !/src/test/resources/import-parent.dmn
 !/src/test/resources/import-child.dmn
 !/src/test/resources/import-child-child.dmn
+!/src/test/resources/decision-service.dmn
 !/src/test/resources/EmploymentStatusDecision.java
 !/src/test/resources/EmploymentStatusDecision-missing-method.java
