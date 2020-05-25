@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="decision-service" xmlns:dmn="http://www.omg.org/spec/DMN/20180521/MODEL/" xmlns:layout="https://products.bfs-intra.net/milestones/vr/spec/20170328/dmndi.xsd" xsi:schemaLocation="http://www.omg.org/spec/DMN/20151101/dmn.xsd http://www.omg.org/spec/DMN/20151101/dmn.xsd" id="_l-A58JqkEeq986vDsdws2A" name="decision-service" exporter="ACTICO Modeler" namespace="decision-service">
+  <dmn:extensionElements>
+    <layout:container id="_l-LSAJqkEeq986vDsdws2A" name="decision-service" type="Dmn" href="#_l-A58JqkEeq986vDsdws2A">
+      <layout:node id="_o7pIsJqkEeq986vDsdws2A" type="2009" href="#_o7TxgJqkEeq986vDsdws2A">
+        <layout:location x="270" y="185"/>
+      </layout:node>
+      <layout:node id="_pmhRsJqkEeq986vDsdws2A" type="2003" href="#_pmfcgJqkEeq986vDsdws2A">
+        <layout:location x="325" y="327"/>
+      </layout:node>
+      <layout:node id="_UDOS4JqlEeq986vDsdws2A" type="2009" href="#_UDMdsJqlEeq986vDsdws2A">
+        <layout:location x="212" y="65"/>
+      </layout:node>
+      <layout:edge id="_rtK1IJqkEeq986vDsdws2A" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_o7TxgJqkEeq986vDsdws2A$_pmfcgJqkEeq986vDsdws2A" source="#_pmhRsJqkEeq986vDsdws2A" target="#_o7pIsJqkEeq986vDsdws2A">
+        <layout:bendpoints points="[-5, -16, 44, 129]$[-48, -139, 1, 6]"/>
+        <layout:targetAnchor id="(0.536,0.8222222222222222)"/>
+      </layout:edge>
+      <layout:edge id="_ZPEFoJqlEeq986vDsdws2A" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_UDMdsJqlEeq986vDsdws2A$_o7TxgJqkEeq986vDsdws2A" source="#_o7pIsJqkEeq986vDsdws2A" target="#_UDOS4JqlEeq986vDsdws2A">
+        <layout:bendpoints points="[-14, -23, 45, 72]$[-57, -118, 2, -23]"/>
+      </layout:edge>
+      <layout:DiContainerStyle/>
+    </layout:container>
+  </dmn:extensionElements>
+  <dmn:itemDefinition id="_10ts4JqkEeq986vDsdws2A" name="ItemDefinition">
+    <dmn:itemComponent id="_3DraYJqkEeq986vDsdws2A" name="Name">
+      <dmn:typeRef>string</dmn:typeRef>
+    </dmn:itemComponent>
+  </dmn:itemDefinition>
+  <dmn:decision id="_o7TxgJqkEeq986vDsdws2A" name="ChildDecision">
+    <dmn:extensionElements>
+      <layout:container id="_qoCZEJqkEeq986vDsdws2A" name="" type="DMN_Expression" href="#_o7TxgJqkEeq986vDsdws2A"/>
+    </dmn:extensionElements>
+    <dmn:variable id="_o7TxgZqkEeq986vDsdws2A" name="ChildDecision" typeRef="ItemDefinition"/>
+    <dmn:informationRequirement>
+      <dmn:requiredInput href="#_pmfcgJqkEeq986vDsdws2A"/>
+    </dmn:informationRequirement>
+    <dmn:context id="_8IYDUJqkEeq986vDsdws2A">
+      <dmn:contextEntry>
+        <dmn:variable id="_8KotJ5qkEeq986vDsdws2A" name="Name"/>
+        <dmn:literalExpression id="_8KotKJqkEeq986vDsdws2A">
+          <dmn:text>&quot;Child&quot; + Input.Name</dmn:text>
+        </dmn:literalExpression>
+      </dmn:contextEntry>
+    </dmn:context>
+  </dmn:decision>
+  <dmn:decision id="_UDMdsJqlEeq986vDsdws2A" name="ParentDecision">
+    <dmn:extensionElements>
+      <layout:container id="_WwE6sJqlEeq986vDsdws2A" name="" type="DMN_Expression" href="#_UDMdsJqlEeq986vDsdws2A"/>
+    </dmn:extensionElements>
+    <dmn:variable id="_UDMdsZqlEeq986vDsdws2A" name="ParentDecision" typeRef="ItemDefinition"/>
+    <dmn:informationRequirement>
+      <dmn:requiredDecision href="#_o7TxgJqkEeq986vDsdws2A"/>
+    </dmn:informationRequirement>
+    <dmn:context id="_XK1kEJqlEeq986vDsdws2A">
+      <dmn:contextEntry>
+        <dmn:variable id="_XK4nYZqlEeq986vDsdws2A" name="Name"/>
+        <dmn:literalExpression id="_XK4nY5qlEeq986vDsdws2A">
+          <dmn:text>&quot;Parent&quot; + ChildDecision.Name</dmn:text>
+        </dmn:literalExpression>
+      </dmn:contextEntry>
+    </dmn:context>
+  </dmn:decision>
+  <dmn:inputData id="_pmfcgJqkEeq986vDsdws2A" name="Input">
+    <dmn:variable id="_pmfcgZqkEeq986vDsdws2A" name="Input" typeRef="ItemDefinition"/>
+  </dmn:inputData>
+  <dmn:decisionService id="_Qx5FAZqlEeq986vDsdws2A" name="DecisionService">
+    <dmn:extensionElements>
+      <layout:container id="_RrJoQJqlEeq986vDsdws2A" name="" type="DecisionService" href="#_Qx5FAZqlEeq986vDsdws2A">
+        <layout:node id="_RrJoQZqlEeq986vDsdws2A" type="7001" href="#_Qx5FAZqlEeq986vDsdws2A">
+          <layout:node id="_j3KFsJqlEeq986vDsdws2A" type="7002" href="#_Qx5FAZqlEeq986vDsdws2A">
+            <layout:node id="_iTiW0JqlEeq986vDsdws2A" type="2009" href="#_UDMdsJqlEeq986vDsdws2A">
+              <layout:location x="305" y="54"/>
+            </layout:node>
+            <layout:ratio value="-1.0"/>
+          </layout:node>
+          <layout:node id="_j3KFsZqlEeq986vDsdws2A" type="7003" href="#_Qx5FAZqlEeq986vDsdws2A">
+            <layout:ratio value="-1.0"/>
+          </layout:node>
+          <layout:bounds height="300" width="600" x="50" y="100"/>
+        </layout:node>
+        <layout:node id="_Scry4JqlEeq986vDsdws2A" type="2009" href="#_o7TxgJqkEeq986vDsdws2A">
+          <layout:location x="715" y="220"/>
+        </layout:node>
+        <layout:node id="_jpFNcJqlEeq986vDsdws2A" type="2003" href="#_pmfcgJqkEeq986vDsdws2A">
+          <layout:location x="745" y="350"/>
+        </layout:node>
+        <layout:edge id="_iTt9AJqlEeq986vDsdws2A" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_UDMdsJqlEeq986vDsdws2A$_o7TxgJqkEeq986vDsdws2A" source="#_Scry4JqlEeq986vDsdws2A" target="#_iTiW0JqlEeq986vDsdws2A">
+          <layout:bendpoints points="[-62, -4, 172, 10]$[-172, -10, 62, 4]"/>
+        </layout:edge>
+        <layout:edge id="_jpL7IJqlEeq986vDsdws2A" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_o7TxgJqkEeq986vDsdws2A$_pmfcgJqkEeq986vDsdws2A" source="#_jpFNcJqlEeq986vDsdws2A" target="#_Scry4JqlEeq986vDsdws2A">
+          <layout:bendpoints points="[-10, -16, 60, 102]$[-58, -97, 12, 21]"/>
+        </layout:edge>
+        <layout:DiContainerStyle/>
+      </layout:container>
+    </dmn:extensionElements>
+    <dmn:variable id="_Qx5FAZqlEeq986vDsdws2B" name="DecisionService"/>
+    <dmn:outputDecision href="#_UDMdsJqlEeq986vDsdws2A"/>
+    <dmn:inputDecision href="#_o7TxgJqkEeq986vDsdws2A"/>
+  </dmn:decisionService>
+</dmn:definitions>
