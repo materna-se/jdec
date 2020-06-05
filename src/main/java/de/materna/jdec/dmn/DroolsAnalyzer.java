@@ -4,15 +4,20 @@ import de.materna.jdec.model.ComplexInputStructure;
 import de.materna.jdec.model.InputStructure;
 import de.materna.jdec.model.ModelNotFoundException;
 import org.apache.log4j.Logger;
+import org.codehaus.janino.Mod;
 import org.kie.dmn.api.core.DMNModel;
 import org.kie.dmn.api.core.DMNRuntime;
 import org.kie.dmn.api.core.DMNType;
+import org.kie.dmn.api.core.ast.DecisionNode;
 import org.kie.dmn.api.core.ast.DecisionServiceNode;
+import org.kie.dmn.api.core.ast.InputDataNode;
+import org.kie.dmn.model.api.DMNElementReference;
 import org.kie.dmn.model.api.Import;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Optional;
 
 public class DroolsAnalyzer {
 	private static final Logger log = Logger.getLogger(DroolsAnalyzer.class);
@@ -23,19 +28,39 @@ public class DroolsAnalyzer {
 	/**
 	 * Uses getInputs() to convert all inputs into our own class hierarchy
 	 */
-	public static ComplexInputStructure getComplexInputStructure(DMNRuntime runtime, String namespace) throws ModelNotFoundException {
+	public static ComplexInputStructure getComplexInputStructure(DMNRuntime runtime, String namespace, String decisionServiceName) throws ModelNotFoundException {
 		DMNModel model = DroolsHelper.getModel(runtime, namespace);
 
 		ComplexInputStructure modelInput = new ComplexInputStructure("object", false);
 
 		Map<String, InputStructure> inputs = new LinkedHashMap<>();
-		// We only want to add the inputs that directly belong to the model.
-		model.getInputs().stream().filter(inputDataNode -> inputDataNode.getModelNamespace().equals(namespace)).forEach(inputDataNode -> {
-			inputs.put(inputDataNode.getName(), getInputStructure(inputDataNode.getType()));
-		});
-		// All other inputs are resolved and added recursively via the import elements attatched to the definition element.
-		for (Import _import : model.getDefinitions().getImport()) {
-			inputs.put(_import.getNamespace(), getComplexInputStructure(runtime, _import.getNamespace()));
+		if (decisionServiceName == null) {
+			// We only want to add the inputs that directly belong to the model.
+			for (InputDataNode inputDataNode : model.getInputs()) {
+				if(inputDataNode.getModelNamespace().equals(namespace)) {
+					inputs.put(inputDataNode.getName(), getInputStructure(inputDataNode.getType()));
+				}
+			}
+			// All other inputs are resolved and added recursively via the import elements attatched to the definition element.
+			for (Import _import : model.getDefinitions().getImport()) {
+				inputs.put(_import.getNamespace(), getComplexInputStructure(runtime, _import.getNamespace(), null));
+			}
+		}
+		else {
+			Optional<DecisionServiceNode> optionalDecisionServiceNode = model.getDecisionServices().stream().filter(decisionServiceNode -> decisionServiceNode.getName().equals(decisionServiceName)).findFirst();
+			if(!optionalDecisionServiceNode.isPresent()) {
+				throw new ModelNotFoundException();
+			}
+
+			DecisionServiceNode decisionServiceNode = optionalDecisionServiceNode.get();
+			for (DMNElementReference reference : decisionServiceNode.getDecisionService().getInputData()) {
+				InputDataNode inputDataNode = model.getInputById(reference.getHref().split("#")[1]);
+				inputs.put(inputDataNode.getName(), getInputStructure(inputDataNode.getType()));
+			}
+			for (DMNElementReference reference : decisionServiceNode.getDecisionService().getInputDecision()) {
+				DecisionNode decisionNode = model.getDecisionById(reference.getHref().split("#")[1]);
+				inputs.put(decisionNode.getName(), getInputStructure(decisionNode.getResultType()));
+			}
 		}
 		modelInput.setValue(inputs);
 
