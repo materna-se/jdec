@@ -167,12 +167,6 @@ public class DMNDecisionSession implements DecisionSession {
 		return new ExecutionResult(outputs, debugger.getDecisions(), debugger.getMessages());
 	}
 
-	public void close() {
-		kieRuntime = null;
-		kieFileSystem = null;
-		kieServices = null;
-	}
-
 	private String getPath(String namespace) {
 		return "/src/main/resources/" + namespace + ".dmn";
 	}
