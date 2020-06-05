@@ -96,8 +96,8 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	//
 
 	@Override
-	public ComplexInputStructure getInputStructure(String namespace) throws ModelNotFoundException {
-		return DroolsAnalyzer.getComplexInputStructure(kieRuntime, namespace, null);
+	public Map<String, InputStructure> getInputStructure(String namespace) throws ModelNotFoundException {
+		return (Map<String, InputStructure>) DroolsAnalyzer.getComplexInputStructure(kieRuntime, namespace, null).getValue();
 	}
 
 	//
@@ -112,8 +112,8 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 		return executeModel(DroolsHelper.getModel(kieRuntime, namespace), decisionServiceName, inputs);
 	}
 
-	public ComplexInputStructure getInputStructure(String namespace, String decisionServiceName) throws ModelNotFoundException {
-		return DroolsAnalyzer.getComplexInputStructure(kieRuntime, namespace, decisionServiceName);
+	public Map<String, InputStructure> getInputStructure(String namespace, String decisionServiceName) throws ModelNotFoundException {
+		return (Map<String, InputStructure>) DroolsAnalyzer.getComplexInputStructure(kieRuntime, namespace, decisionServiceName).getValue();
 	}
 
 	//

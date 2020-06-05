@@ -90,7 +90,7 @@ public class HybridDecisionSession implements DecisionSession {
 	//
 
 	@Override
-	public ComplexInputStructure getInputStructure(String namespace) throws ModelNotFoundException {
+	public Map<String, InputStructure> getInputStructure(String namespace) throws ModelNotFoundException {
 		if (!decisionSessionMapping.containsKey(namespace)) {
 			throw new ModelNotFoundException();
 		}

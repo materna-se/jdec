@@ -87,7 +87,7 @@ public class JavaDecisionSession implements DecisionSession {
 	//
 
 	@Override
-	public ComplexInputStructure getInputStructure(String namespace) throws ModelNotFoundException {
+	public Map<String, InputStructure> getInputStructure(String namespace) throws ModelNotFoundException {
 		return getInstance(namespace).getInputStructure();
 	}
 

@@ -40,5 +40,5 @@ public interface DecisionSession {
 	 *
 	 * @param namespace Namespace of the decision model. It can be extracted with /definitions/@namespace.
 	 */
-	ComplexInputStructure getInputStructure(String namespace) throws ModelNotFoundException;
+	Map<String, InputStructure> getInputStructure(String namespace) throws ModelNotFoundException;
 }
