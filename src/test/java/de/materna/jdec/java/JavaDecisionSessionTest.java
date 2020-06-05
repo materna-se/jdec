@@ -3,7 +3,9 @@ package de.materna.jdec.java;
 import de.materna.jdec.DecisionSession;
 import de.materna.jdec.JavaDecisionSession;
 import de.materna.jdec.model.ExecutionResult;
+import de.materna.jdec.model.Model;
 import de.materna.jdec.model.ModelImportException;
+import de.materna.jdec.serialization.SerializationHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +16,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JavaDecisionSessionTest {
+	@Test
+	void getModel() throws Exception {
+		DecisionSession decisionSession = new JavaDecisionSession();
+
+		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("EmploymentStatusDecision.java").toURI());
+		String decision = new String(Files.readAllBytes(decisionPath));
+		decisionSession.importModel("de.materna.jdec.java.test.EmploymentStatusDecision", decision);
+
+		Model model = decisionSession.getModel("de.materna.jdec.java.test.EmploymentStatusDecision");
+		Assertions.assertEquals("de.materna.jdec.java.test.EmploymentStatusDecision", model.getNamespace());
+		Assertions.assertEquals("EmploymentStatusDecision", model.getName());
+		Assertions.assertEquals("Employment Status", model.getInputs().toArray()[0]);
+	}
+
 	@Test
 	void executeHashMap() throws Exception {
 		DecisionSession decisionSession = new JavaDecisionSession();
