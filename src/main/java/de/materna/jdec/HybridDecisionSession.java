@@ -131,6 +131,10 @@ public class HybridDecisionSession implements DecisionSession {
 		return javaDecisionSession;
 	}
 
+	public DecisionSessionMapping getMapping(String namespace) {
+		return decisionSessionMapping.get(namespace);
+	}
+
 	private enum DecisionSessionMapping {
 		DMN,
 		JAVA
