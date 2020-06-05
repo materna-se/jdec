@@ -85,9 +85,10 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	// Executor
 	//
 
+
 	@Override
 	public ExecutionResult executeModel(String namespace, Map<String, Object> inputs) throws ModelNotFoundException {
-		return executeModel(DroolsHelper.getModel(kieRuntime, namespace), inputs);
+		return executeModel(DroolsHelper.getModel(kieRuntime, namespace), null, inputs);
 	}
 
 	//
@@ -96,16 +97,28 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 
 	@Override
 	public ComplexInputStructure getInputStructure(String namespace) throws ModelNotFoundException {
-		return DroolsAnalyzer.getComplexInputStructure(kieRuntime, namespace);
+		return DroolsAnalyzer.getComplexInputStructure(kieRuntime, namespace, null);
 	}
 
 	//
-	// Custom Methods
+	// Overloads
 	//
 
 	public ExecutionResult executeModel(DMNModel model, Map<String, ?> inputs) {
 		return executeModel(model, null, inputs);
 	}
+
+	public ExecutionResult executeModel(String namespace, String decisionServiceName, Map<String, Object> inputs) throws ModelNotFoundException {
+		return executeModel(DroolsHelper.getModel(kieRuntime, namespace), decisionServiceName, inputs);
+	}
+
+	public ComplexInputStructure getInputStructure(String namespace, String decisionServiceName) throws ModelNotFoundException {
+		return DroolsAnalyzer.getComplexInputStructure(kieRuntime, namespace, decisionServiceName);
+	}
+
+	//
+	// Custom Methods
+	//
 
 	public ExecutionResult executeModel(DMNModel model, String decisionServiceName, Map<String, ?> inputs) {
 		// We need to copy all key-value pairs from the given HashMap<String, Object> into the context
