@@ -20,10 +20,10 @@ import org.kie.dmn.feel.FEEL;
 import org.kie.dmn.feel.lang.FEELProfile;
 import org.kie.dmn.feel.parser.feel11.profiles.KieExtendedFEELProfile;
 
-import java.io.Closeable;
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class DMNDecisionSession implements DecisionSession, Closeable {
+public class DMNDecisionSession implements DecisionSession {
 	private static final Logger log = Logger.getLogger(DMNDecisionSession.class);
 
 	public KieFileSystem kieFileSystem;
@@ -48,12 +48,31 @@ public class DMNDecisionSession implements DecisionSession, Closeable {
 	//
 
 	@Override
-	public String getModel(String namespace) throws ModelNotFoundException {
-		byte[] model = kieFileSystem.read(getPath(namespace));
-		if (model == null) {
-			throw new ModelNotFoundException();
-		}
-		return new String(model);
+	public Set<Model> getModels() {
+		return kieRuntime.getModels().stream().map(model -> {
+			try {
+				return getModel(model.getNamespace());
+			}
+			catch (ModelNotFoundException ignored) {
+			}
+			return null; // In theory, this can't happen.
+		}).collect(Collectors.toSet());
+	}
+
+	@Override
+	public Model getModel(String namespace) throws ModelNotFoundException {
+		DMNModel model = DroolsHelper.getModel(kieRuntime, namespace);
+		byte[] source = kieFileSystem.read(getPath(namespace));
+
+		return new Model(
+				model.getNamespace(),
+				model.getName(),
+				new String(source),
+				model.getDecisions().stream().filter(decisionNode -> decisionNode.getModelNamespace().equals(model.getNamespace())).map(decisionNode -> decisionNode.getName()).collect(Collectors.toSet()),
+				model.getInputs().stream().filter(inputDataNode -> inputDataNode.getModelNamespace().equals(model.getNamespace())).map(inputDataNode -> inputDataNode.getName()).collect(Collectors.toSet()),
+				model.getBusinessKnowledgeModels().stream().filter(businessKnowledgeModelNode -> businessKnowledgeModelNode.getModelNamespace().equals(model.getNamespace())).map(businessKnowledgeModelNode -> businessKnowledgeModelNode.getName()).collect(Collectors.toSet()),
+				model.getDecisionServices().stream().filter(decisionServiceNode -> decisionServiceNode.getModelNamespace().equals(model.getNamespace())).map(decisionServiceNode -> decisionServiceNode.getName()).collect(Collectors.toSet())
+		);
 	}
 
 	/**

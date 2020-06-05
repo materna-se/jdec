@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class JavaDecisionSession implements DecisionSession {
 	private Compiler compiler;
@@ -41,13 +42,30 @@ public class JavaDecisionSession implements DecisionSession {
 	// Store
 	//
 
+
 	@Override
-	public String getModel(String namespace) throws ModelNotFoundException {
-		String model = models.get(getPath(namespace));
-		if (model == null) {
+	public Set<Model> getModels() {
+		return compiledModels.entrySet().stream().map(entry -> {
+			try {
+				return getModel(entry.getKey());
+			}
+			catch (ModelNotFoundException ignored) {
+			}
+			return null; // In theory, this can't happen.
+		}).collect(Collectors.toSet());
+	}
+
+	@Override
+	public Model getModel(String namespace) throws ModelNotFoundException {
+		String source = models.get(getPath(namespace));
+		if (source == null) {
 			throw new ModelNotFoundException();
 		}
-		return model;
+
+		DecisionModel model = getInstance(namespace);
+
+		String name = model.getClass().getSimpleName();
+		return new Model(namespace, name, source, Collections.emptySet(), model.getInputStructure().keySet(), Collections.emptySet(), Collections.emptySet());
 	}
 
 	@Override
@@ -79,7 +97,7 @@ public class JavaDecisionSession implements DecisionSession {
 	@Override
 	public ExecutionResult executeModel(String namespace, Map<String, Object> inputs) throws ModelNotFoundException {
 		Map<String, Object> output = getInstance(namespace).executeDecision(inputs);
-		return new ExecutionResult(output, null, null);
+		return new ExecutionResult(output, Collections.emptyMap(), Collections.emptyList());
 	}
 
 	//

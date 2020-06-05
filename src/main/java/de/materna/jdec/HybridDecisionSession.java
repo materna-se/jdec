@@ -4,6 +4,8 @@ import de.materna.jdec.model.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class HybridDecisionSession implements DecisionSession {
 	private DMNDecisionSession dmnDecisionSession;
@@ -21,7 +23,19 @@ public class HybridDecisionSession implements DecisionSession {
 	//
 
 	@Override
-	public String getModel(String namespace) throws ModelNotFoundException {
+	public Set<Model> getModels() {
+		return decisionSessionMapping.entrySet().stream().map(entry -> {
+			try {
+				return getModel(entry.getKey());
+			}
+			catch (ModelNotFoundException ignored) {
+			}
+			return null; // In theory, this can't happen.
+		}).collect(Collectors.toSet());
+	}
+
+	@Override
+	public Model getModel(String namespace) throws ModelNotFoundException {
 		if (!decisionSessionMapping.containsKey(namespace)) {
 			throw new ModelNotFoundException();
 		}

@@ -3,14 +3,20 @@ package de.materna.jdec;
 import de.materna.jdec.model.*;
 
 import java.util.Map;
+import java.util.Set;
 
 public interface DecisionSession {
 	/**
-	 * Returns the decision model.
+	 * Returns information about all decision models.
+	 */
+	Set<Model> getModels();
+
+	/**
+	 * Returns information about the decision model.
 	 *
 	 * @param namespace Namespace of the decision model. It can be extracted with /definitions/@namespace.
 	 */
-	String getModel(String namespace) throws ModelNotFoundException;
+	Model getModel(String namespace) throws ModelNotFoundException;
 
 	/**
 	 * Imports the decision model.
