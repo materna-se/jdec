@@ -2,10 +2,7 @@ package de.materna.jdec.dmn;
 
 import de.materna.jdec.DMNDecisionSession;
 import de.materna.jdec.DecisionSession;
-import de.materna.jdec.model.ComplexInputStructure;
-import de.materna.jdec.model.ExecutionResult;
-import de.materna.jdec.model.ModelImportException;
-import de.materna.jdec.model.ModelNotFoundException;
+import de.materna.jdec.model.*;
 import de.materna.jdec.serialization.SerializationHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -162,7 +159,7 @@ public class DMNDecisionSessionTest {
 		childInputs.put("Name", "John");
 		inputs.put("ChildDecision", childInputs);
 
-		ComplexInputStructure inputStructure = decisionSession.getInputStructure("decision-service", "DecisionService");
+		Map<String, InputStructure> inputStructure = decisionSession.getInputStructure("decision-service", "DecisionService");
 		System.out.println(SerializationHelper.getInstance().toJSON(inputStructure));
 
 		ExecutionResult executionResult = decisionSession.executeModel("decision-service", "DecisionService", inputs);

@@ -11,13 +11,13 @@ import java.util.Map;
 
 public class EmploymentStatusDecision extends DecisionModel {
 	@Override
-	public ComplexInputStructure getInputStructure() {
+	public Map<String, InputStructure> getInputStructure() {
 		Map<String, InputStructure> inputs = new LinkedHashMap<>();
 
 		InputStructure inputStructure = new InputStructure("string", Arrays.asList("UNEMPLOYED", "EMPLOYED", "SELF-EMPLOYED", "STUDENT"));
 		inputs.put("Employment Status", inputStructure);
 
-		return new ComplexInputStructure("object", inputs);
+		return inputs;
 	}
 
 	@Override
