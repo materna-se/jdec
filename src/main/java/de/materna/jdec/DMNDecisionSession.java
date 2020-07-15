@@ -1,5 +1,6 @@
 package de.materna.jdec;
 
+import de.materna.jdec.dmn.ActicoHelper;
 import de.materna.jdec.dmn.DroolsAnalyzer;
 import de.materna.jdec.dmn.DroolsDebugger;
 import de.materna.jdec.dmn.DroolsHelper;
@@ -80,6 +81,9 @@ public class DMNDecisionSession implements DecisionSession {
 	 */
 	@Override
 	public ImportResult importModel(String namespace, String model) throws ModelImportException {
+		//REMOVEME When Actico starts properly exporting models that contain decision services
+		model = ActicoHelper.acticoFixDSWrapper(model);
+		
 		kieFileSystem.write(getPath(namespace), model);
 
 		try {
