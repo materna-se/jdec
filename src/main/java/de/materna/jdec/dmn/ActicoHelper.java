@@ -21,10 +21,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class ActicoHelper {
-	public static String acticoFixDSWrapper(String model) {
-		try {
-			return acticoFixDS(model);
-		} catch (IOException | SAXException | ParserConfigurationException | TransformerException e) {
+	public static String fixActicoDecisionServices(String model) throws IOException, SAXException, ParserConfigurationException, TransformerException {
+		// Performance optimization, checks if model is exported by ACTICO and includes decision services.
+		if (!model.contains("exporter=\"ACTICO Modeler\"") || !model.contains("<dmn:decisionService")) {
+			System.out.println("fallout");
 			return model;
 		}
 	}

@@ -20,7 +20,11 @@ import org.kie.dmn.api.core.DMNRuntime;
 import org.kie.dmn.feel.FEEL;
 import org.kie.dmn.feel.lang.FEELProfile;
 import org.kie.dmn.feel.parser.feel11.profiles.KieExtendedFEELProfile;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -82,8 +86,13 @@ public class DMNDecisionSession implements DecisionSession {
 	@Override
 	public ImportResult importModel(String namespace, String model) throws ModelImportException {
 		//REMOVEME When Actico starts properly exporting models that contain decision services
-		model = ActicoHelper.acticoFixDSWrapper(model);
-		
+		try {
+			model = ActicoHelper.fixActicoDecisionServices(model);
+		}
+		catch (IOException | SAXException | ParserConfigurationException | TransformerException e) {
+			e.printStackTrace();
+		}
+
 		kieFileSystem.write(getPath(namespace), model);
 
 		try {
