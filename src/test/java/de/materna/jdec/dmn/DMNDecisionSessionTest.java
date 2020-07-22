@@ -2,7 +2,10 @@ package de.materna.jdec.dmn;
 
 import de.materna.jdec.DMNDecisionSession;
 import de.materna.jdec.DecisionSession;
-import de.materna.jdec.model.*;
+import de.materna.jdec.model.ExecutionResult;
+import de.materna.jdec.model.InputStructure;
+import de.materna.jdec.model.ModelImportException;
+import de.materna.jdec.model.ModelNotFoundException;
 import de.materna.jdec.serialization.SerializationHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -148,23 +151,19 @@ public class DMNDecisionSessionTest {
 	void executeDecisionService() throws Exception {
 		DMNDecisionSession decisionSession = new DMNDecisionSession();
 
-		{
-			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("decision-service.dmn").toURI());
-			String decision = new String(Files.readAllBytes(decisionPath));
-			decisionSession.importModel("decision-service", decision);
-		}
+		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("decision-service.dmn").toURI());
+		String decision = new String(Files.readAllBytes(decisionPath));
+		decisionSession.importModel("decision-service-actico", decision);
 
 		Map<String, Object> inputs = new HashMap<>();
-		Map<String, Object> childInputs = new HashMap<>();
-		childInputs.put("Name", "John");
-		inputs.put("ChildDecision", childInputs);
+		inputs.put("Input", "test");
 
-		Map<String, InputStructure> inputStructure = decisionSession.getInputStructure("decision-service", "DecisionService");
+		Map<String, InputStructure> inputStructure = decisionSession.getInputStructure("decision-service-actico", "DecisionService");
 		System.out.println(SerializationHelper.getInstance().toJSON(inputStructure));
 
-		ExecutionResult executionResult = decisionSession.executeModel("decision-service", "DecisionService", inputs);
+		ExecutionResult executionResult = decisionSession.executeModel("decision-service-actico", "DecisionService", inputs);
 		Map<String, Object> outputs = executionResult.getOutputs();
-		System.out.println(outputs);
+		Assertions.assertEquals("{\"PublicDecision\":\"PUBLIC: PRIVATE: test\"}", SerializationHelper.getInstance().toJSON(outputs));
 	}
 
 	@Test
