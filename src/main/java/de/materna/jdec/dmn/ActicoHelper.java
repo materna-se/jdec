@@ -68,8 +68,7 @@ public class ActicoHelper {
 				Node child = dsChildren.item(j);
 
 				try {
-					if(child.getNodeName() == "dmn:variable" && 
-							child.getAttributes().getNamedItem("name").getTextContent().equals(dsName)) {
+					if (child.getNodeName().equals("dmn:variable") && child.getAttributes().getNamedItem("name").getTextContent().equals(decisionServiceName)) {
 						hasDMNVariableElement = true;
 						break;
 					}
