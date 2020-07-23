@@ -9,6 +9,7 @@
 !/src/test/java/de/materna/jdec/dmn/
 /src/test/java/de/materna/jdec/dmn/*
 !/src/test/java/de/materna/jdec/dmn/DMNDecisionSessionTest.java
+!/src/test/java/de/materna/jdec/dmn/ActicoHelperTest.java
 
 !/src/test/java/de/materna/jdec/java/
 /src/test/java/de/materna/jdec/java/*
@@ -28,5 +29,6 @@
 !/src/test/resources/import-child.dmn
 !/src/test/resources/import-child-child.dmn
 !/src/test/resources/decision-service.dmn
+!/src/test/resources/0085-decision-services.dmn
 !/src/test/resources/EmploymentStatusDecision.java
 !/src/test/resources/EmploymentStatusDecision-missing-method.java
