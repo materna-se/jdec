@@ -159,9 +159,9 @@ public class JavaDecisionSession implements DecisionSession {
 		Map<String, byte[]> transpiledModels = new HashMap<>();
 		compiler.setClassFileCreator(new MapResourceCreator(transpiledModels));
 
-		List<String> messages = new LinkedList<>();
-		compiler.setWarningHandler((handle, message, location) -> messages.add(message + (location != null ? (" (Line: " + location.getLineNumber() + ", Column: " + location.getColumnNumber() + ")" ): "")));
-		compiler.setCompileErrorHandler((message, location) -> messages.add(message + (location != null ? (" (Line: " + location.getLineNumber() + ", Column: " + location.getColumnNumber() + ")" ): "")));
+		List<Message> messages = new LinkedList<>();
+		compiler.setWarningHandler((handle, message, location) -> messages.add(new Message(message + (location != null ? (" (Line: " + location.getLineNumber() + ", Column: " + location.getColumnNumber() + ")" ): ""), Message.Level.WARNING)));
+		compiler.setCompileErrorHandler((message, location) -> messages.add(new Message(message + (location != null ? (" (Line: " + location.getLineNumber() + ", Column: " + location.getColumnNumber() + ")" ): ""), Message.Level.ERROR)));
 
 		// The compiler is now configured, we can convert all models to resources and compile them afterwards.
 		Resource[] resources = new Resource[models.size()];

@@ -4,17 +4,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ImportResult {
-	private List<String> messages;
+	private List<Message> messages;
 
 	public ImportResult() {
 		this.messages = new LinkedList<>();
 	}
 
-	public ImportResult(List<String> messages) {
+	public ImportResult(List<Message> messages) {
 		this.messages = messages;
 	}
 
-	public List<String> getMessages() {
+	public List<Message> getMessages() {
 		return messages;
 	}
 }

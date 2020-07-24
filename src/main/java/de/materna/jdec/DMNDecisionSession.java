@@ -11,7 +11,6 @@ import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.KieModule;
-import org.kie.api.builder.Message;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.dmn.api.core.DMNContext;
@@ -82,13 +81,13 @@ public class DMNDecisionSession implements DecisionSession {
 	 */
 	@Override
 	public ImportResult importModel(String namespace, String model) throws ModelImportException {
-		List<String> messages = new LinkedList<>();
+		List<Message> messages = new LinkedList<>();
 
 		//REMOVEME When Actico starts properly exporting models that contain decision services
 		ConversionResult conversionResult = ActicoConverter.convertModel(model);
 		if (conversionResult.isFixed()) {
 			model = conversionResult.getModel();
-			messages.add("The imported model " + namespace + " was exported by ACTICO and was automatically converted to support decision services.");
+			messages.add(new Message("The imported model " + namespace + " was exported by ACTICO and was automatically converted to support decision services.", Message.Level.INFO));
 		}
 
 		kieFileSystem.write(getPath(namespace), model);
@@ -188,7 +187,7 @@ public class DMNDecisionSession implements DecisionSession {
 	 * @param messages Warnings that occurred during compilation.
 	 * @return Warnings that occurred during compilation.
 	 */
-	private ImportResult compileModels(List<String> messages) throws ModelImportException {
+	private ImportResult compileModels(List<Message> messages) throws ModelImportException {
 		KieBuilder kieBuilder = null;
 
 		try {
@@ -226,16 +225,17 @@ public class DMNDecisionSession implements DecisionSession {
 				else {
 					messages.addAll(convertMessages(kieBuilder.getResults().getMessages()));
 				}
-
-				throw new ModelImportException(new ImportResult(messages));
 			}
 			catch (Exception e) {
 				if (e.getMessage() == null) {
-					throw new ModelImportException(new ImportResult(Collections.singletonList("An unknown error has occurred in Drools. Please refer to the logs for further information.")));
+					messages = Collections.singletonList(new Message("An unknown error has occurred in Drools. Please refer to the logs for further information.", Message.Level.ERROR));
 				}
-
-				throw new ModelImportException(new ImportResult(Collections.singletonList(e.getMessage())));
+				else {
+					messages = Collections.singletonList(new Message(e.getMessage(), Message.Level.ERROR));
+				}
 			}
+
+			throw new ModelImportException(new ImportResult(messages));
 		}
 	}
 
@@ -248,8 +248,8 @@ public class DMNDecisionSession implements DecisionSession {
 		profiles.add(new KieExtendedFEELProfile());
 		FEEL feel = FEEL.newInstance(profiles);
 
-		List<String> messages = new LinkedList<>();
-		feel.addListener(feelEvent -> messages.add(feelEvent.getMessage()));
+		List<Message> messages = new LinkedList<>();
+		feel.addListener(feelEvent -> messages.add(new Message(feelEvent.getMessage(), DroolsHelper.convertMessageLevel(feelEvent.getSeverity()))));
 
 		HashMap<String, Object> decisions = new LinkedHashMap<>();
 		decisions.put("main", DroolsHelper.cleanResult(feel.evaluate(expression, inputs)));
@@ -257,10 +257,10 @@ public class DMNDecisionSession implements DecisionSession {
 		return new ExecutionResult(decisions, null, messages);
 	}
 
-	private List<String> convertMessages(List<Message> messages) {
-		List<String> convertedMessages = new LinkedList<>();
-		for (Message message : messages) {
-			convertedMessages.add(message.getText());
+	private List<Message> convertMessages(List<org.kie.api.builder.Message> messages) {
+		List<Message> convertedMessages = new LinkedList<>();
+		for (org.kie.api.builder.Message message : messages) {
+			convertedMessages.add(new Message(message.getText(), Message.Level.valueOf(message.getLevel().name())));
 		}
 		return convertedMessages;
 	}

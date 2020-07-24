@@ -1,10 +1,12 @@
 package de.materna.jdec.dmn;
 
+import de.materna.jdec.model.Message;
 import de.materna.jdec.model.ModelNotFoundException;
 import org.apache.log4j.Logger;
 import org.kie.dmn.api.core.DMNModel;
 import org.kie.dmn.api.core.DMNRuntime;
 import org.kie.dmn.api.core.DMNUnaryTest;
+import org.kie.dmn.api.feel.runtime.events.FEELEvent;
 import org.kie.dmn.core.ast.DMNFunctionDefinitionEvaluator;
 import org.kie.dmn.feel.runtime.functions.JavaFunction;
 
@@ -73,5 +75,17 @@ public class DroolsHelper {
 		}
 
 		return result;
+	}
+
+	public static Message.Level convertMessageLevel(FEELEvent.Severity severity) {
+		switch (severity) {
+			case TRACE:
+			case INFO:
+				return Message.Level.INFO;
+			case WARN:
+				return Message.Level.WARNING;
+			default:
+				return Message.Level.ERROR;
+		}
 	}
 }

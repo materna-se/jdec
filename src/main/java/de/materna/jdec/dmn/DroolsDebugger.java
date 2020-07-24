@@ -1,9 +1,11 @@
 package de.materna.jdec.dmn;
 
 import de.materna.jdec.DMNDecisionSession;
+import de.materna.jdec.model.Message;
 import de.materna.jdec.model.ModelContext;
 import org.kie.dmn.api.core.DMNMessage;
 import org.kie.dmn.api.core.event.*;
+import org.kie.dmn.api.feel.runtime.events.FEELEvent;
 
 import java.util.*;
 
@@ -12,7 +14,7 @@ public class DroolsDebugger {
 
 	private Map<String, Map<String, Object>> decisions = new LinkedHashMap<>();
 	private Stack<String> decisionStack = new Stack<>();
-	private List<String> messages = new LinkedList<>();
+	private List<Message> messages = new LinkedList<>();
 	private Stack<ModelContext> contextStack;
 
 	private DMNRuntimeEventListener listener;
@@ -117,8 +119,8 @@ public class DroolsDebugger {
 			public void afterEvaluateDecision(AfterEvaluateDecisionEvent event) {
 				synchronized (decisionSession.getRuntime()) {
 					for (DMNMessage message : event.getResult().getMessages()) {
-						// noinspection deprecation
-						messages.add(message.getMessage());
+						FEELEvent feelEvent = message.getFeelEvent();
+						messages.add(new Message(feelEvent.getMessage(), DroolsHelper.convertMessageLevel(feelEvent.getSeverity())));
 					}
 
 					decisionStack.pop();
@@ -136,7 +138,7 @@ public class DroolsDebugger {
 		return decisions;
 	}
 
-	public List<String> getMessages() {
+	public List<Message> getMessages() {
 		return messages;
 	}
 }

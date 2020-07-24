@@ -6,12 +6,12 @@ import java.util.Map;
 public class ExecutionResult {
 	private Map<String, Object> outputs;
 	private Map<String, Map<String, Object>> context;
-	private List<String> messages;
+	private List<Message> messages;
 
 	public ExecutionResult() {
 	}
 
-	public ExecutionResult(Map<String, Object> outputs, Map<String, Map<String, Object>> context, List<String> messages) {
+	public ExecutionResult(Map<String, Object> outputs, Map<String, Map<String, Object>> context, List<Message> messages) {
 		this.outputs = outputs;
 		this.context = context;
 		this.messages = messages;
@@ -25,7 +25,7 @@ public class ExecutionResult {
 		return context;
 	}
 
-	public List<String> getMessages() {
+	public List<Message> getMessages() {
 		return messages;
 	}
 }
