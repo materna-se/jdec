@@ -208,7 +208,14 @@ public class DMNDecisionSession implements DecisionSession {
 			// Get the KieRuntime through the established connection
 			kieRuntime = kieSession.getKieRuntime(DMNRuntime.class);
 
-			return new ImportResult(convertMessages(kieBuilder.getResults().getMessages()));
+			if (messages == null) {
+				messages = convertMessages(kieBuilder.getResults().getMessages());
+			}
+			else {
+				messages.addAll(convertMessages(kieBuilder.getResults().getMessages()));
+			}
+
+			return new ImportResult(messages);
 		}
 		catch (Exception exception) {
 			try {
@@ -219,6 +226,8 @@ public class DMNDecisionSession implements DecisionSession {
 				else {
 					messages.addAll(convertMessages(kieBuilder.getResults().getMessages()));
 				}
+
+				throw new ModelImportException(new ImportResult(messages));
 			}
 			catch (Exception e) {
 				if (e.getMessage() == null) {
@@ -227,8 +236,6 @@ public class DMNDecisionSession implements DecisionSession {
 
 				throw new ModelImportException(new ImportResult(Collections.singletonList(e.getMessage())));
 			}
-
-			throw new ModelImportException(new ImportResult(messages));
 		}
 	}
 

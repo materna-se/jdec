@@ -2,10 +2,7 @@ package de.materna.jdec.dmn;
 
 import de.materna.jdec.DMNDecisionSession;
 import de.materna.jdec.DecisionSession;
-import de.materna.jdec.model.ExecutionResult;
-import de.materna.jdec.model.InputStructure;
-import de.materna.jdec.model.ModelImportException;
-import de.materna.jdec.model.ModelNotFoundException;
+import de.materna.jdec.model.*;
 import de.materna.jdec.serialization.SerializationHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -153,7 +150,8 @@ public class DMNDecisionSessionTest {
 
 		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("decision-service.dmn").toURI());
 		String decision = new String(Files.readAllBytes(decisionPath));
-		decisionSession.importModel("decision-service-actico", decision);
+		ImportResult importResult = decisionSession.importModel("decision-service-actico", decision);
+		Assertions.assertTrue(importResult.getMessages().get(0).contains("automatically converted to support decision services"));
 
 		Map<String, Object> inputs = new HashMap<>();
 		inputs.put("Input", "test");
