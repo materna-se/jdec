@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DMNDecisionSessionTest {
@@ -57,7 +58,11 @@ public class DMNDecisionSessionTest {
 			decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
 		}
 		catch (ModelImportException e) {
-			Assertions.assertTrue(e.getResult().getMessages().get(0).contains("An unknown error has occurred in Drools"));
+			List<Message> messages = e.getResult().getMessages();
+			Assertions.assertEquals(1, messages.size());
+			Message message = messages.get(0);
+			Assertions.assertTrue(message.getText().contains("An unknown error has occurred in Drools"));
+			Assertions.assertEquals(Message.Level.ERROR, message.getLevel());
 		}
 	}
 
@@ -87,7 +92,11 @@ public class DMNDecisionSessionTest {
 			}
 		}
 		catch (ModelImportException e) {
-			Assertions.assertTrue(e.getResult().getMessages().get(0).contains("Duplicate model name"));
+			List<Message> messages = e.getResult().getMessages();
+			Assertions.assertEquals(1, messages.size());
+			Message message = messages.get(0);
+			Assertions.assertTrue(message.getText().contains("Duplicate model name"));
+			Assertions.assertEquals(Message.Level.ERROR, message.getLevel());
 		}
 	}
 
@@ -151,7 +160,10 @@ public class DMNDecisionSessionTest {
 		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("decision-service.dmn").toURI());
 		String decision = new String(Files.readAllBytes(decisionPath));
 		ImportResult importResult = decisionSession.importModel("decision-service-actico", decision);
-		Assertions.assertTrue(importResult.getMessages().get(0).contains("automatically converted to support decision services"));
+		Assertions.assertEquals(1, importResult.getMessages().size());
+		Message message = importResult.getMessages().get(0);
+		Assertions.assertTrue(message.getText().contains("automatically converted to support decision services"));
+		Assertions.assertEquals(Message.Level.INFO, message.getLevel());
 
 		Map<String, Object> inputs = new HashMap<>();
 		inputs.put("Input", "test");

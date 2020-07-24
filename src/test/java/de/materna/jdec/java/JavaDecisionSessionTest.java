@@ -3,9 +3,9 @@ package de.materna.jdec.java;
 import de.materna.jdec.DecisionSession;
 import de.materna.jdec.JavaDecisionSession;
 import de.materna.jdec.model.ExecutionResult;
+import de.materna.jdec.model.ImportResult;
 import de.materna.jdec.model.Model;
 import de.materna.jdec.model.ModelImportException;
-import de.materna.jdec.serialization.SerializationHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +22,8 @@ public class JavaDecisionSessionTest {
 
 		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("EmploymentStatusDecision.java").toURI());
 		String decision = new String(Files.readAllBytes(decisionPath));
-		decisionSession.importModel("de.materna.jdec.java.test.EmploymentStatusDecision", decision);
+		ImportResult importResult = decisionSession.importModel("de.materna.jdec.java.test.EmploymentStatusDecision", decision);
+		Assertions.assertEquals(3, importResult.getMessages().size());
 
 		Model model = decisionSession.getModel("de.materna.jdec.java.test.EmploymentStatusDecision");
 		Assertions.assertEquals("de.materna.jdec.java.test.EmploymentStatusDecision", model.getNamespace());
@@ -36,7 +37,8 @@ public class JavaDecisionSessionTest {
 
 		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("EmploymentStatusDecision.java").toURI());
 		String decision = new String(Files.readAllBytes(decisionPath));
-		decisionSession.importModel("de.materna.jdec.java.test.EmploymentStatusDecision", decision);
+		ImportResult importResult = decisionSession.importModel("de.materna.jdec.java.test.EmploymentStatusDecision", decision);
+		Assertions.assertEquals(3, importResult.getMessages().size());
 
 		Map<String, Object> inputs = new HashMap<>();
 		inputs.put("Employment Status", "UNEMPLOYED");
