@@ -60,7 +60,7 @@ public class DMNDecisionSessionTest {
 			decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
 		}
 		catch (ModelImportException e) {
-			Assertions.assertTrue(e.getResult().getMessages().get(0).contains("Error unmarshalling"));
+			Assertions.assertTrue(e.getResult().getMessages().get(0).contains("An unknown error has occurred in Drools"));
 		}
 	}
 

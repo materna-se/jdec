@@ -1,9 +1,10 @@
 package de.materna.jdec;
 
-import de.materna.jdec.dmn.ActicoHelper;
 import de.materna.jdec.dmn.DroolsAnalyzer;
 import de.materna.jdec.dmn.DroolsDebugger;
 import de.materna.jdec.dmn.DroolsHelper;
+import de.materna.jdec.dmn.conversions.ActicoConverter;
+import de.materna.jdec.dmn.conversions.ConversionResult;
 import de.materna.jdec.model.*;
 import org.apache.log4j.Logger;
 import org.kie.api.KieServices;
@@ -20,11 +21,7 @@ import org.kie.dmn.api.core.DMNRuntime;
 import org.kie.dmn.feel.FEEL;
 import org.kie.dmn.feel.lang.FEELProfile;
 import org.kie.dmn.feel.parser.feel11.profiles.KieExtendedFEELProfile;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,7 +39,7 @@ public class DMNDecisionSession implements DecisionSession {
 		kieServices = KieServices.Factory.get();
 		kieFileSystem = kieServices.newKieFileSystem();
 		try {
-			compileModels();
+			compileModels(null);
 		}
 		catch (ModelImportException ignored) {
 		}
@@ -85,18 +82,19 @@ public class DMNDecisionSession implements DecisionSession {
 	 */
 	@Override
 	public ImportResult importModel(String namespace, String model) throws ModelImportException {
+		List<String> messages = new LinkedList<>();
+
 		//REMOVEME When Actico starts properly exporting models that contain decision services
-		try {
-			model = ActicoHelper.fixActicoDecisionServices(model);
-		}
-		catch (IOException | SAXException | ParserConfigurationException | TransformerException e) {
-			e.printStackTrace();
+		ConversionResult conversionResult = ActicoConverter.convertModel(model);
+		if (conversionResult.isFixed()) {
+			model = conversionResult.getModel();
+			messages.add("The imported model " + namespace + " was exported by ACTICO and was automatically converted to support decision services.");
 		}
 
 		kieFileSystem.write(getPath(namespace), model);
 
 		try {
-			return compileModels();
+			return compileModels(messages);
 		}
 		catch (ModelImportException exception) {
 			// Before we can throw the exception, we need to delete the imported model.
@@ -110,7 +108,7 @@ public class DMNDecisionSession implements DecisionSession {
 	@Override
 	public void deleteModel(String namespace) throws ModelImportException {
 		kieFileSystem.delete(getPath(namespace));
-		compileModels();
+		compileModels(null);
 	}
 
 	//
@@ -187,9 +185,10 @@ public class DMNDecisionSession implements DecisionSession {
 	/**
 	 * Reloads the service by compiling the decision models.
 	 *
+	 * @param messages Warnings that occurred during compilation.
 	 * @return Warnings that occurred during compilation.
 	 */
-	private ImportResult compileModels() throws ModelImportException {
+	private ImportResult compileModels(List<String> messages) throws ModelImportException {
 		KieBuilder kieBuilder = null;
 
 		try {
@@ -212,28 +211,25 @@ public class DMNDecisionSession implements DecisionSession {
 			return new ImportResult(convertMessages(kieBuilder.getResults().getMessages()));
 		}
 		catch (Exception exception) {
-			List<Message> messages;
 			try {
-				// May produce a NullPointerException in org.kie.dmn.core.assembler.DMNAssemblerService.
-				messages = kieBuilder.getResults().getMessages();
+				// kieBuilder.getResults() may produce a NullPointerException in org.kie.dmn.core.assembler.DMNAssemblerService.
+				if (messages == null) {
+					messages = convertMessages(kieBuilder.getResults().getMessages());
+				}
+				else {
+					messages.addAll(convertMessages(kieBuilder.getResults().getMessages()));
+				}
 			}
 			catch (Exception e) {
 				if (e.getMessage() == null) {
-					throw new ModelImportException(new ImportResult(Collections.singletonList("Error unmarshalling DMN.")));
+					throw new ModelImportException(new ImportResult(Collections.singletonList("An unknown error has occurred in Drools. Please refer to the logs for further information.")));
 				}
 
 				throw new ModelImportException(new ImportResult(Collections.singletonList(e.getMessage())));
 			}
-			throw new ModelImportException(new ImportResult(convertMessages(messages)));
-		}
-	}
 
-	private List<String> convertMessages(List<Message> messages) {
-		List<String> convertedMessages = new LinkedList<>();
-		for (Message message : messages) {
-			convertedMessages.add(message.getText());
+			throw new ModelImportException(new ImportResult(messages));
 		}
-		return convertedMessages;
 	}
 
 	public DMNRuntime getRuntime() {
@@ -252,5 +248,13 @@ public class DMNDecisionSession implements DecisionSession {
 		decisions.put("main", DroolsHelper.cleanResult(feel.evaluate(expression, inputs)));
 
 		return new ExecutionResult(decisions, null, messages);
+	}
+
+	private List<String> convertMessages(List<Message> messages) {
+		List<String> convertedMessages = new LinkedList<>();
+		for (Message message : messages) {
+			convertedMessages.add(message.getText());
+		}
+		return convertedMessages;
 	}
 }
