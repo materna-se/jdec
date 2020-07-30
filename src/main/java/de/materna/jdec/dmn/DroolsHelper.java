@@ -3,6 +3,7 @@ package de.materna.jdec.dmn;
 import de.materna.jdec.model.Message;
 import de.materna.jdec.model.ModelNotFoundException;
 import org.apache.log4j.Logger;
+import org.kie.dmn.api.core.DMNMessage;
 import org.kie.dmn.api.core.DMNModel;
 import org.kie.dmn.api.core.DMNRuntime;
 import org.kie.dmn.api.core.DMNUnaryTest;
@@ -77,7 +78,19 @@ public class DroolsHelper {
 		return result;
 	}
 
-	public static Message.Level convertMessageLevel(FEELEvent.Severity severity) {
+	public static Message.Level convertMessageLevel(DMNMessage.Severity severity) {
+		switch (severity) {
+			case TRACE:
+			case INFO:
+				return Message.Level.INFO;
+			case WARN:
+				return Message.Level.WARNING;
+			default:
+				return Message.Level.ERROR;
+		}
+	}
+
+	public static Message.Level convertFEELEventLevel(FEELEvent.Severity severity) {
 		switch (severity) {
 			case TRACE:
 			case INFO:
