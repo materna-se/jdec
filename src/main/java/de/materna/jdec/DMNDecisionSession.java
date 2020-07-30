@@ -249,7 +249,7 @@ public class DMNDecisionSession implements DecisionSession {
 		FEEL feel = FEEL.newInstance(profiles);
 
 		List<Message> messages = new LinkedList<>();
-		feel.addListener(feelEvent -> messages.add(new Message(feelEvent.getMessage(), DroolsHelper.convertMessageLevel(feelEvent.getSeverity()))));
+		feel.addListener(feelEvent -> messages.add(new Message(feelEvent.getMessage(), DroolsHelper.convertFEELEventLevel(feelEvent.getSeverity()))));
 
 		HashMap<String, Object> decisions = new LinkedHashMap<>();
 		decisions.put("main", DroolsHelper.cleanResult(feel.evaluate(expression, inputs)));
