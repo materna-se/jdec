@@ -88,7 +88,11 @@ public class ActicoConverter {
 			StringWriter stringWriter = new StringWriter();
 			transformer.transform(new DOMSource(document), new StreamResult(stringWriter));
 
-			return new ConversionResult(true, stringWriter.toString());
+			String convertedDocument = stringWriter.toString();
+			convertedDocument = convertedDocument.replaceAll(">feel:(.*?)<", ">$1<");
+			convertedDocument = convertedDocument.replaceAll("\"feel:(.*?)\"", "\"$1\"");
+
+			return new ConversionResult(true, convertedDocument);
 		}
 		catch (IOException | SAXException | ParserConfigurationException | TransformerException e) {
 			e.printStackTrace();
