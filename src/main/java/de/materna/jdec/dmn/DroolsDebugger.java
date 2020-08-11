@@ -2,10 +2,11 @@ package de.materna.jdec.dmn;
 
 import de.materna.jdec.DMNDecisionSession;
 import de.materna.jdec.model.Message;
+import de.materna.jdec.model.ModelAccess;
 import de.materna.jdec.model.ModelContext;
 import org.kie.dmn.api.core.DMNMessage;
 import org.kie.dmn.api.core.event.*;
-import org.kie.dmn.api.feel.runtime.events.FEELEvent;
+import org.kie.dmn.feel.runtime.FEELFunction;
 
 import java.util.*;
 
@@ -14,8 +15,11 @@ public class DroolsDebugger {
 
 	private Map<String, Map<String, Object>> decisions = new LinkedHashMap<>();
 	private Stack<String> decisionStack = new Stack<>();
-	private List<Message> messages = new LinkedList<>();
 	private Stack<ModelContext> contextStack;
+
+	private List<Message> messages = new LinkedList<>();
+
+	private Stack<ModelAccess> modelAccessLog = new Stack<>();
 
 	private DMNRuntimeEventListener listener;
 
@@ -26,13 +30,47 @@ public class DroolsDebugger {
 	public void start(String namespace, String name) {
 		listener = new DMNRuntimeEventListener() {
 			@Override
+			public void beforeEvaluateDecisionService(BeforeEvaluateDecisionServiceEvent event) {
+				// FIX: If the model contains a decision service is executed, beforeEvaluateAll is not executed.
+				synchronized (decisionSession.getRuntime()) {
+					modelAccessLog.push(new ModelAccess(ModelAccess.ModelAccessType.MODEL, name));
+				}
+			}
+
+			@Override
+			public void beforeEvaluateAll(BeforeEvaluateAllEvent event) {
+				synchronized (decisionSession.getRuntime()) {
+					modelAccessLog.push(new ModelAccess(ModelAccess.ModelAccessType.MODEL, name));
+				}
+			}
+
+			@Override
 			public void beforeEvaluateDecision(BeforeEvaluateDecisionEvent event) {
 				synchronized (decisionSession.getRuntime()) {
 					// If the model name of the evaluated decision does not match the main model name, we need to prefix it.
 					String modelName = event.getDecision().getModelName();
-					decisionStack.push((modelName.equals(name) ? "" : modelName + ".") + event.getDecision().getName());
+					String decisionName = (modelName.equals(name) ? "" : modelName + ".") + event.getDecision().getName();
+
+					decisionStack.push(decisionName);
 					decisions.put(decisionStack.peek(), new LinkedHashMap<>());
 					contextStack = new Stack<>();
+
+					ModelAccess modelAccess = new ModelAccess(ModelAccess.ModelAccessType.DECISION, decisionName, cleanInternalContext(event.getResult().getContext().getAll()));
+					modelAccessLog.peek().getChildren().add(modelAccess);
+					modelAccessLog.push(modelAccess);
+				}
+			}
+
+			@Override
+			public void beforeInvokeBKM(BeforeInvokeBKMEvent event) {
+				synchronized (decisionSession.getRuntime()) {
+					// If the model name of the evaluated knowledge model does not match the main model name, we need to prefix it.
+					String modelName = event.getBusinessKnowledgeModel().getModelName();
+					String knowledgeModelName = (modelName.equals(name) ? "" : modelName + ".") + event.getBusinessKnowledgeModel().getName();
+
+					ModelAccess modelAccess = new ModelAccess(ModelAccess.ModelAccessType.KNOWLEDGE_MODEL, knowledgeModelName, cleanInternalContext(event.getResult().getContext().getAll()));
+					modelAccessLog.peek().getChildren().add(modelAccess);
+					modelAccessLog.push(modelAccess);
 				}
 			}
 
@@ -118,12 +156,37 @@ public class DroolsDebugger {
 			@Override
 			public void afterEvaluateDecision(AfterEvaluateDecisionEvent event) {
 				synchronized (decisionSession.getRuntime()) {
+					System.out.println("afterEvaluateDecision");
 					for (DMNMessage message : event.getResult().getMessages()) {
-						FEELEvent feelEvent = message.getFeelEvent();
-						messages.add(new Message(feelEvent.getMessage(), DroolsHelper.convertMessageLevel(feelEvent.getSeverity())));
+						messages.add(new Message(message.getMessage(), DroolsHelper.convertMessageLevel(message.getSeverity())));
 					}
 
 					decisionStack.pop();
+
+					modelAccessLog.peek().setExitContext(cleanInternalContext(event.getResult().getContext().getAll()));
+					modelAccessLog.pop();
+				}
+			}
+
+			@Override
+			public void afterInvokeBKM(AfterInvokeBKMEvent event) {
+				synchronized (decisionSession.getRuntime()) {
+					modelAccessLog.peek().setExitContext(cleanInternalContext(event.getResult().getContext().getAll()));
+					modelAccessLog.pop();
+				}
+			}
+
+			@Override
+			public void afterEvaluateDecisionService(AfterEvaluateDecisionServiceEvent event) {
+				synchronized (decisionSession.getRuntime()) {
+					modelAccessLog.peek().setExitContext(cleanInternalContext(event.getResult().getContext().getAll()));
+				}
+			}
+
+			@Override
+			public void afterEvaluateAll(AfterEvaluateAllEvent event) {
+				synchronized (decisionSession.getRuntime()) {
+					modelAccessLog.peek().setExitContext(cleanInternalContext(event.getResult().getContext().getAll()));
 				}
 			}
 		};
@@ -138,7 +201,23 @@ public class DroolsDebugger {
 		return decisions;
 	}
 
+	public Stack<ModelAccess> getModelAccessLog() {
+		return modelAccessLog;
+	}
+
 	public List<Message> getMessages() {
 		return messages;
+	}
+
+	private Map<String, Object> cleanInternalContext(Map<String, Object> internalContext) {
+		Map<String, Object> cleanedInternalContext = new HashMap<>();
+		for (Map.Entry<String, Object> entry : internalContext.entrySet()) {
+			if (entry.getValue() instanceof FEELFunction) {
+				continue;
+			}
+
+			cleanedInternalContext.put(entry.getKey(), entry.getValue());
+		}
+		return cleanedInternalContext;
 	}
 }

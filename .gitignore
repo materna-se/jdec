@@ -30,5 +30,6 @@
 !/src/test/resources/import-child-child.dmn
 !/src/test/resources/decision-service.dmn
 !/src/test/resources/0085-decision-services.dmn
+!/src/test/resources/access.dmn
 !/src/test/resources/EmploymentStatusDecision.java
 !/src/test/resources/EmploymentStatusDecision-missing-method.java

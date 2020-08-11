@@ -190,4 +190,17 @@ public class DMNDecisionSessionTest {
 		Assertions.assertTrue(outputs.containsKey("main"));
 		Assertions.assertEquals("You are UNEMPLOYED", outputs.get("main"));
 	}
+
+	@Test
+	void executeModelWithDebuggedAccessLog() throws IOException, URISyntaxException {
+		DecisionSession decisionSession = new DMNDecisionSession();
+
+		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("access.dmn").toURI());
+		String decision = new String(Files.readAllBytes(decisionPath));
+		decisionSession.importModel("access", decision);
+
+		ExecutionResult executionResult = decisionSession.executeModel("access",  new HashMap<>());
+		Map<String, Object> outputs = executionResult.getOutputs();
+		System.out.println("executeHashMap(): " + outputs);
+	}
 }

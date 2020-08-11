@@ -6,6 +6,7 @@ import de.materna.jdec.dmn.DroolsHelper;
 import de.materna.jdec.dmn.conversions.ActicoConverter;
 import de.materna.jdec.dmn.conversions.ConversionResult;
 import de.materna.jdec.model.*;
+import de.materna.jdec.serialization.SerializationHelper;
 import org.apache.log4j.Logger;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
@@ -174,7 +175,7 @@ public class DMNDecisionSession implements DecisionSession {
 			outputs.put(decisionResult.getDecisionName(), decisionResult.getResult());
 		}
 
-		return new ExecutionResult(outputs, debugger.getDecisions(), debugger.getMessages());
+		return new ExecutionResult(outputs, debugger.getDecisions(), debugger.getModelAccessLog(), debugger.getMessages());
 	}
 
 	private String getPath(String namespace) {
