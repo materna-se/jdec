@@ -17,6 +17,11 @@ public class Message {
 		return level;
 	}
 
+	@Override
+	public String toString() {
+		return "Message{" + "text='" + text + '\'' + ", level=" + level + '}';
+	}
+
 	public enum Level {
 		INFO,
 		WARNING,
