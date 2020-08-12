@@ -12,6 +12,9 @@ public class ModelAccess {
 	private Map<String, Object> exitContext = new HashMap<>();
 	private List<ModelAccess> children = new LinkedList<>();
 
+	public ModelAccess() {
+	}
+
 	public ModelAccess(ModelAccessType accessType, String name) {
 		this.accessType = accessType;
 		this.name = name;
