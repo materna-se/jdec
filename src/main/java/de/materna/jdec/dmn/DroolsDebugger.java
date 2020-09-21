@@ -156,7 +156,6 @@ public class DroolsDebugger {
 			@Override
 			public void afterEvaluateDecision(AfterEvaluateDecisionEvent event) {
 				synchronized (decisionSession.getRuntime()) {
-					System.out.println("afterEvaluateDecision");
 					for (DMNMessage message : event.getResult().getMessages()) {
 						messages.add(new Message(message.getMessage(), DroolsHelper.convertMessageLevel(message.getSeverity())));
 					}

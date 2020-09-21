@@ -24,8 +24,8 @@ public class JavaDecisionSession implements DecisionSession {
 	private ClassLoader classLoader;
 	private ClassLoader parentClassLoader;
 
-	private Map<String, String> models = new HashMap<>();
-	private Map<String, DecisionModel> compiledModels = new HashMap<>();
+	private Map<String, String> models = new LinkedHashMap<>();
+	private Map<String, DecisionModel> compiledModels = new LinkedHashMap<>();
 
 	public JavaDecisionSession() throws Exception {
 		parentClassLoader = Thread.currentThread().getContextClassLoader();
@@ -44,7 +44,7 @@ public class JavaDecisionSession implements DecisionSession {
 
 
 	@Override
-	public Set<Model> getModels() {
+	public List<Model> getModels() {
 		return compiledModels.entrySet().stream().map(entry -> {
 			try {
 				return getModel(entry.getKey());
@@ -52,7 +52,7 @@ public class JavaDecisionSession implements DecisionSession {
 			catch (ModelNotFoundException ignored) {
 			}
 			return null; // In theory, this can't happen.
-		}).collect(Collectors.toSet());
+		}).collect(Collectors.toList());
 	}
 
 	@Override
@@ -156,12 +156,12 @@ public class JavaDecisionSession implements DecisionSession {
 	 */
 	private ImportResult compileModels() throws ModelImportException {
 		// The compiler needs to be configured before every compilation.
-		Map<String, byte[]> transpiledModels = new HashMap<>();
+		Map<String, byte[]> transpiledModels = new LinkedHashMap<>();
 		compiler.setClassFileCreator(new MapResourceCreator(transpiledModels));
 
 		List<Message> messages = new LinkedList<>();
-		compiler.setWarningHandler((handle, message, location) -> messages.add(new Message(message + (location != null ? (" (Line: " + location.getLineNumber() + ", Column: " + location.getColumnNumber() + ")" ): ""), Message.Level.WARNING)));
-		compiler.setCompileErrorHandler((message, location) -> messages.add(new Message(message + (location != null ? (" (Line: " + location.getLineNumber() + ", Column: " + location.getColumnNumber() + ")" ): ""), Message.Level.ERROR)));
+		compiler.setWarningHandler((handle, message, location) -> messages.add(new Message(message + (location != null ? (" (Line: " + location.getLineNumber() + ", Column: " + location.getColumnNumber() + ")") : ""), Message.Level.WARNING)));
+		compiler.setCompileErrorHandler((message, location) -> messages.add(new Message(message + (location != null ? (" (Line: " + location.getLineNumber() + ", Column: " + location.getColumnNumber() + ")") : ""), Message.Level.ERROR)));
 
 		// The compiler is now configured, we can convert all models to resources and compile them afterwards.
 		Resource[] resources = new Resource[models.size()];

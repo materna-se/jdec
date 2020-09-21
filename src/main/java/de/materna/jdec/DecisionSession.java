@@ -2,14 +2,14 @@ package de.materna.jdec;
 
 import de.materna.jdec.model.*;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public interface DecisionSession {
 	/**
 	 * Returns information about all decision models.
 	 */
-	Set<Model> getModels();
+	List<Model> getModels();
 
 	/**
 	 * Returns information about the decision model.

@@ -2,9 +2,9 @@ package de.materna.jdec;
 
 import de.materna.jdec.model.*;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class HybridDecisionSession implements DecisionSession {
@@ -15,7 +15,7 @@ public class HybridDecisionSession implements DecisionSession {
 	public HybridDecisionSession() throws Exception {
 		dmnDecisionSession = new DMNDecisionSession();
 		javaDecisionSession = new JavaDecisionSession();
-		decisionSessionMapping = new HashMap<>();
+		decisionSessionMapping = new LinkedHashMap<>();
 	}
 
 	//
@@ -23,7 +23,7 @@ public class HybridDecisionSession implements DecisionSession {
 	//
 
 	@Override
-	public Set<Model> getModels() {
+	public List<Model> getModels() {
 		return decisionSessionMapping.entrySet().stream().map(entry -> {
 			try {
 				return getModel(entry.getKey());
@@ -31,7 +31,7 @@ public class HybridDecisionSession implements DecisionSession {
 			catch (ModelNotFoundException ignored) {
 			}
 			return null; // In theory, this can't happen.
-		}).collect(Collectors.toSet());
+		}).collect(Collectors.toList());
 	}
 
 	@Override

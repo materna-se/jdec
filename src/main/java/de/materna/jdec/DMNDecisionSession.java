@@ -6,7 +6,6 @@ import de.materna.jdec.dmn.DroolsHelper;
 import de.materna.jdec.dmn.conversions.ActicoConverter;
 import de.materna.jdec.dmn.conversions.ConversionResult;
 import de.materna.jdec.model.*;
-import de.materna.jdec.serialization.SerializationHelper;
 import org.apache.log4j.Logger;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
@@ -50,7 +49,7 @@ public class DMNDecisionSession implements DecisionSession {
 	//
 
 	@Override
-	public Set<Model> getModels() {
+	public List<Model> getModels() {
 		return kieRuntime.getModels().stream().map(model -> {
 			try {
 				return getModel(model.getNamespace());
@@ -58,7 +57,7 @@ public class DMNDecisionSession implements DecisionSession {
 			catch (ModelNotFoundException ignored) {
 			}
 			return null; // In theory, this can't happen.
-		}).collect(Collectors.toSet());
+		}).collect(Collectors.toList());
 	}
 
 	@Override
