@@ -11,7 +11,7 @@ jDEC is a Java library designed to provide a unified interface for executing dec
 
 ## Download
 
-jDEC is published to the Maven Central Repository. To get the release versions, you can add the following dependency to your your build management tool. In addition, snapshot versions are published at more regular intervals to the Maven Snapshot Repository. All available versions are also tagged and can be seen on https://github.com/materna-se/jdec/releases.
+jDEC is published to the Maven Central Repository. To get the release versions, you can add the following dependency to your your build management tool. In addition, snapshot versions are published at more regular intervals to the Maven Snapshot Repository. All available versions are also tagged and can be seen at https://github.com/materna-se/jdec/releases.
 
 ### Maven
 ```xml
