@@ -43,7 +43,7 @@ public class DroolsAnalyzer {
 			}
 			// All other inputs are resolved and added recursively via the import elements attatched to the definition element.
 			for (Import _import : model.getDefinitions().getImport()) {
-				inputs.put(_import.getNamespace(), getComplexInputStructure(runtime, _import.getNamespace(), null));
+				inputs.put(DroolsHelper.getModel(runtime, _import.getNamespace()).getName(), getComplexInputStructure(runtime, _import.getNamespace(), null));
 			}
 		}
 		else {
