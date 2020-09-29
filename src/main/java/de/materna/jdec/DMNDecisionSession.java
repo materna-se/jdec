@@ -6,6 +6,7 @@ import de.materna.jdec.dmn.DroolsHelper;
 import de.materna.jdec.dmn.conversions.ActicoConverter;
 import de.materna.jdec.dmn.conversions.ConversionResult;
 import de.materna.jdec.model.*;
+import de.materna.jdec.serialization.SerializationHelper;
 import org.apache.log4j.Logger;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
@@ -17,9 +18,14 @@ import org.kie.dmn.api.core.DMNContext;
 import org.kie.dmn.api.core.DMNDecisionResult;
 import org.kie.dmn.api.core.DMNModel;
 import org.kie.dmn.api.core.DMNRuntime;
+import org.kie.dmn.api.core.ast.DecisionNode;
+import org.kie.dmn.api.core.ast.DecisionServiceNode;
+import org.kie.dmn.api.core.ast.InputDataNode;
 import org.kie.dmn.feel.FEEL;
 import org.kie.dmn.feel.lang.FEELProfile;
 import org.kie.dmn.feel.parser.feel11.profiles.KieExtendedFEELProfile;
+import org.kie.dmn.model.api.DMNElementReference;
+import org.kie.dmn.model.api.DecisionService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -142,7 +148,26 @@ public class DMNDecisionSession implements DecisionSession {
 	}
 
 	public Map<String, InputStructure> getInputStructure(String namespace, String decisionServiceName) throws ModelNotFoundException {
-		return (Map<String, InputStructure>) DroolsAnalyzer.getComplexInputStructure(kieRuntime, namespace, decisionServiceName).getValue();
+		DMNModel model = DroolsHelper.getModel(kieRuntime, namespace);
+
+		Optional<DecisionServiceNode> optionalDecisionServiceNode = model.getDecisionServices().stream().filter(decisionServiceNode -> decisionServiceNode.getName().equals(decisionServiceName)).findFirst();
+		if(!optionalDecisionServiceNode.isPresent()) {
+			throw new ModelNotFoundException();
+		}
+
+		List<DecisionServiceReference> decisionServiceReferences = new LinkedList<>();
+
+		DecisionService decisionService = optionalDecisionServiceNode.get().getDecisionService();
+		for (DMNElementReference reference : decisionService.getInputData()) {
+			String[] referenceChunks = reference.getHref().split("#");
+			decisionServiceReferences.add(new DecisionServiceReference(referenceChunks[0].equals("") ? model.getName() : DroolsHelper.getModel(kieRuntime, referenceChunks[0]).getName(), DecisionServiceReference.DecisionServiceReferenceType.INPUT, referenceChunks[1]));
+		}
+		for (DMNElementReference reference : decisionService.getInputDecision()) {
+			String[] referenceChunks = reference.getHref().split("#");
+			decisionServiceReferences.add(new DecisionServiceReference(referenceChunks[0].equals("") ? model.getName() : DroolsHelper.getModel(kieRuntime, referenceChunks[0]).getName(), DecisionServiceReference.DecisionServiceReferenceType.DECISION, referenceChunks[1]));
+		}
+
+		return (Map<String, InputStructure>) DroolsAnalyzer.getComplexInputStructure(kieRuntime, namespace, decisionServiceReferences).getValue();
 	}
 
 	//
