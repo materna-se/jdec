@@ -6,7 +6,6 @@ import de.materna.jdec.model.ModelAccess;
 import de.materna.jdec.model.ModelContext;
 import org.kie.dmn.api.core.DMNMessage;
 import org.kie.dmn.api.core.event.*;
-import org.kie.dmn.feel.runtime.FEELFunction;
 
 import java.util.*;
 
@@ -55,7 +54,7 @@ public class DroolsDebugger {
 					decisions.put(decisionStack.peek(), new LinkedHashMap<>());
 					contextStack = new Stack<>();
 
-					ModelAccess modelAccess = new ModelAccess(ModelAccess.ModelAccessType.DECISION, decisionName, cleanInternalContext(event.getResult().getContext().getAll()));
+					ModelAccess modelAccess = new ModelAccess(ModelAccess.ModelAccessType.DECISION, decisionName, DroolsHelper.cleanContext(event.getResult().getContext().getAll()));
 					modelAccessLog.peek().getChildren().add(modelAccess);
 					modelAccessLog.push(modelAccess);
 				}
@@ -68,7 +67,7 @@ public class DroolsDebugger {
 					String modelName = event.getBusinessKnowledgeModel().getModelName();
 					String knowledgeModelName = (modelName.equals(name) ? "" : modelName + ".") + event.getBusinessKnowledgeModel().getName();
 
-					ModelAccess modelAccess = new ModelAccess(ModelAccess.ModelAccessType.KNOWLEDGE_MODEL, knowledgeModelName, cleanInternalContext(event.getResult().getContext().getAll()));
+					ModelAccess modelAccess = new ModelAccess(ModelAccess.ModelAccessType.KNOWLEDGE_MODEL, knowledgeModelName, DroolsHelper.cleanContext(event.getResult().getContext().getAll()));
 					modelAccessLog.peek().getChildren().add(modelAccess);
 					modelAccessLog.push(modelAccess);
 				}
@@ -162,7 +161,7 @@ public class DroolsDebugger {
 
 					decisionStack.pop();
 
-					modelAccessLog.peek().setExitContext(cleanInternalContext(event.getResult().getContext().getAll()));
+					modelAccessLog.peek().setExitContext(DroolsHelper.cleanContext(event.getResult().getContext().getAll()));
 					modelAccessLog.pop();
 				}
 			}
@@ -170,7 +169,7 @@ public class DroolsDebugger {
 			@Override
 			public void afterInvokeBKM(AfterInvokeBKMEvent event) {
 				synchronized (decisionSession.getRuntime()) {
-					modelAccessLog.peek().setExitContext(cleanInternalContext(event.getResult().getContext().getAll()));
+					modelAccessLog.peek().setExitContext(DroolsHelper.cleanContext(event.getResult().getContext().getAll()));
 					modelAccessLog.pop();
 				}
 			}
@@ -178,14 +177,14 @@ public class DroolsDebugger {
 			@Override
 			public void afterEvaluateDecisionService(AfterEvaluateDecisionServiceEvent event) {
 				synchronized (decisionSession.getRuntime()) {
-					modelAccessLog.peek().setExitContext(cleanInternalContext(event.getResult().getContext().getAll()));
+					modelAccessLog.peek().setExitContext(DroolsHelper.cleanContext(event.getResult().getContext().getAll()));
 				}
 			}
 
 			@Override
 			public void afterEvaluateAll(AfterEvaluateAllEvent event) {
 				synchronized (decisionSession.getRuntime()) {
-					modelAccessLog.peek().setExitContext(cleanInternalContext(event.getResult().getContext().getAll()));
+					modelAccessLog.peek().setExitContext(DroolsHelper.cleanContext(event.getResult().getContext().getAll()));
 				}
 			}
 		};
@@ -206,17 +205,5 @@ public class DroolsDebugger {
 
 	public List<Message> getMessages() {
 		return messages;
-	}
-
-	private Map<String, Object> cleanInternalContext(Map<String, Object> internalContext) {
-		Map<String, Object> cleanedInternalContext = new HashMap<>();
-		for (Map.Entry<String, Object> entry : internalContext.entrySet()) {
-			if (entry.getValue() instanceof FEELFunction) {
-				continue;
-			}
-
-			cleanedInternalContext.put(entry.getKey(), entry.getValue());
-		}
-		return cleanedInternalContext;
 	}
 }

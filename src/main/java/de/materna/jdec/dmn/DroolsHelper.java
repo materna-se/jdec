@@ -9,6 +9,7 @@ import org.kie.dmn.api.core.DMNRuntime;
 import org.kie.dmn.api.core.DMNUnaryTest;
 import org.kie.dmn.api.feel.runtime.events.FEELEvent;
 import org.kie.dmn.core.ast.DMNFunctionDefinitionEvaluator;
+import org.kie.dmn.feel.runtime.FEELFunction;
 import org.kie.dmn.feel.runtime.functions.JavaFunction;
 
 import java.util.*;
@@ -71,11 +72,27 @@ public class DroolsHelper {
 			return cleanedResults;
 		}
 
-		if (result instanceof DMNFunctionDefinitionEvaluator.DMNFunction || result instanceof JavaFunction) {
+		if (result instanceof FEELFunction) {
 			return "__FUNCTION_DEFINITION__";
 		}
 
 		return result;
+	}
+
+	/**
+	 * The returned context of a decision or knowledge model contains all FEEL functions on the first level.
+	 * We need to remove separately before calling cleanResult to not pollute the context.
+	 */
+	public static Map<String, Object> cleanContext(Map<String, Object> context) {
+		Map<String, Object> cleanedInternalContext = new HashMap<>();
+		for (Map.Entry<String, Object> entry : context.entrySet()) {
+			if (entry.getValue() instanceof FEELFunction) {
+				continue;
+			}
+
+			cleanedInternalContext.put(entry.getKey(), cleanResult(entry.getValue()));
+		}
+		return cleanedInternalContext;
 	}
 
 	public static Message.Level convertMessageLevel(DMNMessage.Severity severity) {
