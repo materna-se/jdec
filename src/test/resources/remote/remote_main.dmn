@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dmn="http://www.omg.org/spec/DMN/20151101/dmn.xsd" xmlns:feel="http://www.omg.org/spec/FEEL/20140401" xmlns:layout="https://products.bfs-intra.net/milestones/vr/spec/20170328/dmndi.xsd" xmlns:remote_interface="remote_interface" xmlns:remote_util="remote_util" xsi:schemaLocation="http://www.omg.org/spec/DMN/20151101/dmn.xsd http://www.omg.org/spec/DMN/20151101/dmn.xsd" id="_lULGwP9BEeqE3LNEqHj2fA" name="remote_main" exporter="ACTICO Modeler" namespace="remote_main">
+  <dmn:extensionElements>
+    <layout:container id="_lULt0P9BEeqE3LNEqHj2fA" name="remote_main" type="Dmn" href="#_lULGwP9BEeqE3LNEqHj2fA">
+      <layout:node id="_nBRhwP9BEeqE3LNEqHj2fA" type="2010" href="remote_util#_Zij54P9BEeqE3LNEqHj2fA">
+        <layout:location x="840" y="280"/>
+      </layout:node>
+      <layout:node id="_nqrEEP9BEeqE3LNEqHj2fA" type="2009" href="#_nqoAwP9BEeqE3LNEqHj2fA">
+        <layout:location x="595" y="303"/>
+      </layout:node>
+      <layout:node id="_wKizYP9BEeqE3LNEqHj2fA" type="2003" href="#_wKg-MP9BEeqE3LNEqHj2fA">
+        <layout:location x="575" y="475"/>
+      </layout:node>
+      <layout:edge id="_o3O90P9BEeqE3LNEqHj2fA" type="4002" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:KnowledgeRequirement$_nqoAwP9BEeqE3LNEqHj2fA$_Zij54P9BEeqE3LNEqHj2fA" source="#_nBRhwP9BEeqE3LNEqHj2fA" target="#_nqrEEP9BEeqE3LNEqHj2fA">
+        <layout:bendpoints points="[-39, 21, 166, -84]$[-198, 82, 7, -23]"/>
+      </layout:edge>
+      <layout:edge id="_xEbowP9BEeqE3LNEqHj2fA" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_nqoAwP9BEeqE3LNEqHj2fA$_wKg-MP9BEeqE3LNEqHj2fA" source="#_wKizYP9BEeqE3LNEqHj2fA" target="#_nqrEEP9BEeqE3LNEqHj2fA">
+        <layout:bendpoints points="[-3, -3, 105, 143]$[-46, -147, 62, -1]"/>
+        <layout:sourceAnchor id="(0.592,0.06666666666666667)"/>
+      </layout:edge>
+      <layout:DiContainerStyle/>
+    </layout:container>
+  </dmn:extensionElements>
+  <dmn:import importType="http://www.omg.org/spec/DMN/20151101/dmn.xsd" namespace="remote_util"/>
+  <dmn:import importType="http://www.omg.org/spec/DMN/20151101/dmn.xsd" namespace="remote_interface"/>
+  <dmn:decision id="_nqoAwP9BEeqE3LNEqHj2fA" name="MainDecision">
+    <dmn:extensionElements>
+      <layout:container id="_o9938P9BEeqE3LNEqHj2fA" name="" type="DMN_Expression" href="#_nqoAwP9BEeqE3LNEqHj2fA"/>
+    </dmn:extensionElements>
+    <dmn:variable id="_nqoAwf9BEeqE3LNEqHj2fA" name="MainDecision"/>
+    <dmn:informationRequirement>
+      <dmn:requiredInput href="#_wKg-MP9BEeqE3LNEqHj2fA"/>
+    </dmn:informationRequirement>
+    <dmn:knowledgeRequirement>
+      <dmn:requiredKnowledge href="remote_util#_Zij54P9BEeqE3LNEqHj2fA"/>
+    </dmn:knowledgeRequirement>
+    <dmn:literalExpression id="_o9-fAP9BEeqE3LNEqHj2fA">
+      <dmn:text>remote_util.remoteAccess(&quot;remote_interface&quot;, {&quot;RemotePerson&quot;:  MainPerson})</dmn:text>
+    </dmn:literalExpression>
+  </dmn:decision>
+  <dmn:inputData id="_wKg-MP9BEeqE3LNEqHj2fA" name="MainPerson">
+    <dmn:variable id="_wKg-Mf9BEeqE3LNEqHj2fA" name="MainPerson" typeRef="remote_interface:RemotePerson"/>
+  </dmn:inputData>
+</dmn:definitions>

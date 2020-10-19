@@ -17,7 +17,7 @@ public class HybridDecisionSessionTest {
 	void executeDMN() throws Exception {
 		DecisionSession decisionSession = new HybridDecisionSession();
 
-		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values.dmn").toURI());
+		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("tck/0003-input-data-string-allowed-values.dmn").toURI());
 		String decision = new String(Files.readAllBytes(decisionPath));
 		decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
 
@@ -36,7 +36,7 @@ public class HybridDecisionSessionTest {
 	void executeJava() throws Exception {
 		DecisionSession decisionSession = new HybridDecisionSession();
 
-		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("EmploymentStatusDecision.java").toURI());
+		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("java/EmploymentStatusDecision.java").toURI());
 		String decision = new String(Files.readAllBytes(decisionPath));
 		decisionSession.importModel("de.materna.jdec.java.test.EmploymentStatusDecision", decision);
 
@@ -56,12 +56,12 @@ public class HybridDecisionSessionTest {
 		DecisionSession decisionSession = new HybridDecisionSession();
 
 		{
-			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("EmploymentStatusDecision.java").toURI());
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("java/EmploymentStatusDecision.java").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
 			decisionSession.importModel("de.materna.jdec.java.test.EmploymentStatusDecision", decision);
 		}
 		{
-			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values.dmn").toURI());
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("tck/0003-input-data-string-allowed-values.dmn").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
 			decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
 		}

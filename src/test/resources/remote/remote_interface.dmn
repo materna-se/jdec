@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="remote_interface" xmlns:dmn="http://www.omg.org/spec/DMN/20151101/dmn.xsd" xmlns:feel="http://www.omg.org/spec/FEEL/20140401" xmlns:layout="https://products.bfs-intra.net/milestones/vr/spec/20170328/dmndi.xsd" xsi:schemaLocation="http://www.omg.org/spec/DMN/20151101/dmn.xsd http://www.omg.org/spec/DMN/20151101/dmn.xsd" id="_A4REwAI-EeuS5ZE1frbAgg" name="remote_interface" exporter="ACTICO Modeler" namespace="remote_interface">
+  <dmn:extensionElements>
+    <layout:container id="_A4aOsAI-EeuS5ZE1frbAgg" name="remote_interface" type="Dmn" href="#_A4REwAI-EeuS5ZE1frbAgg">
+      <layout:node id="_OD8b4AI-EeuS5ZE1frbAgg" type="2009" href="#_ODvnkAI-EeuS5ZE1frbAgg">
+        <layout:location x="717" y="174"/>
+      </layout:node>
+      <layout:node id="_Ou3BIQI-EeuS5ZE1frbAgg" type="2003" href="#_OuyIoAI-EeuS5ZE1frbAgg">
+        <layout:location x="670" y="315"/>
+      </layout:node>
+      <layout:edge id="_P4fisAI-EeuS5ZE1frbAgg" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_ODvnkAI-EeuS5ZE1frbAgg$_OuyIoAI-EeuS5ZE1frbAgg" source="#_Ou3BIQI-EeuS5ZE1frbAgg" target="#_OD8b4AI-EeuS5ZE1frbAgg">
+        <layout:bendpoints points="[-3, -2, 125, 86]$[-66, -79, 62, 9]"/>
+        <layout:sourceAnchor id="(0.6,0.8333333333333334)"/>
+      </layout:edge>
+      <layout:DiContainerStyle/>
+    </layout:container>
+  </dmn:extensionElements>
+  <dmn:itemDefinition id="_GMy5cAI-EeuS5ZE1frbAgg" name="RemotePerson">
+    <dmn:itemComponent id="_IwQUsAI-EeuS5ZE1frbAgg" name="Name">
+      <dmn:typeRef>feel:string</dmn:typeRef>
+    </dmn:itemComponent>
+    <dmn:itemComponent id="_KXKoIAI-EeuS5ZE1frbAgg" name="Age">
+      <dmn:typeRef>feel:number</dmn:typeRef>
+    </dmn:itemComponent>
+  </dmn:itemDefinition>
+  <dmn:decision id="_ODvnkAI-EeuS5ZE1frbAgg" name="RemoteDecision">
+    <dmn:extensionElements>
+      <layout:container id="_P9rksAI-EeuS5ZE1frbAgg" name="" type="DMN_Expression" href="#_ODvnkAI-EeuS5ZE1frbAgg"/>
+    </dmn:extensionElements>
+    <dmn:variable id="_ODvnkQI-EeuS5ZE1frbAgg" name="RemoteDecision" typeRef="feel:string"/>
+    <dmn:informationRequirement>
+      <dmn:requiredInput href="#_OuyIoAI-EeuS5ZE1frbAgg"/>
+    </dmn:informationRequirement>
+    <dmn:literalExpression id="_P9tZ4AI-EeuS5ZE1frbAgg">
+      <dmn:text>&quot;Name: &quot; + RemotePerson.Name + &quot;, Age: &quot; + string(RemotePerson.Age)</dmn:text>
+    </dmn:literalExpression>
+  </dmn:decision>
+  <dmn:inputData id="_OuyIoAI-EeuS5ZE1frbAgg" name="RemotePerson">
+    <dmn:variable id="_OuyIoQI-EeuS5ZE1frbAgg" name="RemotePerson" typeRef="RemotePerson"/>
+  </dmn:inputData>
+</dmn:definitions>

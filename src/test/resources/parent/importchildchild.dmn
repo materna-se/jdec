@@ -3,15 +3,15 @@
   <dmn:extensionElements>
     <layout:container id="_oSsuwG91EeqdqrI5Cyo7SA" name="import-child-child" type="Dmn" href="#_oSpEYG91EeqdqrI5Cyo7SA">
       <layout:node id="_vgWoQG91EeqdqrI5Cyo7SA" type="2009" href="#_vgUzEG91EeqdqrI5Cyo7SA">
-        <layout:location x="400" y="110"/>
+        <layout:location x="30" y="30"/>
       </layout:node>
       <layout:node id="_w0aRIG91EeqdqrI5Cyo7SA" type="2003" href="#_w0ZDAG91EeqdqrI5Cyo7SA">
-        <layout:location x="356" y="302"/>
+        <layout:location x="30" y="135"/>
       </layout:node>
       <layout:edge id="_x8Zz8G91EeqdqrI5Cyo7SA" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_vgUzEG91EeqdqrI5Cyo7SA$_w0ZDAG91EeqdqrI5Cyo7SA" source="#_w0aRIG91EeqdqrI5Cyo7SA" target="#_vgWoQG91EeqdqrI5Cyo7SA">
-        <layout:bendpoints points="[10, -8, -250, 185]$[288, -199, 28, -6]"/>
-        <layout:sourceAnchor id="(0.4,0.23333333333333334)"/>
-        <layout:targetAnchor id="(0.768,0.35555555555555557)"/>
+        <layout:bendpoints points="[0, 0, 0, 60]$[0, -60, 0, 0]"/>
+        <layout:sourceAnchor id="(0.496,0.0)"/>
+        <layout:targetAnchor id="(0.496,1.0)"/>
       </layout:edge>
       <layout:DiContainerStyle/>
     </layout:container>
@@ -20,7 +20,7 @@
     <dmn:extensionElements>
       <layout:container id="_P4FIEG93EeqF14gIQ9FpDw" name="" type="DMN_Expression" href="#_vgUzEG91EeqdqrI5Cyo7SA"/>
     </dmn:extensionElements>
-    <dmn:variable id="_vgUzEW91EeqdqrI5Cyo7SA" name="ChildChildDecision"/>
+    <dmn:variable id="_vgUzEW91EeqdqrI5Cyo7SA" name="ChildChildDecision" typeRef="feel:number"/>
     <dmn:informationRequirement>
       <dmn:requiredInput href="#_w0ZDAG91EeqdqrI5Cyo7SA"/>
     </dmn:informationRequirement>

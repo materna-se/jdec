@@ -3,26 +3,31 @@
   <dmn:extensionElements>
     <layout:container id="_8iJkQG9tEeq66ZD1T-VbkA" name="import-child" type="Dmn" href="#_8iI9MG9tEeq66ZD1T-VbkA">
       <layout:node id="_AX5GwG9uEeq66ZD1T-VbkA" type="2009" href="#_AX34oG9uEeq66ZD1T-VbkA">
-        <layout:location x="388" y="132"/>
+        <layout:location x="122" y="30"/>
       </layout:node>
       <layout:node id="_BPzmMG9uEeq66ZD1T-VbkA" type="2003" href="#_BPyYEG9uEeq66ZD1T-VbkA">
-        <layout:location x="388" y="377"/>
+        <layout:location x="30" y="135"/>
       </layout:node>
       <layout:node id="_4d0SgG91EeqdqrI5Cyo7SA" type="2009" href="importchildchild#_vgUzEG91EeqdqrI5Cyo7SA">
-        <layout:location x="200" y="215"/>
+        <layout:location x="215" y="135"/>
       </layout:node>
       <layout:node id="_87TxgG91EeqdqrI5Cyo7SA" type="2003" href="importchildchild#_w0ZDAG91EeqdqrI5Cyo7SA">
-        <layout:location x="150" y="385"/>
+        <layout:location x="215" y="240"/>
       </layout:node>
       <layout:edge id="_B_6NcG9uEeq66ZD1T-VbkA" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_AX34oG9uEeq66ZD1T-VbkA$_BPyYEG9uEeq66ZD1T-VbkA" source="#_BPzmMG9uEeq66ZD1T-VbkA" target="#_AX5GwG9uEeq66ZD1T-VbkA">
-        <layout:bendpoints points="[-1, -16, -1, 222]$[-62, -242, -62, -4]"/>
+        <layout:bendpoints points="[0, 0, -71, 60]$[71, -60, 0, 0]"/>
+        <layout:sourceAnchor id="(0.496,0.0)"/>
+        <layout:targetAnchor id="(0.328,1.0)"/>
       </layout:edge>
       <layout:edge id="_Fl48AG92EeqdqrI5Cyo7SA" type="4001" href="importchildchild#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_vgUzEG91EeqdqrI5Cyo7SA$_w0ZDAG91EeqdqrI5Cyo7SA" source="#_87TxgG91EeqdqrI5Cyo7SA" target="#_4d0SgG91EeqdqrI5Cyo7SA">
-        <layout:bendpoints points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+        <layout:bendpoints points="[0, 0, 0, 60]$[0, -60, 0, 0]"/>
+        <layout:sourceAnchor id="(0.496,0.0)"/>
+        <layout:targetAnchor id="(0.496,1.0)"/>
       </layout:edge>
       <layout:edge id="_GDYwUG92EeqdqrI5Cyo7SA" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_AX34oG9uEeq66ZD1T-VbkA$_vgUzEG91EeqdqrI5Cyo7SA" source="#_4d0SgG91EeqdqrI5Cyo7SA" target="#_AX5GwG9uEeq66ZD1T-VbkA">
-        <layout:bendpoints points="[20, -11, -152, 60]$[110, -77, -62, -6]"/>
-        <layout:sourceAnchor id="(0.624,0.2222222222222222)"/>
+        <layout:bendpoints points="[0, 0, 72, 60]$[-72, -60, 0, 0]"/>
+        <layout:sourceAnchor id="(0.496,0.0)"/>
+        <layout:targetAnchor id="(0.664,1.0)"/>
       </layout:edge>
       <layout:DiContainerStyle/>
     </layout:container>
@@ -32,7 +37,7 @@
     <dmn:extensionElements>
       <layout:container id="_C-ptoG9uEeq66ZD1T-VbkA" name="" type="DMN_Expression" href="#_AX34oG9uEeq66ZD1T-VbkA"/>
     </dmn:extensionElements>
-    <dmn:variable id="_AX34oW9uEeq66ZD1T-VbkA" name="ChildDecision"/>
+    <dmn:variable id="_AX34oW9uEeq66ZD1T-VbkA" name="ChildDecision" typeRef="feel:number"/>
     <dmn:informationRequirement>
       <dmn:requiredInput href="#_BPyYEG9uEeq66ZD1T-VbkA"/>
     </dmn:informationRequirement>

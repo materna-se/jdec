@@ -21,16 +21,16 @@
 
 /src/test/resources/*
 !/src/test/resources/log4j.properties
+
+
 !/src/test/resources/0003-input-data-string-allowed-values.dmn
 !/src/test/resources/0003-input-data-string-allowed-values-invalid-feel.dmn
 !/src/test/resources/0003-input-data-string-allowed-values-invalid-xml.dmn
-!/src/test/resources/import-parent.dmn
-!/src/test/resources/import-child.dmn
-!/src/test/resources/import-child-child.dmn
 !/src/test/resources/decision-service.dmn
 !/src/test/resources/0085-decision-services.dmn
 !/src/test/resources/access.dmn
-!/src/test/resources/EmploymentStatusDecision.java
-!/src/test/resources/EmploymentStatusDecision-missing-method.java
 
-!/src/test/resources/tck/
+!/src/test/resources/parent
+!/src/test/resources/java
+!/src/test/resources/remote
+!/src/test/resources/tck

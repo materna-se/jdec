@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dmn="http://www.omg.org/spec/DMN/20151101/dmn.xsd" xmlns:feel="http://www.omg.org/spec/FEEL/20140401" xmlns:layout="https://products.bfs-intra.net/milestones/vr/spec/20170328/dmndi.xsd" xsi:schemaLocation="http://www.omg.org/spec/DMN/20151101/dmn.xsd http://www.omg.org/spec/DMN/20151101/dmn.xsd" id="_XXKZUP9BEeqE3LNEqHj2fA" name="remote_util" exporter="ACTICO Modeler" namespace="remote_util">
+  <dmn:extensionElements>
+    <layout:container id="_XXWmkP9BEeqE3LNEqHj2fA" name="remote_util" type="Dmn" href="#_XXKZUP9BEeqE3LNEqHj2fA">
+      <layout:node id="_Zim9MP9BEeqE3LNEqHj2fA" type="2010" href="#_Zij54P9BEeqE3LNEqHj2fA">
+        <layout:location x="495" y="197"/>
+      </layout:node>
+      <layout:DiContainerStyle/>
+    </layout:container>
+  </dmn:extensionElements>
+  <dmn:businessKnowledgeModel id="_Zij54P9BEeqE3LNEqHj2fA" name="remoteAccess">
+    <dmn:extensionElements>
+      <layout:container id="_bGhnAP9BEeqE3LNEqHj2fA" name="" type="DMN_Expression" href="#_Zij54P9BEeqE3LNEqHj2fA"/>
+    </dmn:extensionElements>
+    <dmn:encapsulatedLogic id="_bGi1IP9BEeqE3LNEqHj2fA">
+      <dmn:formalParameter id="_diNmUP9BEeqE3LNEqHj2fA" name="namespace"/>
+      <dmn:formalParameter id="_diONZv9BEeqE3LNEqHj2fA" name="input"/>
+      <dmn:literalExpression id="_bGi1If9BEeqE3LNEqHj2fA">
+        <dmn:text>{decide: function(url, namespace, input) external {java : {class: &quot;de.materna.jdec.dmn.functions.FunctionProvider&quot;, method signature: &quot;decide(java.lang.String, java.lang.String, java.util.Map)&quot;}}}.decide(&quot;http://decnet.materna.de&quot;, namespace, input)</dmn:text>
+      </dmn:literalExpression>
+    </dmn:encapsulatedLogic>
+    <dmn:variable id="_Zij54f9BEeqE3LNEqHj2fA" name="remoteAccess"/>
+  </dmn:businessKnowledgeModel>
+</dmn:definitions>

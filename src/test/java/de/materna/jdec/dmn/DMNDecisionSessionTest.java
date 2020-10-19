@@ -1,5 +1,6 @@
 package de.materna.jdec.dmn;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import de.materna.jdec.DMNDecisionSession;
 import de.materna.jdec.DecisionSession;
 import de.materna.jdec.model.*;
@@ -14,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +24,7 @@ public class DMNDecisionSessionTest {
 	void executeModel() throws IOException, URISyntaxException {
 		DecisionSession decisionSession = new DMNDecisionSession();
 
-		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values.dmn").toURI());
+		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("tck/0003-input-data-string-allowed-values.dmn").toURI());
 		String decision = new String(Files.readAllBytes(decisionPath));
 		decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
 
@@ -42,7 +44,7 @@ public class DMNDecisionSessionTest {
 		Assertions.assertThrows(ModelImportException.class, () -> {
 			DecisionSession decisionSession = new DMNDecisionSession();
 
-			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values-invalid-feel.dmn").toURI());
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("tck/0003-input-data-string-allowed-values-invalid-feel.dmn").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
 			decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
 		});
@@ -53,7 +55,7 @@ public class DMNDecisionSessionTest {
 		try {
 			DecisionSession decisionSession = new DMNDecisionSession();
 
-			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values-invalid-xml.dmn").toURI());
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("tck/0003-input-data-string-allowed-values-invalid-xml.dmn").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
 			decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
 		}
@@ -80,13 +82,13 @@ public class DMNDecisionSessionTest {
 			DecisionSession decisionSession = new DMNDecisionSession();
 
 			{
-				Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values.dmn").toURI());
+				Path decisionPath = Paths.get(getClass().getClassLoader().getResource("tck/0003-input-data-string-allowed-values.dmn").toURI());
 				String decision = new String(Files.readAllBytes(decisionPath));
 				decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
 			}
 
 			{
-				Path decisionPath = Paths.get(getClass().getClassLoader().getResource("0003-input-data-string-allowed-values.dmn").toURI());
+				Path decisionPath = Paths.get(getClass().getClassLoader().getResource("tck/0003-input-data-string-allowed-values.dmn").toURI());
 				String decision = new String(Files.readAllBytes(decisionPath));
 				decisionSession.importModel("https://github.com/agilepro/dmn-tcK", decision);
 			}
@@ -105,19 +107,19 @@ public class DMNDecisionSessionTest {
 		DMNDecisionSession decisionSession = new DMNDecisionSession();
 
 		{
-			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("import-child-child.dmn").toURI());
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("parent/importchildchild.dmn").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
 			decisionSession.importModel("importchildchild", decision);
 		}
 
 		{
-			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("import-child.dmn").toURI());
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("parent/importchild.dmn").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
 			decisionSession.importModel("importchild", decision);
 		}
 
 		{
-			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("import-parent.dmn").toURI());
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("parent/importparent.dmn").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
 			decisionSession.importModel("importparent", decision);
 		}
@@ -151,6 +153,34 @@ public class DMNDecisionSessionTest {
 		Assertions.assertTrue(context.containsKey("ParentDecision"));
 		Assertions.assertTrue(context.containsKey("importchild.ChildDecision"));
 		Assertions.assertTrue(context.containsKey("importchildchild.ChildChildDecision"));
+	}
+
+	@Test
+	void importMultipleModelsWithDecisionsAsInput() throws Exception {
+		DMNDecisionSession decisionSession = new DMNDecisionSession();
+
+		{
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("parent/importchildchild.dmn").toURI());
+			String decision = new String(Files.readAllBytes(decisionPath));
+			decisionSession.importModel("importchildchild", decision);
+		}
+
+		{
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("parent/importchild.dmn").toURI());
+			String decision = new String(Files.readAllBytes(decisionPath));
+			decisionSession.importModel("importchild", decision);
+		}
+
+		{
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("parent/importparent.dmn").toURI());
+			String decision = new String(Files.readAllBytes(decisionPath));
+			decisionSession.importModel("importparent", decision);
+		}
+
+		Map<String, InputStructure> inputStructure = decisionSession.getInputStructure("importparent", "decisionasinput");
+		Assertions.assertTrue(inputStructure.containsKey("ParentInput"));
+		Assertions.assertTrue(inputStructure.containsKey("importchild"));
+		Assertions.assertTrue(inputStructure.containsKey("importchildchild"));
 	}
 
 	@Test
@@ -199,8 +229,35 @@ public class DMNDecisionSessionTest {
 		String decision = new String(Files.readAllBytes(decisionPath));
 		decisionSession.importModel("access", decision);
 
-		ExecutionResult executionResult = decisionSession.executeModel("access",  new HashMap<>());
+		ExecutionResult executionResult = decisionSession.executeModel("access", new HashMap<>());
 		Map<String, Object> outputs = executionResult.getOutputs();
-		System.out.println("executeHashMap(): " + outputs);
+		// TODO: Access log assertions
+	}
+
+	@Test
+	void importModelWithRemoteDecision() throws Exception {
+		DMNDecisionSession decisionSession = new DMNDecisionSession();
+
+		{
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("remote/remote_util.dmn").toURI());
+			String decision = new String(Files.readAllBytes(decisionPath));
+			decisionSession.importModel("remote_util", decision);
+		}
+
+		{
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("remote/remote_interface.dmn").toURI());
+			String decision = new String(Files.readAllBytes(decisionPath));
+			decisionSession.importModel("remote_interface", decision);
+		}
+
+		{
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("remote/remote_main.dmn").toURI());
+			String decision = new String(Files.readAllBytes(decisionPath));
+			decisionSession.importModel("remote_main", decision);
+		}
+
+		ExecutionResult executionResult = decisionSession.executeModel("remote_main", SerializationHelper.getInstance().toClass("{\"MainPerson\":{\"Name\":\"Max\",\"Age\":40}}", new TypeReference<LinkedHashMap<String, Object>>() {
+		}));
+		System.out.println(SerializationHelper.getInstance().toJSON(executionResult.getOutputs()));
 	}
 }

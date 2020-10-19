@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:_1="importparent" xmlns:dmn="http://www.omg.org/spec/DMN/20151101/dmn.xsd" xmlns:feel="http://www.omg.org/spec/FEEL/20140401" xmlns:importchild="importchild" xmlns:importchildchild="importchildchild" xmlns:layout="https://products.bfs-intra.net/milestones/vr/spec/20170328/dmndi.xsd" xsi:schemaLocation="http://www.omg.org/spec/DMN/20151101/dmn.xsd http://www.omg.org/spec/DMN/20151101/dmn.xsd" id="_-SSsMG9tEeq66ZD1T-VbkA" name="importparent" exporter="ACTICO Modeler" namespace="importparent">
+  <dmn:extensionElements>
+    <layout:container id="_RoZZsG94EeqTEIoxJ2VEPA" name="importparent" type="Dmn" href="#_-SSsMG9tEeq66ZD1T-VbkA">
+      <layout:node id="_Uxf4oG94EeqTEIoxJ2VEPA" type="2009" href="#_EdylIG9uEeq66ZD1T-VbkA">
+        <layout:location x="323" y="30"/>
+      </layout:node>
+      <layout:node id="_VIp0YG94EeqTEIoxJ2VEPA" type="2003" href="#_GqAlEG9uEeq66ZD1T-VbkA">
+        <layout:location x="30" y="135"/>
+      </layout:node>
+      <layout:node id="_ekUdkG94EeqTEIoxJ2VEPA" type="2009" href="importchild#_AX34oG9uEeq66ZD1T-VbkA">
+        <layout:location x="215" y="135"/>
+      </layout:node>
+      <layout:node id="_fHpNEG94EeqTEIoxJ2VEPA" type="2003" href="importchild#_BPyYEG9uEeq66ZD1T-VbkA">
+        <layout:location x="96" y="240"/>
+      </layout:node>
+      <layout:node id="_fxvS8G94EeqTEIoxJ2VEPA" type="2009" href="importchildchild#_vgUzEG91EeqdqrI5Cyo7SA">
+        <layout:location x="281" y="240"/>
+      </layout:node>
+      <layout:node id="_0T3hgHTOEeqi8Lcz6whuyw" type="2003" href="importchildchild#_w0ZDAG91EeqdqrI5Cyo7SA">
+        <layout:location x="280" y="365"/>
+      </layout:node>
+      <layout:edge id="_VM9FkG94EeqTEIoxJ2VEPA" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_EdylIG9uEeq66ZD1T-VbkA$_GqAlEG9uEeq66ZD1T-VbkA" source="#_VIp0YG94EeqTEIoxJ2VEPA" target="#_Uxf4oG94EeqTEIoxJ2VEPA">
+        <layout:bendpoints points="[0, 0, -251, 60]$[251, -60, 0, 0]"/>
+        <layout:sourceAnchor id="(0.496,0.0)"/>
+        <layout:targetAnchor id="(0.16,1.0)"/>
+      </layout:edge>
+      <layout:edge id="_ekZ9IG94EeqTEIoxJ2VEPA" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_EdylIG9uEeq66ZD1T-VbkA$_AX34oG9uEeq66ZD1T-VbkA" source="#_ekUdkG94EeqTEIoxJ2VEPA" target="#_Uxf4oG94EeqTEIoxJ2VEPA">
+        <layout:bendpoints points="[0, 0, -86, 60]$[86, -60, 0, 0]"/>
+        <layout:sourceAnchor id="(0.496,0.0)"/>
+        <layout:targetAnchor id="(0.32,1.0)"/>
+      </layout:edge>
+      <layout:edge id="_fHusoG94EeqTEIoxJ2VEPA" type="4001" href="importchild#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_AX34oG9uEeq66ZD1T-VbkA$_BPyYEG9uEeq66ZD1T-VbkA" source="#_fHpNEG94EeqTEIoxJ2VEPA" target="#_ekUdkG94EeqTEIoxJ2VEPA">
+        <layout:bendpoints points="[0, 0, -98, 60]$[98, -60, 0, 0]"/>
+        <layout:sourceAnchor id="(0.496,0.0)"/>
+        <layout:targetAnchor id="(0.328,1.0)"/>
+      </layout:edge>
+      <layout:edge id="_fx2nsG94EeqTEIoxJ2VEPA" type="4001" href="importchild#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_AX34oG9uEeq66ZD1T-VbkA$_vgUzEG91EeqdqrI5Cyo7SA" source="#_fxvS8G94EeqTEIoxJ2VEPA" target="#_ekUdkG94EeqTEIoxJ2VEPA">
+        <layout:bendpoints points="[0, 0, 0, 60]$[0, -60, 0, 0]"/>
+        <layout:sourceAnchor id="(0.136,0.0)"/>
+        <layout:targetAnchor id="(0.664,1.0)"/>
+      </layout:edge>
+      <layout:edge id="_gfzhIHTOEeqi8Lcz6whuyw" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_EdylIG9uEeq66ZD1T-VbkA$_vgUzEG91EeqdqrI5Cyo7SA" source="#_fxvS8G94EeqTEIoxJ2VEPA" target="#_Uxf4oG94EeqTEIoxJ2VEPA">
+        <layout:bendpoints points="[0, 0, 0, 165]$[0, -165, 0, 0]"/>
+        <layout:sourceAnchor id="(0.824,0.0)"/>
+        <layout:targetAnchor id="(0.488,1.0)"/>
+      </layout:edge>
+      <layout:DiContainerStyle/>
+    </layout:container>
+  </dmn:extensionElements>
+  <dmn:import importType="http://www.omg.org/spec/DMN/20151101/dmn.xsd" namespace="importchild"/>
+  <dmn:import importType="http://www.omg.org/spec/DMN/20151101/dmn.xsd" namespace="importchildchild"/>
+  <dmn:decision id="_EdylIG9uEeq66ZD1T-VbkA" name="ParentDecision">
+    <dmn:extensionElements>
+      <layout:container id="_He4-oG9uEeq66ZD1T-VbkA" name="" type="DMN_Expression" href="#_EdylIG9uEeq66ZD1T-VbkA"/>
+    </dmn:extensionElements>
+    <dmn:variable id="_EdylIW9uEeq66ZD1T-VbkA" name="ParentDecision" typeRef="feel:number"/>
+    <dmn:informationRequirement>
+      <dmn:requiredInput href="#_GqAlEG9uEeq66ZD1T-VbkA"/>
+    </dmn:informationRequirement>
+    <dmn:informationRequirement>
+      <dmn:requiredDecision href="importchild#_AX34oG9uEeq66ZD1T-VbkA"/>
+    </dmn:informationRequirement>
+    <dmn:informationRequirement>
+      <dmn:requiredDecision href="importchildchild#_vgUzEG91EeqdqrI5Cyo7SA"/>
+    </dmn:informationRequirement>
+    <dmn:context id="_wIdywHP3EeqNBNQaQOEUJQ">
+      <dmn:contextEntry>
+        <dmn:variable id="_wMYCZ3P3EeqNBNQaQOEUJQ" name="ChildChildDecision"/>
+        <dmn:literalExpression id="_wMYCaHP3EeqNBNQaQOEUJQ">
+          <dmn:text>importchildchild.ChildChildDecision</dmn:text>
+        </dmn:literalExpression>
+      </dmn:contextEntry>
+      <dmn:contextEntry>
+        <dmn:variable id="_xRJ5IHP3EeqNBNQaQOEUJQ" name="ChildDecision"/>
+        <dmn:literalExpression id="_xRJ5IXP3EeqNBNQaQOEUJQ">
+          <dmn:text>importchild.ChildDecision</dmn:text>
+        </dmn:literalExpression>
+      </dmn:contextEntry>
+      <dmn:contextEntry>
+        <dmn:variable id="_xP3fsHP3EeqNBNQaQOEUJQ" name="ParentInput"/>
+        <dmn:literalExpression id="_xP3fsXP3EeqNBNQaQOEUJQ">
+          <dmn:text>ParentInput</dmn:text>
+        </dmn:literalExpression>
+      </dmn:contextEntry>
+      <dmn:contextEntry>
+        <dmn:literalExpression id="_zDBfYHP3EeqNBNQaQOEUJQ">
+          <dmn:text>ParentInput + ChildDecision + ChildChildDecision</dmn:text>
+        </dmn:literalExpression>
+      </dmn:contextEntry>
+    </dmn:context>
+  </dmn:decision>
+  <dmn:inputData id="_GqAlEG9uEeq66ZD1T-VbkA" name="ParentInput">
+    <dmn:variable id="_GqAlEW9uEeq66ZD1T-VbkA" name="ParentInput" typeRef="feel:number"/>
+  </dmn:inputData>
+  <dmn:decisionService id="_6bHG0JafEeqQGP0_8YSTqg" name="onlyparent">
+    <dmn:extensionElements>
+      <layout:container id="_7jhgYJafEeqQGP0_8YSTqg" name="" type="DecisionService" href="#_6bHG0JafEeqQGP0_8YSTqg">
+        <layout:node id="_7jhgYZafEeqQGP0_8YSTqg" type="7001" href="#_6bHG0JafEeqQGP0_8YSTqg">
+          <layout:node id="_AFcMYJagEeqQGP0_8YSTqg" type="7002" href="#_6bHG0JafEeqQGP0_8YSTqg">
+            <layout:node id="_9j2ZYJafEeqQGP0_8YSTqg" type="2009" href="#_EdylIG9uEeq66ZD1T-VbkA">
+              <layout:location x="345" y="44"/>
+            </layout:node>
+            <layout:ratio value="-1.0"/>
+          </layout:node>
+          <layout:node id="_AFcMYZagEeqQGP0_8YSTqg" type="7003" href="#_6bHG0JafEeqQGP0_8YSTqg">
+            <layout:node id="_9kLJgJafEeqQGP0_8YSTqg" type="2009" href="importchild#_AX34oG9uEeq66ZD1T-VbkA">
+              <layout:location x="135" y="30"/>
+            </layout:node>
+            <layout:node id="_9kLJgZafEeqQGP0_8YSTqg" type="2009" href="importchildchild#_vgUzEG91EeqdqrI5Cyo7SA">
+              <layout:location x="335" y="49"/>
+            </layout:node>
+            <layout:ratio value="-1.0"/>
+          </layout:node>
+          <layout:bounds height="300" width="600" x="30" y="30"/>
+        </layout:node>
+        <layout:node id="_9kKicJafEeqQGP0_8YSTqg" type="2003" href="#_GqAlEG9uEeq66ZD1T-VbkA">
+          <layout:location x="740" y="225"/>
+        </layout:node>
+        <layout:node id="_97h5kJafEeqQGP0_8YSTqg" type="2003" href="importchild#_BPyYEG9uEeq66ZD1T-VbkA">
+          <layout:location x="185" y="445"/>
+        </layout:node>
+        <layout:node id="_-Isy4JafEeqQGP0_8YSTqg" type="2003" href="importchildchild#_w0ZDAG91EeqdqrI5Cyo7SA">
+          <layout:location x="440" y="470"/>
+        </layout:node>
+        <layout:edge id="_9kRQIJafEeqQGP0_8YSTqg" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_EdylIG9uEeq66ZD1T-VbkA$_GqAlEG9uEeq66ZD1T-VbkA" source="#_9kKicJafEeqQGP0_8YSTqg" target="#_9j2ZYJafEeqQGP0_8YSTqg">
+          <layout:bendpoints points="[0, 0, -556, -221]$[499, 199, -57, -22]"/>
+        </layout:edge>
+        <layout:edge id="_9kTFUJafEeqQGP0_8YSTqg" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_EdylIG9uEeq66ZD1T-VbkA$_AX34oG9uEeq66ZD1T-VbkA" source="#_9kLJgJafEeqQGP0_8YSTqg" target="#_9j2ZYJafEeqQGP0_8YSTqg">
+          <layout:bendpoints points="[0, 0, -556, -221]$[499, 199, -57, -22]"/>
+        </layout:edge>
+        <layout:edge id="_9kUTcJafEeqQGP0_8YSTqg" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_EdylIG9uEeq66ZD1T-VbkA$_vgUzEG91EeqdqrI5Cyo7SA" source="#_9kLJgZafEeqQGP0_8YSTqg" target="#_9j2ZYJafEeqQGP0_8YSTqg">
+          <layout:bendpoints points="[0, 0, -556, -221]$[499, 199, -57, -22]"/>
+        </layout:edge>
+        <layout:edge id="_9kVhkJafEeqQGP0_8YSTqg" type="4001" href="importchild#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_AX34oG9uEeq66ZD1T-VbkA$_vgUzEG91EeqdqrI5Cyo7SA" source="#_9kLJgZafEeqQGP0_8YSTqg" target="#_9kLJgJafEeqQGP0_8YSTqg">
+          <layout:bendpoints points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+        </layout:edge>
+        <layout:edge id="_97s4sJafEeqQGP0_8YSTqg" type="4001" href="importchild#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_AX34oG9uEeq66ZD1T-VbkA$_BPyYEG9uEeq66ZD1T-VbkA" source="#_97h5kJafEeqQGP0_8YSTqg" target="#_9kLJgJafEeqQGP0_8YSTqg">
+          <layout:bendpoints points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+        </layout:edge>
+        <layout:edge id="_-I7cYJafEeqQGP0_8YSTqg" type="4001" href="importchildchild#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_vgUzEG91EeqdqrI5Cyo7SA$_w0ZDAG91EeqdqrI5Cyo7SA" source="#_-Isy4JafEeqQGP0_8YSTqg" target="#_9kLJgZafEeqQGP0_8YSTqg">
+          <layout:bendpoints points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+        </layout:edge>
+        <layout:DiContainerStyle/>
+      </layout:container>
+    </dmn:extensionElements>
+    <dmn:outputDecision href="#_EdylIG9uEeq66ZD1T-VbkA"/>
+    <dmn:encapsulatedDecision href="importchild#_AX34oG9uEeq66ZD1T-VbkA"/>
+    <dmn:encapsulatedDecision href="importchildchild#_vgUzEG91EeqdqrI5Cyo7SA"/>
+    <dmn:inputData href="#_GqAlEG9uEeq66ZD1T-VbkA"/>
+    <dmn:inputData href="importchild#_BPyYEG9uEeq66ZD1T-VbkA"/>
+    <dmn:inputData href="importchildchild#_w0ZDAG91EeqdqrI5Cyo7SA"/>
+  </dmn:decisionService>
+  <dmn:decisionService id="_qSeZ4JagEeqj_-_jssQhSA" name="onlychildchild">
+    <dmn:extensionElements>
+      <layout:container id="_rAtY4JagEeqj_-_jssQhSA" name="" type="DecisionService" href="#_qSeZ4JagEeqj_-_jssQhSA">
+        <layout:node id="_rAtY4ZagEeqj_-_jssQhSA" type="7001" href="#_qSeZ4JagEeqj_-_jssQhSA">
+          <layout:node id="_soUP4JagEeqj_-_jssQhSA" type="7002" href="#_qSeZ4JagEeqj_-_jssQhSA">
+            <layout:node id="_rrFLkJagEeqj_-_jssQhSA" type="2009" href="importchildchild#_vgUzEG91EeqdqrI5Cyo7SA">
+              <layout:location x="340" y="29"/>
+            </layout:node>
+            <layout:ratio value="-1.0"/>
+          </layout:node>
+          <layout:node id="_soUP4ZagEeqj_-_jssQhSA" type="7003" href="#_qSeZ4JagEeqj_-_jssQhSA">
+            <layout:node id="_rqtYIJagEeqj_-_jssQhSA" type="2009" href="#_EdylIG9uEeq66ZD1T-VbkA">
+              <layout:location x="385" y="44"/>
+            </layout:node>
+            <layout:node id="_rrEkgJagEeqj_-_jssQhSA" type="2009" href="importchild#_AX34oG9uEeq66ZD1T-VbkA">
+              <layout:location x="170" y="102"/>
+            </layout:node>
+            <layout:ratio value="-1.0"/>
+          </layout:node>
+          <layout:bounds height="300" width="600" x="50" y="100"/>
+        </layout:node>
+        <layout:node id="_rrD9cJagEeqj_-_jssQhSA" type="2003" href="#_GqAlEG9uEeq66ZD1T-VbkA">
+          <layout:location x="680" y="250"/>
+        </layout:node>
+        <layout:node id="_sCp-EJagEeqj_-_jssQhSA" type="2003" href="importchildchild#_w0ZDAG91EeqdqrI5Cyo7SA">
+          <layout:location x="835" y="265"/>
+        </layout:node>
+        <layout:node id="_sV8tgJagEeqj_-_jssQhSA" type="2003" href="importchild#_BPyYEG9uEeq66ZD1T-VbkA">
+          <layout:location x="990" y="280"/>
+        </layout:node>
+        <layout:edge id="_rrQxwJagEeqj_-_jssQhSA" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_EdylIG9uEeq66ZD1T-VbkA$_GqAlEG9uEeq66ZD1T-VbkA" source="#_rrD9cJagEeqj_-_jssQhSA" target="#_rqtYIJagEeqj_-_jssQhSA">
+          <layout:bendpoints points="[0, 0, -578, -351]$[540, 328, -38, -23]"/>
+        </layout:edge>
+        <layout:edge id="_rrUcIJagEeqj_-_jssQhSA" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_EdylIG9uEeq66ZD1T-VbkA$_AX34oG9uEeq66ZD1T-VbkA" source="#_rrEkgJagEeqj_-_jssQhSA" target="#_rqtYIJagEeqj_-_jssQhSA">
+          <layout:bendpoints points="[0, 0, -578, -351]$[540, 328, -38, -23]"/>
+        </layout:edge>
+        <layout:edge id="_rrW4YJagEeqj_-_jssQhSA" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_EdylIG9uEeq66ZD1T-VbkA$_vgUzEG91EeqdqrI5Cyo7SA" source="#_rrFLkJagEeqj_-_jssQhSA" target="#_rqtYIJagEeqj_-_jssQhSA">
+          <layout:bendpoints points="[0, 0, -578, -351]$[540, 328, -38, -23]"/>
+        </layout:edge>
+        <layout:edge id="_rraiwJagEeqj_-_jssQhSA" type="4001" href="importchild#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_AX34oG9uEeq66ZD1T-VbkA$_vgUzEG91EeqdqrI5Cyo7SA" source="#_rrFLkJagEeqj_-_jssQhSA" target="#_rrEkgJagEeqj_-_jssQhSA">
+          <layout:bendpoints points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+        </layout:edge>
+        <layout:edge id="_sDC_oJagEeqj_-_jssQhSA" type="4001" href="importchildchild#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_vgUzEG91EeqdqrI5Cyo7SA$_w0ZDAG91EeqdqrI5Cyo7SA" source="#_sCp-EJagEeqj_-_jssQhSA" target="#_rrFLkJagEeqj_-_jssQhSA">
+          <layout:bendpoints points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+        </layout:edge>
+        <layout:edge id="_sWT54JagEeqj_-_jssQhSA" type="4001" href="importchild#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_AX34oG9uEeq66ZD1T-VbkA$_BPyYEG9uEeq66ZD1T-VbkA" source="#_sV8tgJagEeqj_-_jssQhSA" target="#_rrEkgJagEeqj_-_jssQhSA">
+          <layout:bendpoints points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+        </layout:edge>
+        <layout:DiContainerStyle/>
+      </layout:container>
+    </dmn:extensionElements>
+    <dmn:outputDecision href="importchildchild#_vgUzEG91EeqdqrI5Cyo7SA"/>
+    <dmn:encapsulatedDecision href="#_EdylIG9uEeq66ZD1T-VbkA"/>
+    <dmn:encapsulatedDecision href="importchild#_AX34oG9uEeq66ZD1T-VbkA"/>
+    <dmn:inputData href="#_GqAlEG9uEeq66ZD1T-VbkA"/>
+    <dmn:inputData href="importchildchild#_w0ZDAG91EeqdqrI5Cyo7SA"/>
+    <dmn:inputData href="importchild#_BPyYEG9uEeq66ZD1T-VbkA"/>
+  </dmn:decisionService>
+  <dmn:decisionService id="_hjB5wP8oEeqE3LNEqHj2fA" name="decisionasinput">
+    <dmn:extensionElements>
+      <layout:container id="_iU-7IP8oEeqE3LNEqHj2fA" name="" type="DecisionService" href="#_hjB5wP8oEeqE3LNEqHj2fA">
+        <layout:node id="_iU-7If8oEeqE3LNEqHj2fA" type="7001" href="#_hjB5wP8oEeqE3LNEqHj2fA">
+          <layout:node id="_Ua6-kP8pEeqE3LNEqHj2fA" type="7002" href="#_hjB5wP8oEeqE3LNEqHj2fA">
+            <layout:node id="_i5wcIP8oEeqE3LNEqHj2fA" type="2009" href="#_EdylIG9uEeq66ZD1T-VbkA">
+              <layout:location x="262" y="96"/>
+            </layout:node>
+            <layout:ratio value="-1.0"/>
+          </layout:node>
+          <layout:node id="_Ua7loP8pEeqE3LNEqHj2fA" type="7003" href="#_hjB5wP8oEeqE3LNEqHj2fA">
+            <layout:ratio value="-1.0"/>
+          </layout:node>
+          <layout:bounds height="300" width="600" x="50" y="100"/>
+        </layout:node>
+        <layout:node id="_i6PkUP8oEeqE3LNEqHj2fA" type="2003" href="#_GqAlEG9uEeq66ZD1T-VbkA">
+          <layout:location x="841" y="328"/>
+        </layout:node>
+        <layout:node id="_i6QycP8oEeqE3LNEqHj2fA" type="2009" href="importchild#_AX34oG9uEeq66ZD1T-VbkA">
+          <layout:location x="760" y="410"/>
+        </layout:node>
+        <layout:node id="_i6RZgP8oEeqE3LNEqHj2fA" type="2009" href="importchildchild#_vgUzEG91EeqdqrI5Cyo7SA">
+          <layout:location x="575" y="470"/>
+        </layout:node>
+        <layout:edge id="_i6bxkP8oEeqE3LNEqHj2fA" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_EdylIG9uEeq66ZD1T-VbkA$_GqAlEG9uEeq66ZD1T-VbkA" source="#_i6PkUP8oEeqE3LNEqHj2fA" target="#_i5wcIP8oEeqE3LNEqHj2fA">
+          <layout:bendpoints points="[0, 0, -379, -219]$[339, 197, -40, -22]"/>
+        </layout:edge>
+        <layout:edge id="_i6fb8P8oEeqE3LNEqHj2fA" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_EdylIG9uEeq66ZD1T-VbkA$_AX34oG9uEeq66ZD1T-VbkA" source="#_i6QycP8oEeqE3LNEqHj2fA" target="#_i5wcIP8oEeqE3LNEqHj2fA">
+          <layout:bendpoints points="[0, 0, -379, -219]$[339, 197, -40, -22]"/>
+        </layout:edge>
+        <layout:edge id="_i6hRIP8oEeqE3LNEqHj2fA" type="4001" href="#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_EdylIG9uEeq66ZD1T-VbkA$_vgUzEG91EeqdqrI5Cyo7SA" source="#_i6RZgP8oEeqE3LNEqHj2fA" target="#_i5wcIP8oEeqE3LNEqHj2fA">
+          <layout:bendpoints points="[0, 0, -379, -219]$[339, 197, -40, -22]"/>
+        </layout:edge>
+        <layout:edge id="_i6jGUP8oEeqE3LNEqHj2fA" type="4001" href="importchild#http://www.omg.org/spec/DMN/20151101/dmn.xsd:InformationRequirement$_AX34oG9uEeq66ZD1T-VbkA$_vgUzEG91EeqdqrI5Cyo7SA" source="#_i6RZgP8oEeqE3LNEqHj2fA" target="#_i6QycP8oEeqE3LNEqHj2fA">
+          <layout:bendpoints points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+        </layout:edge>
+        <layout:DiContainerStyle/>
+      </layout:container>
+    </dmn:extensionElements>
+    <dmn:outputDecision href="#_EdylIG9uEeq66ZD1T-VbkA"/>
+    <dmn:inputDecision href="importchild#_AX34oG9uEeq66ZD1T-VbkA"/>
+    <dmn:inputDecision href="importchildchild#_vgUzEG91EeqdqrI5Cyo7SA"/>
+    <dmn:inputData href="#_GqAlEG9uEeq66ZD1T-VbkA"/>
+  </dmn:decisionService>
+</dmn:definitions>
