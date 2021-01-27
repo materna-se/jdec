@@ -196,7 +196,7 @@ public class DMNDecisionSession implements DecisionSession {
 				continue;
 			}
 
-			outputs.put(decisionResult.getDecisionName(), decisionResult.getResult());
+			outputs.put(decisionResult.getDecisionName(), DroolsHelper.cleanResult(decisionResult.getResult()));
 		}
 
 		return new ExecutionResult(outputs, debugger.getDecisions(), debugger.getModelAccessLog(), debugger.getMessages());
