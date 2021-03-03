@@ -45,7 +45,7 @@ public class JavaDecisionSession implements DecisionSession {
 
 	@Override
 	public List<Model> getModels() {
-		return compiledModels.entrySet().stream().map(entry -> {
+		return models.entrySet().stream().map(entry -> {
 			try {
 				return getModel(entry.getKey());
 			}
