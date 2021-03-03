@@ -6,7 +6,6 @@ import de.materna.jdec.dmn.DroolsHelper;
 import de.materna.jdec.dmn.conversions.ActicoConverter;
 import de.materna.jdec.dmn.conversions.ConversionResult;
 import de.materna.jdec.model.*;
-import de.materna.jdec.serialization.SerializationHelper;
 import org.apache.log4j.Logger;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
@@ -18,9 +17,7 @@ import org.kie.dmn.api.core.DMNContext;
 import org.kie.dmn.api.core.DMNDecisionResult;
 import org.kie.dmn.api.core.DMNModel;
 import org.kie.dmn.api.core.DMNRuntime;
-import org.kie.dmn.api.core.ast.DecisionNode;
 import org.kie.dmn.api.core.ast.DecisionServiceNode;
-import org.kie.dmn.api.core.ast.InputDataNode;
 import org.kie.dmn.feel.FEEL;
 import org.kie.dmn.feel.lang.FEELProfile;
 import org.kie.dmn.feel.parser.feel11.profiles.KieExtendedFEELProfile;
@@ -151,7 +148,7 @@ public class DMNDecisionSession implements DecisionSession {
 		DMNModel model = DroolsHelper.getModel(kieRuntime, namespace);
 
 		Optional<DecisionServiceNode> optionalDecisionServiceNode = model.getDecisionServices().stream().filter(decisionServiceNode -> decisionServiceNode.getName().equals(decisionServiceName)).findFirst();
-		if(!optionalDecisionServiceNode.isPresent()) {
+		if (!optionalDecisionServiceNode.isPresent()) {
 			throw new ModelNotFoundException();
 		}
 

@@ -1,8 +1,6 @@
-package de.materna.jdec.dmn;
+package de.materna.jdec;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import de.materna.jdec.DMNDecisionSession;
-import de.materna.jdec.DecisionSession;
 import de.materna.jdec.model.*;
 import de.materna.jdec.serialization.SerializationHelper;
 import org.junit.jupiter.api.Assertions;
@@ -19,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("ConstantConditions")
 public class DMNDecisionSessionTest {
 	@Test
 	void executeModel() throws IOException, URISyntaxException {
@@ -27,6 +26,13 @@ public class DMNDecisionSessionTest {
 		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("tck/0003-input-data-string-allowed-values.dmn").toURI());
 		String decision = new String(Files.readAllBytes(decisionPath));
 		decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
+
+		Assertions.assertEquals(1, decisionSession.getModels().size());
+
+		Map<String, InputStructure> inputStructure = decisionSession.getInputStructure("https://github.com/agilepro/dmn-tck");
+		InputStructure employmentStatus = inputStructure.get("Employment Status");
+		Assertions.assertEquals("string", employmentStatus.getType());
+		Assertions.assertEquals(4, employmentStatus.getOptions().size());
 
 		Map<String, Object> inputs = new HashMap<>();
 		inputs.put("Employment Status", "UNEMPLOYED");
@@ -41,13 +47,15 @@ public class DMNDecisionSessionTest {
 
 	@Test
 	void executeModelWithInvalidFEEL() {
-		Assertions.assertThrows(ModelImportException.class, () -> {
-			DecisionSession decisionSession = new DMNDecisionSession();
+		DecisionSession decisionSession = new DMNDecisionSession();
 
+		Assertions.assertThrows(ModelImportException.class, () -> {
 			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("tck/0003-input-data-string-allowed-values-invalid-feel.dmn").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
 			decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
 		});
+
+		Assertions.assertEquals(0, decisionSession.getModels().size());
 	}
 
 	@Test

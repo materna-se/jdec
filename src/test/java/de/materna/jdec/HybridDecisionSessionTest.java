@@ -1,7 +1,5 @@
-package de.materna.jdec.hybrid;
+package de.materna.jdec;
 
-import de.materna.jdec.DecisionSession;
-import de.materna.jdec.HybridDecisionSession;
 import de.materna.jdec.model.ExecutionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("ConstantConditions")
 public class HybridDecisionSessionTest {
 	@Test
 	void executeDMN() throws Exception {

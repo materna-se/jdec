@@ -1,7 +1,6 @@
 package de.materna.jdec.java;
 
 import de.materna.jdec.DecisionSession;
-import de.materna.jdec.model.ComplexInputStructure;
 import de.materna.jdec.model.InputStructure;
 
 import java.util.Map;

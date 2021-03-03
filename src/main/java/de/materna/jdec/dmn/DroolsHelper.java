@@ -8,9 +8,7 @@ import org.kie.dmn.api.core.DMNModel;
 import org.kie.dmn.api.core.DMNRuntime;
 import org.kie.dmn.api.core.DMNUnaryTest;
 import org.kie.dmn.api.feel.runtime.events.FEELEvent;
-import org.kie.dmn.core.ast.DMNFunctionDefinitionEvaluator;
 import org.kie.dmn.feel.runtime.FEELFunction;
-import org.kie.dmn.feel.runtime.functions.JavaFunction;
 
 import java.util.*;
 
