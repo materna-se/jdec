@@ -32,14 +32,14 @@ public class DroolsDebugger {
 			public void beforeEvaluateDecisionService(BeforeEvaluateDecisionServiceEvent event) {
 				// FIX: If the model contains a decision service is executed, beforeEvaluateAll is not executed.
 				synchronized (decisionSession.getRuntime()) {
-					modelAccessLog.push(new ModelAccess(ModelAccess.ModelAccessType.MODEL, name));
+					modelAccessLog.push(new ModelAccess(ModelAccess.ModelAccessType.MODEL, name, DroolsHelper.cleanContext(event.getResult().getContext().getAll())));
 				}
 			}
 
 			@Override
 			public void beforeEvaluateAll(BeforeEvaluateAllEvent event) {
 				synchronized (decisionSession.getRuntime()) {
-					modelAccessLog.push(new ModelAccess(ModelAccess.ModelAccessType.MODEL, name));
+					modelAccessLog.push(new ModelAccess(ModelAccess.ModelAccessType.MODEL, name, DroolsHelper.cleanContext(event.getResult().getContext().getAll())));
 				}
 			}
 
