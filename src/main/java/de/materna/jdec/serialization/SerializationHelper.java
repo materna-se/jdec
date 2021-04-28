@@ -15,7 +15,7 @@ public class SerializationHelper {
 	private static SerializationHelper instance;
 
 	private ObjectMapper jsonMapper = new ObjectMapper().registerModules(new ParameterNamesModule(), new JavaTimeModule(), new Jdk8Module()).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-	private ObjectMapper xmlMapper = new XmlMapper().registerModules(new ParameterNamesModule(), new JavaTimeModule(), new Jdk8Module());
+	private ObjectMapper xmlMapper = new XmlMapper().registerModules(new ParameterNamesModule(), new JavaTimeModule(), new Jdk8Module()).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 	private SerializationHelper() {
 	}
