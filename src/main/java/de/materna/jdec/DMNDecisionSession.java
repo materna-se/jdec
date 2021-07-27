@@ -24,6 +24,7 @@ import org.kie.dmn.feel.parser.feel11.profiles.KieExtendedFEELProfile;
 import org.kie.dmn.model.api.DMNElementReference;
 import org.kie.dmn.model.api.DecisionService;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,7 +72,7 @@ public class DMNDecisionSession implements DecisionSession {
 		return new Model(
 				model.getNamespace(),
 				model.getName(),
-				new String(source),
+				new String(source, StandardCharsets.UTF_8),
 				model.getDecisions().stream().filter(decisionNode -> decisionNode.getModelNamespace().equals(model.getNamespace())).map(decisionNode -> decisionNode.getName()).collect(Collectors.toSet()),
 				model.getInputs().stream().filter(inputDataNode -> inputDataNode.getModelNamespace().equals(model.getNamespace())).map(inputDataNode -> inputDataNode.getName()).collect(Collectors.toSet()),
 				model.getBusinessKnowledgeModels().stream().filter(businessKnowledgeModelNode -> businessKnowledgeModelNode.getModelNamespace().equals(model.getNamespace())).map(businessKnowledgeModelNode -> businessKnowledgeModelNode.getName()).collect(Collectors.toSet()),
