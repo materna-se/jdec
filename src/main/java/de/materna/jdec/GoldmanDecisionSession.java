@@ -21,16 +21,22 @@ import java.math.BigDecimal;
 import java.util.*;
 
 public class GoldmanDecisionSession {
+	private InputParameters inputParameters;
+	private EnvironmentFactory environmentFactory;
+	private BasicDMNToJavaTransformer basicTransformer;
+	private StandardDMNDialectDefinition dialectDefinition;
+	private DMNModelRepository modelRepository;
+
 	public GoldmanDecisionSession() {
+		dialectDefinition = new StandardDMNDialectDefinition();
+		modelRepository = new DMNModelRepository();
+		inputParameters = new InputParameters(Collections.emptyMap());
+		basicTransformer = dialectDefinition.createBasicTransformer(modelRepository, new NopLazyEvaluationDetector(), inputParameters);
+
+		environmentFactory = dialectDefinition.createEnvironmentFactory();
 	}
 
 	public ExecutionResult executeExpression(String expression, Map<String, Object> inputs) throws ModelImportException {
-		StandardDMNDialectDefinition dialectDefinition = new StandardDMNDialectDefinition();
-		DMNModelRepository modelRepository = new DMNModelRepository();
-		InputParameters inputParameters = new InputParameters(Collections.emptyMap());
-		BasicDMNToJavaTransformer basicTransformer = dialectDefinition.createBasicTransformer(modelRepository, new NopLazyEvaluationDetector(), inputParameters);
-
-		EnvironmentFactory environmentFactory = dialectDefinition.createEnvironmentFactory();
 
 		DMNContext context = DMNContext.of(basicTransformer.makeBuiltInContext(), DMNContextKind.GLOBAL, null, environmentFactory.emptyEnvironment(), RuntimeEnvironment.of());
 		for (Map.Entry<String, Object> entry : inputs.entrySet()) {

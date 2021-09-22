@@ -12,10 +12,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("ConstantConditions")
 public class DMNDecisionSessionTest {
@@ -38,6 +35,7 @@ public class DMNDecisionSessionTest {
 		inputs.put("Employment Status", "UNEMPLOYED");
 
 		ExecutionResult executionResult = decisionSession.executeModel("https://github.com/agilepro/dmn-tck", inputs);
+
 		Map<String, Object> outputs = executionResult.getOutputs();
 		System.out.println("executeHashMap(): " + outputs);
 
@@ -267,5 +265,14 @@ public class DMNDecisionSessionTest {
 		ExecutionResult executionResult = decisionSession.executeModel("remote_main", SerializationHelper.getInstance().toClass("{\"MainPerson\":{\"Name\":\"Max\",\"Age\":40}}", new TypeReference<LinkedHashMap<String, Object>>() {
 		}));
 		System.out.println(SerializationHelper.getInstance().toJSON(executionResult.getOutputs()));
+	}
+
+	@Test
+	void executeInfiniteLoop() throws IOException {
+		DMNDecisionSession decisionSession = new DMNDecisionSession();
+
+		ExecutionResult executionResult = decisionSession.executeExpression("{\"x\": function(age) x(age), \"x\": x(2)}", Collections.EMPTY_MAP);
+		Map<String, Object> outputs = executionResult.getOutputs();
+		System.out.println(outputs);
 	}
 }
