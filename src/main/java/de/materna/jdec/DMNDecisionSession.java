@@ -254,7 +254,12 @@ public class DMNDecisionSession implements DecisionSession {
 					messages = Collections.singletonList(new Message("An unknown error has occurred in Drools. Please refer to the logs for further information.", Message.Level.ERROR));
 				}
 				else {
-					messages = Collections.singletonList(new Message(e.getMessage(), Message.Level.ERROR));
+					if (messages == null) {
+						messages = Collections.singletonList(new Message(e.getMessage(), Message.Level.ERROR));
+					}
+					else {
+						messages.addAll(Collections.singletonList(new Message(e.getMessage(), Message.Level.ERROR)));
+					}
 				}
 			}
 
