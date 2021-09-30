@@ -10,11 +10,12 @@ public class Model {
 	private Set<String> inputs;
 	private Set<String> knowledgeModels;
 	private Set<String> decisionServices;
+	private boolean successful;
 
 	public Model() {
 	}
 
-	public Model(String namespace, String name, String source, Set<String> decisions, Set<String> inputs, Set<String> knowledgeModels, Set<String> decisionServices) {
+	public Model(String namespace, String name, String source, Set<String> decisions, Set<String> inputs, Set<String> knowledgeModels, Set<String> decisionServices, boolean successful) {
 		this.namespace = namespace;
 		this.name = name;
 		this.source = source;
@@ -22,6 +23,7 @@ public class Model {
 		this.inputs = inputs;
 		this.knowledgeModels = knowledgeModels;
 		this.decisionServices = decisionServices;
+		this.successful = successful;
 	}
 
 	public String getNamespace() {
@@ -50,5 +52,9 @@ public class Model {
 
 	public Set<String> getDecisionServices() {
 		return decisionServices;
+	}
+
+	public boolean isSuccessful() {
+		return successful;
 	}
 }

@@ -65,7 +65,7 @@ public class JavaDecisionSession implements DecisionSession {
 		DecisionModel model = getInstance(namespace);
 
 		String name = model.getClass().getSimpleName();
-		return new Model(namespace, name, source, Collections.emptySet(), model.getInputStructure().keySet(), Collections.emptySet(), Collections.emptySet());
+		return new Model(namespace, name, source, Collections.emptySet(), model.getInputStructure().keySet(), Collections.emptySet(), Collections.emptySet(), true);
 	}
 
 	@Override
