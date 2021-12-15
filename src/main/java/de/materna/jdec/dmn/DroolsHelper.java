@@ -2,7 +2,8 @@ package de.materna.jdec.dmn;
 
 import de.materna.jdec.model.Message;
 import de.materna.jdec.model.ModelNotFoundException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.kie.dmn.api.core.DMNMessage;
 import org.kie.dmn.api.core.DMNModel;
 import org.kie.dmn.api.core.DMNRuntime;
@@ -13,7 +14,7 @@ import org.kie.dmn.feel.runtime.FEELFunction;
 import java.util.*;
 
 public class DroolsHelper {
-	private static final Logger log = Logger.getLogger(DroolsHelper.class);
+	private static final Logger log = LoggerFactory.getLogger(DroolsHelper.class);
 
 	public static DMNModel getModel(DMNRuntime runtime, String namespace) throws ModelNotFoundException {
 		Optional<DMNModel> optionalModel = runtime.getModels().stream().filter(model -> model.getNamespace().equals(namespace)).findFirst();

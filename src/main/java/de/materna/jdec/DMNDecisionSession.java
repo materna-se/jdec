@@ -6,7 +6,8 @@ import de.materna.jdec.dmn.DroolsHelper;
 import de.materna.jdec.dmn.conversions.ActicoConverter;
 import de.materna.jdec.dmn.conversions.ConversionResult;
 import de.materna.jdec.model.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
@@ -29,7 +30,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class DMNDecisionSession implements DecisionSession {
-	private static final Logger log = Logger.getLogger(DMNDecisionSession.class);
+	private static final Logger log = LoggerFactory.getLogger(DMNDecisionSession.class);
 
 	public KieFileSystem kieFileSystem;
 	private KieServices kieServices;

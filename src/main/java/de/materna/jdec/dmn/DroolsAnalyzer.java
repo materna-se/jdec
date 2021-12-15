@@ -4,7 +4,8 @@ import de.materna.jdec.model.ComplexInputStructure;
 import de.materna.jdec.model.DecisionServiceReference;
 import de.materna.jdec.model.InputStructure;
 import de.materna.jdec.model.ModelNotFoundException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.kie.dmn.api.core.DMNModel;
 import org.kie.dmn.api.core.DMNRuntime;
 import org.kie.dmn.api.core.DMNType;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DroolsAnalyzer {
-	private static final Logger log = Logger.getLogger(DroolsAnalyzer.class);
+	private static final Logger log = LoggerFactory.getLogger(DroolsAnalyzer.class);
 
 	private DroolsAnalyzer() {
 	}
