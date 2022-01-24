@@ -34,6 +34,8 @@ public class DMNDecisionSession implements DecisionSession {
 
 	public KieFileSystem kieFileSystem;
 	private KieServices kieServices;
+	private KieSession kieSession;
+	private KieContainer kieContainer;
 	private DMNRuntime kieRuntime;
 
 	/**
@@ -216,20 +218,28 @@ public class DMNDecisionSession implements DecisionSession {
 		KieBuilder kieBuilder = null;
 
 		try {
-			// KieBuilder is a builder for the KieModule
+			// We'll dispose the old session before creating a new one.
+			if(kieSession != null) {
+				kieSession.dispose();
+			}
+			if(kieContainer != null) {
+				kieContainer.dispose();
+			}
+
+			// KieBuilder is a builder for the KieModule.
 			kieBuilder = kieServices.newKieBuilder(kieFileSystem);
 
-			// KieModule is a container for the resources in the KieContainer
+			// KieModule is a container for the resources in the KieContainer.
 			KieModule kieModule = kieBuilder.getKieModule();
 
-			// KieContainer contains all KieBases of the models in the KieModule
-			KieContainer kieContainer = kieServices.newKieContainer(kieModule.getReleaseId());
+			// KieContainer contains all KieBases of the models in the KieModule.
+			kieContainer = kieServices.newKieContainer(kieModule.getReleaseId());
 
-			// KieSession allows the application to establish a connection to the drools engine
-			// The state is kept across invocations
-			KieSession kieSession = kieContainer.newKieSession();
+			// KieSession allows the application to establish a connection to the Drools engine.
+			// The state is kept across invocations.
+			kieSession = kieContainer.newKieSession();
 
-			// Get the KieRuntime through the established connection
+			// Get the KieRuntime through the established connection.
 			kieRuntime = kieSession.getKieRuntime(DMNRuntime.class);
 
 			if (messages == null) {
