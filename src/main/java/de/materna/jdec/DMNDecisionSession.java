@@ -6,6 +6,7 @@ import de.materna.jdec.dmn.DroolsHelper;
 import de.materna.jdec.dmn.conversions.ActicoConverter;
 import de.materna.jdec.dmn.conversions.ConversionResult;
 import de.materna.jdec.model.*;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.kie.api.KieServices;
@@ -205,7 +206,7 @@ public class DMNDecisionSession implements DecisionSession {
 	}
 
 	private String getPath(String namespace) {
-		return "/src/main/resources/" + namespace + ".dmn";
+		return "/src/main/resources/" + DigestUtils.md5Hex(namespace).substring(0, 20) + ".dmn";
 	}
 
 	/**
