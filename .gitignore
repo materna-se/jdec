@@ -6,6 +6,7 @@
 ##### Test #####
 /src/test/resources/*
 !/src/test/resources/log4j.properties
+!/src/test/resources/logback.xml
 
 !/src/test/resources/0003-input-data-string-allowed-values.dmn
 !/src/test/resources/0003-input-data-string-allowed-values-invalid-feel.dmn
