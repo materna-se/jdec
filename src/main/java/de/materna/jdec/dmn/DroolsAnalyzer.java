@@ -61,7 +61,7 @@ public class DroolsAnalyzer {
 
 		// All other inputs are resolved and added recursively via the import elements attatched to the definition element.
 		for (Import _import : model.getDefinitions().getImport()) {
-			inputs.put(DroolsHelper.getModel(runtime, _import.getNamespace()).getName(), getComplexInputStructure(runtime, _import.getNamespace(), decisionServiceReferences));
+			inputs.put(_import.getName(), getComplexInputStructure(runtime, _import.getNamespace(), decisionServiceReferences));
 		}
 
 		modelInput.setValue(inputs);

@@ -12,4 +12,5 @@
 	<logger name="org.kie.api.internal.utils.ServiceDiscoveryImpl" level="WARN"/>
 	<logger name="org.eclipse.aether.internal" level="WARN"/>
 	<logger name="org.appformer.maven" level="WARN"/>
+	<logger name="org.kie.dmn.backend.marshalling" level="WARN"/>
 </configuration>
