@@ -1,6 +1,7 @@
 package de.materna.jdec;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import de.materna.jdec.entities.EmploymentForm;
 import de.materna.jdec.model.*;
 import de.materna.jdec.serialization.SerializationHelper;
 import org.junit.jupiter.api.Assertions;
@@ -35,6 +36,29 @@ public class DMNDecisionSessionTest {
 		inputs.put("Employment Status", "UNEMPLOYED");
 
 		ExecutionResult executionResult = decisionSession.executeModel("https://github.com/agilepro/dmn-tck", inputs);
+
+		Map<String, Object> outputs = executionResult.getOutputs();
+		System.out.println("executeHashMap(): " + outputs);
+
+		Assertions.assertTrue(outputs.containsKey("Employment Status Statement"));
+		Assertions.assertEquals("You are UNEMPLOYED", outputs.get("Employment Status Statement"));
+	}
+
+	@Test
+	void executeModelWithSerialization() throws IOException, URISyntaxException {
+		DecisionSession decisionSession = new DMNDecisionSession();
+
+		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("tck/0003-input-data-string-allowed-values.dmn").toURI());
+		String decision = new String(Files.readAllBytes(decisionPath));
+		decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
+
+		Assertions.assertEquals(1, decisionSession.getModels().size());
+
+		EmploymentForm employmentForm = new EmploymentForm();
+		employmentForm.setEmploymentStatus("UNEMPLOYED");
+		System.out.println(SerializationHelper.getInstance().toJSON(employmentForm));
+
+		ExecutionResult executionResult = decisionSession.executeModel("https://github.com/agilepro/dmn-tck", employmentForm);
 
 		Map<String, Object> outputs = executionResult.getOutputs();
 		System.out.println("executeHashMap(): " + outputs);
@@ -227,6 +251,7 @@ public class DMNDecisionSessionTest {
 		Assertions.assertEquals("You are UNEMPLOYED", outputs.get("main"));
 	}
 
+	/*
 	@Test
 	void executeModelWithDebuggedAccessLog() throws IOException, URISyntaxException {
 		DecisionSession decisionSession = new DMNDecisionSession();
@@ -239,40 +264,5 @@ public class DMNDecisionSessionTest {
 		Map<String, Object> outputs = executionResult.getOutputs();
 		// TODO: Access log assertions
 	}
-
-	@Test
-	void importModelWithRemoteDecision() throws Exception {
-		DMNDecisionSession decisionSession = new DMNDecisionSession();
-
-		{
-			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("remote/remote_util.dmn").toURI());
-			String decision = new String(Files.readAllBytes(decisionPath));
-			decisionSession.importModel("remote_util", decision);
-		}
-
-		{
-			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("remote/remote_interface.dmn").toURI());
-			String decision = new String(Files.readAllBytes(decisionPath));
-			decisionSession.importModel("remote_interface", decision);
-		}
-
-		{
-			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("remote/remote_main.dmn").toURI());
-			String decision = new String(Files.readAllBytes(decisionPath));
-			decisionSession.importModel("remote_main", decision);
-		}
-
-		ExecutionResult executionResult = decisionSession.executeModel("remote_main", SerializationHelper.getInstance().toClass("{\"MainPerson\":{\"Name\":\"Max\",\"Age\":40}}", new TypeReference<LinkedHashMap<String, Object>>() {
-		}));
-		System.out.println(SerializationHelper.getInstance().toJSON(executionResult.getOutputs()));
-	}
-
-	@Test
-	void executeInfiniteLoop() throws IOException {
-		DMNDecisionSession decisionSession = new DMNDecisionSession();
-
-		ExecutionResult executionResult = decisionSession.executeExpression("{\"x\": function(age) x(age), \"x\": x(2)}", Collections.EMPTY_MAP);
-		Map<String, Object> outputs = executionResult.getOutputs();
-		System.out.println(outputs);
-	}
+	 */
 }

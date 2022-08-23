@@ -1,7 +1,9 @@
 package de.materna.jdec;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import de.materna.jdec.java.DecisionModel;
 import de.materna.jdec.model.*;
+import de.materna.jdec.serialization.SerializationHelper;
 import org.codehaus.commons.compiler.CompileException;
 import org.codehaus.commons.compiler.CompilerFactoryFactory;
 import org.codehaus.commons.compiler.util.ResourceFinderClassLoader;
@@ -98,6 +100,11 @@ public class JavaDecisionSession implements DecisionSession {
 	public ExecutionResult executeModel(String namespace, Map<String, Object> inputs) throws ModelNotFoundException {
 		Map<String, Object> output = getInstance(namespace).executeDecision(inputs);
 		return new ExecutionResult(output, Collections.emptyMap(), Collections.emptyList());
+	}
+	@Override
+	public ExecutionResult executeModel(String namespace, Object input) throws ModelNotFoundException {
+		return executeModel(namespace, (Map<String, Object>) SerializationHelper.getInstance().getJSONMapper().convertValue(input, new TypeReference<Map<String, ?>>() {
+		}));
 	}
 
 	//

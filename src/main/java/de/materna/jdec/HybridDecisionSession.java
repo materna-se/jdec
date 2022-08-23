@@ -1,6 +1,8 @@
 package de.materna.jdec;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import de.materna.jdec.model.*;
+import de.materna.jdec.serialization.SerializationHelper;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -97,6 +99,11 @@ public class HybridDecisionSession implements DecisionSession {
 			default:
 				throw new ModelNotFoundException();
 		}
+	}
+	@Override
+	public ExecutionResult executeModel(String namespace, Object input) throws ModelNotFoundException {
+		return executeModel(namespace, (Map<String, Object>) SerializationHelper.getInstance().getJSONMapper().convertValue(input, new TypeReference<Map<String, ?>>() {
+		}));
 	}
 
 	//

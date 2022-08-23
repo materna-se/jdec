@@ -1,11 +1,13 @@
 package de.materna.jdec;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import de.materna.jdec.dmn.DroolsAnalyzer;
 import de.materna.jdec.dmn.DroolsDebugger;
 import de.materna.jdec.dmn.DroolsHelper;
 import de.materna.jdec.dmn.conversions.ActicoConverter;
 import de.materna.jdec.dmn.conversions.ConversionResult;
 import de.materna.jdec.model.*;
+import de.materna.jdec.serialization.SerializationHelper;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,6 +129,11 @@ public class DMNDecisionSession implements DecisionSession {
 	@Override
 	public ExecutionResult executeModel(String namespace, Map<String, Object> inputs) throws ModelNotFoundException {
 		return executeModel(DroolsHelper.getModel(kieRuntime, namespace), null, inputs);
+	}
+	@Override
+	public ExecutionResult executeModel(String namespace, Object input) throws ModelNotFoundException {
+		return executeModel(namespace, (Map<String, Object>) SerializationHelper.getInstance().getJSONMapper().convertValue(input, new TypeReference<Map<String, ?>>() {
+		}));
 	}
 
 	//

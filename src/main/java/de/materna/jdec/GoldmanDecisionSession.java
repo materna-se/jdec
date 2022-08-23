@@ -1,15 +1,16 @@
 package de.materna.jdec;
 
 import com.gs.dmn.DMNModelRepository;
+import com.gs.dmn.context.DMNContext;
+import com.gs.dmn.context.DMNContextKind;
+import com.gs.dmn.context.environment.EnvironmentFactory;
+import com.gs.dmn.context.environment.RuntimeEnvironment;
 import com.gs.dmn.dialect.StandardDMNDialectDefinition;
+import com.gs.dmn.el.analysis.semantics.type.Type;
+import com.gs.dmn.el.interpreter.ELInterpreter;
 import com.gs.dmn.feel.analysis.semantics.SemanticError;
-import com.gs.dmn.feel.analysis.semantics.environment.EnvironmentFactory;
-import com.gs.dmn.feel.interpreter.FEELInterpreter;
 import com.gs.dmn.runtime.Context;
-import com.gs.dmn.runtime.DMNContext;
-import com.gs.dmn.runtime.DMNContextKind;
 import com.gs.dmn.runtime.interpreter.Result;
-import com.gs.dmn.runtime.interpreter.environment.RuntimeEnvironment;
 import com.gs.dmn.transformation.InputParameters;
 import com.gs.dmn.transformation.basic.BasicDMNToJavaTransformer;
 import com.gs.dmn.transformation.lazy.NopLazyEvaluationDetector;
@@ -43,7 +44,7 @@ public class GoldmanDecisionSession {
 			context.bind(entry.getKey(), convertInput(entry.getValue()));
 		}
 
-		FEELInterpreter feelInterpreter = dialectDefinition.createFEELInterpreter(modelRepository, inputParameters);
+		ELInterpreter<Type, DMNContext> feelInterpreter = dialectDefinition.createFEELInterpreter(modelRepository, inputParameters);
 
 		try {
 			Result result = feelInterpreter.evaluateExpression(expression, context);
