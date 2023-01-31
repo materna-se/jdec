@@ -1,5 +1,6 @@
 package de.materna.jdec;
 
+import de.materna.jdec.dmn.DroolsHelper;
 import de.materna.jdec.model.ExecutionResult;
 import de.materna.jdec.model.ImportResult;
 import de.materna.jdec.model.Message;
@@ -19,13 +20,13 @@ public class CamundaDecisionSession {
 	}
 
 	public ExecutionResult executeExpression(String expression, Map<String, Object> inputs) throws ModelImportException {
-		Either<FeelEngine.Failure, Object> failureObjectEither = engine.evalExpression(expression, inputs);
+		Either<FeelEngine.Failure, Object> failureObjectEither = engine.evalExpression(expression, (Map<String, Object>) DroolsHelper.enrichInput(inputs));
 		if (failureObjectEither.isLeft()) {
 			throw new ModelImportException(new ImportResult(Collections.singletonList(new Message(failureObjectEither.left().get().message(), Message.Level.ERROR))));
 		}
 
 		HashMap<String, Object> decisions = new LinkedHashMap<>();
-		decisions.put("main", convertContext(failureObjectEither.right().get()));
+		decisions.put("main", DroolsHelper.cleanOutput(convertContext(failureObjectEither.right().get())));
 
 		return new ExecutionResult(decisions, null, Collections.emptyList());
 	}

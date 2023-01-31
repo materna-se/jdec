@@ -102,7 +102,7 @@ public class HybridDecisionSession implements DecisionSession {
 	}
 	@Override
 	public ExecutionResult executeModel(String namespace, Object input) throws ModelNotFoundException {
-		return executeModel(namespace, (Map<String, Object>) SerializationHelper.getInstance().getJSONMapper().convertValue(input, new TypeReference<Map<String, ?>>() {
+		return executeModel(namespace, SerializationHelper.getInstance().getJSONMapper().convertValue(input, new TypeReference<Map<String, Object>>() {
 		}));
 	}
 

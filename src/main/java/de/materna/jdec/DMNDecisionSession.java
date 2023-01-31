@@ -4,11 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import de.materna.jdec.dmn.DroolsAnalyzer;
 import de.materna.jdec.dmn.DroolsDebugger;
 import de.materna.jdec.dmn.DroolsHelper;
-import de.materna.jdec.dmn.conversions.ActicoConverter;
-import de.materna.jdec.dmn.conversions.ConversionResult;
+import de.materna.jdec.dmn.DroolsListener;
 import de.materna.jdec.model.*;
 import de.materna.jdec.serialization.SerializationHelper;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.kie.dmn.api.core.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.kie.api.KieServices;
@@ -17,10 +17,6 @@ import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.KieModule;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
-import org.kie.dmn.api.core.DMNContext;
-import org.kie.dmn.api.core.DMNDecisionResult;
-import org.kie.dmn.api.core.DMNModel;
-import org.kie.dmn.api.core.DMNRuntime;
 import org.kie.dmn.api.core.ast.DecisionServiceNode;
 import org.kie.dmn.feel.FEEL;
 import org.kie.dmn.feel.lang.FEELProfile;
@@ -94,13 +90,6 @@ public class DMNDecisionSession implements DecisionSession {
 	public ImportResult importModel(String namespace, String model) throws ModelImportException {
 		List<Message> messages = new LinkedList<>();
 
-		//REMOVEME When Actico starts properly exporting models that contain decision services
-		ConversionResult conversionResult = ActicoConverter.convertModel(model);
-		if (conversionResult.isFixed()) {
-			model = conversionResult.getModel();
-			messages.add(new Message("The imported model " + namespace + " was exported by ACTICO and was automatically converted to support decision services.", Message.Level.INFO));
-		}
-
 		kieFileSystem.write(getPath(namespace), model);
 
 		try {
@@ -128,12 +117,19 @@ public class DMNDecisionSession implements DecisionSession {
 
 	@Override
 	public ExecutionResult executeModel(String namespace, Map<String, Object> inputs) throws ModelNotFoundException {
-		return executeModel(DroolsHelper.getModel(kieRuntime, namespace), null, inputs);
+		return executeModel(namespace, inputs, false);
 	}
+	public ExecutionResult executeModel(String namespace, Map<String, Object> inputs, boolean debug) throws ModelNotFoundException {
+		return executeModel(DroolsHelper.getModel(kieRuntime, namespace), null, inputs, debug);
+	}
+
 	@Override
 	public ExecutionResult executeModel(String namespace, Object input) throws ModelNotFoundException {
-		return executeModel(namespace, (Map<String, Object>) SerializationHelper.getInstance().getJSONMapper().convertValue(input, new TypeReference<Map<String, ?>>() {
-		}));
+		return executeModel(namespace, input, false);
+	}
+	public ExecutionResult executeModel(String namespace, Object input, boolean debug) throws ModelNotFoundException {
+		return executeModel(namespace, SerializationHelper.getInstance().getJSONMapper().convertValue(input, new TypeReference<Map<String, Object>>() {
+		}), debug);
 	}
 
 	//
@@ -149,12 +145,18 @@ public class DMNDecisionSession implements DecisionSession {
 	// Overloads
 	//
 
-	public ExecutionResult executeModel(DMNModel model, Map<String, ?> inputs) {
-		return executeModel(model, null, inputs);
+	public ExecutionResult executeModel(String namespace, String decisionServiceName, Map<String, Object> input) throws ModelNotFoundException {
+		return executeModel(namespace, decisionServiceName, input, false);
 	}
-
-	public ExecutionResult executeModel(String namespace, String decisionServiceName, Map<String, Object> inputs) throws ModelNotFoundException {
-		return executeModel(DroolsHelper.getModel(kieRuntime, namespace), decisionServiceName, inputs);
+	public ExecutionResult executeModel(String namespace, String decisionServiceName, Map<String, Object> input, boolean debug) throws ModelNotFoundException {
+		return executeModel(DroolsHelper.getModel(kieRuntime, namespace), decisionServiceName, input, debug);
+	}
+	public ExecutionResult executeModel(String namespace, String decisionServiceName, Object input) throws ModelNotFoundException {
+		return executeModel(namespace, decisionServiceName, input, false);
+	}
+	public ExecutionResult executeModel(String namespace, String decisionServiceName, Object input, boolean debug) throws ModelNotFoundException {
+		return executeModel(DroolsHelper.getModel(kieRuntime, namespace), decisionServiceName, SerializationHelper.getInstance().getJSONMapper().convertValue(input, new TypeReference<Map<String, Object>>() {
+		}), debug);
 	}
 
 	public Map<String, InputStructure> getInputStructure(String namespace, String decisionServiceName) throws ModelNotFoundException {
@@ -184,18 +186,27 @@ public class DMNDecisionSession implements DecisionSession {
 	// Custom Methods
 	//
 
-	public ExecutionResult executeModel(DMNModel model, String decisionServiceName, Map<String, ?> inputs) {
+	private ExecutionResult executeModel(DMNModel model, String decisionServiceName, Map<String, ?> inputs, boolean debug) {
 		// We need to copy all key-value pairs from the given HashMap<String, Object> into the context
 		DMNContext context = kieRuntime.newContext();
 		for (Map.Entry<String, ?> entry : inputs.entrySet()) {
-			context.set(entry.getKey(), entry.getValue());
+			context.set(entry.getKey(), DroolsHelper.enrichInput(entry.getValue()));
 		}
 
+		DroolsListener listener = new DroolsListener(this);
+		listener.start(model.getNamespace(), model.getName());
+
 		DroolsDebugger debugger = new DroolsDebugger(this);
-		debugger.start(model.getNamespace(), model.getName());
+		if(debug) {
+			debugger.start(model.getNamespace(), model.getName());
+		}
+
 		// By calling evaluateAll, the dmn model and the dmn context are sent to the drools engine
 		List<DMNDecisionResult> results = (decisionServiceName == null ? kieRuntime.evaluateAll(model, context) : kieRuntime.evaluateDecisionService(model, context, decisionServiceName)).getDecisionResults();
-		debugger.stop();
+		listener.stop();
+		if(debug) {
+			debugger.stop();
+		}
 
 		// After we've received the results, we need to convert them into a usable format
 		Map<String, Object> outputs = new LinkedHashMap<>();
@@ -206,10 +217,10 @@ public class DMNDecisionSession implements DecisionSession {
 				continue;
 			}
 
-			outputs.put(decisionResult.getDecisionName(), DroolsHelper.cleanResult(decisionResult.getResult()));
+			outputs.put(decisionResult.getDecisionName(), DroolsHelper.cleanOutput(decisionResult.getResult()));
 		}
 
-		return new ExecutionResult(outputs, debugger.getDecisions(), debugger.getModelAccessLog(), debugger.getMessages());
+		return new ExecutionResult(outputs, debugger.getDecisions(), debugger.getModelAccessLog(), listener.getMessages());
 	}
 
 	private String getPath(String namespace) {
@@ -300,7 +311,7 @@ public class DMNDecisionSession implements DecisionSession {
 		feel.addListener(feelEvent -> messages.add(new Message(feelEvent.getMessage(), DroolsHelper.convertFEELEventLevel(feelEvent.getSeverity()))));
 
 		HashMap<String, Object> decisions = new LinkedHashMap<>();
-		decisions.put("main", DroolsHelper.cleanResult(feel.evaluate(expression, inputs)));
+		decisions.put("main", DroolsHelper.cleanOutput(feel.evaluate(expression, (Map<String, Object>) DroolsHelper.enrichInput(inputs))));
 
 		return new ExecutionResult(decisions, null, messages);
 	}
