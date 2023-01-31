@@ -16,8 +16,6 @@ public class DroolsDebugger {
 	private Stack<String> decisionStack = new Stack<>();
 	private Stack<ModelContext> contextStack;
 
-	private List<Message> messages = new LinkedList<>();
-
 	private Stack<ModelAccess> modelAccessLog = new Stack<>();
 
 	private DMNRuntimeEventListener listener;
@@ -93,7 +91,7 @@ public class DroolsDebugger {
 					// Otherwise, we could overwrite context that we cannot see from this level.
 					ModelContext context = contextStack.pop();
 					if (context.getState() == ModelContext.ModelContextState.UNDEFINED) {
-						context.setValue(DroolsHelper.cleanResult(event.getExpressionResult()));
+						context.setValue(DroolsHelper.cleanOutput(event.getExpressionResult()));
 						context.setState(ModelContext.ModelContextState.VALUE);
 					}
 
@@ -155,10 +153,6 @@ public class DroolsDebugger {
 			@Override
 			public void afterEvaluateDecision(AfterEvaluateDecisionEvent event) {
 				synchronized (decisionSession.getRuntime()) {
-					for (DMNMessage message : event.getResult().getMessages()) {
-						messages.add(new Message(message.getMessage(), DroolsHelper.convertMessageLevel(message.getSeverity())));
-					}
-
 					decisionStack.pop();
 
 					modelAccessLog.peek().setExitContext(DroolsHelper.cleanContext(event.getResult().getContext().getAll()));
@@ -201,9 +195,5 @@ public class DroolsDebugger {
 
 	public Stack<ModelAccess> getModelAccessLog() {
 		return modelAccessLog;
-	}
-
-	public List<Message> getMessages() {
-		return messages;
 	}
 }
