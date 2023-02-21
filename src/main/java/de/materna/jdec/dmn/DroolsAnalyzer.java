@@ -71,7 +71,7 @@ public class DroolsAnalyzer {
 		return modelInput;
 	}
 
-	private static InputStructure getInputStructure(DMNType type) {
+	public static InputStructure getInputStructure(DMNType type) {
 		// FIX: By explicitly using getBaseType, we avoid the wrong (?) type resolution of the drools engine.
 		DMNType baseType = getBaseType(type);
 
