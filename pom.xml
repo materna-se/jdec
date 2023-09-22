@@ -4,7 +4,7 @@
 
 	<groupId>com.github.materna-se</groupId>
 	<artifactId>jdec</artifactId>
-	<version>2.9.10-SNAPSHOT</version>
+	<version>2.9.11-SNAPSHOT</version>
 
 	<name>jDEC</name>
 	<description>🤔 Library that offers a unified interface to Drools and Java decisions</description>
@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>org.kie</groupId>
 			<artifactId>kie-ci</artifactId>
-			<version>7.67.2.Final-redhat-00006</version>
+			<version>8.44.0.Final</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.httpcomponents</groupId>
@@ -84,13 +84,13 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>31.1.0.jre-redhat-00004</version>
+			<version>32.1.2-jre</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.kie</groupId>
 			<artifactId>kie-dmn-core</artifactId>
-			<version>7.59.0.Final-redhat-00010</version>
+			<version>8.44.0.Final</version>
 		</dependency>
 
 		<!-- Jackson -->
@@ -200,7 +200,7 @@
 		<dependency>
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit</artifactId>
-			<version>5.13.0.202109080827-r</version>
+			<version>6.7.0.202309050840-r</version>
 		</dependency>
 
 		<dependency>
