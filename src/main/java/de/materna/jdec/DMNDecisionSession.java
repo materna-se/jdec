@@ -8,6 +8,8 @@ import de.materna.jdec.dmn.DroolsListener;
 import de.materna.jdec.model.*;
 import de.materna.jdec.serialization.SerializationHelper;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.kie.api.builder.ReleaseId;
+import org.kie.api.builder.model.KieModuleModel;
 import org.kie.dmn.api.core.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -224,7 +226,7 @@ public class DMNDecisionSession implements DecisionSession {
 	}
 
 	private String getPath(String namespace) {
-		return "/src/main/resources/" + DigestUtils.md5Hex(namespace).substring(0, 20) + ".dmn";
+		return "src/main/resources/" + DigestUtils.md5Hex(namespace).substring(0, 20) + ".dmn";
 	}
 
 	/**
@@ -246,7 +248,7 @@ public class DMNDecisionSession implements DecisionSession {
 			}
 
 			// KieBuilder is a builder for the KieModule.
-			kieBuilder = kieServices.newKieBuilder(kieFileSystem);
+			kieBuilder = kieServices.newKieBuilder(kieFileSystem).buildAll();
 
 			// KieModule is a container for the resources in the KieContainer.
 			KieModule kieModule = kieBuilder.getKieModule();
