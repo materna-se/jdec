@@ -73,6 +73,15 @@ public class DroolsHelper {
 			return cleanedResults;
 		}
 
+		if (result instanceof List) {
+			List<Object> typedResult = (List<Object>) result;
+			List<Object> cleanedResults = new ArrayList<>();
+			for (Object entry : typedResult) {
+				cleanedResults.add(enrichInput(entry));
+			}
+			return cleanedResults;
+		}
+
 		if (result instanceof String) {
 			String typedResult = (String) result;
 			if (typedResult.startsWith("\uE15A")) {
