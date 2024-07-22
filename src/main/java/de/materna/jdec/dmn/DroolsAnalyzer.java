@@ -4,6 +4,7 @@ import de.materna.jdec.model.ComplexInputStructure;
 import de.materna.jdec.model.DecisionServiceReference;
 import de.materna.jdec.model.InputStructure;
 import de.materna.jdec.model.ModelNotFoundException;
+import org.kie.dmn.feel.lang.types.AliasFEELType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.kie.dmn.api.core.DMNModel;
@@ -91,7 +92,7 @@ public class DroolsAnalyzer {
 			return new InputStructure(baseType.getName(), DroolsHelper.convertOptions(baseType.getName(), type.getAllowedValues()));
 		}
 
-		if (type.isCollection()) { // Is the input a simple collection?
+		if (type.isCollection() && !type.isInstanceOf(AliasFEELType.ANY)) { // Is the input a simple collection and not of type any?
 			if (baseType.getAllowedValues().size() != 0) { // Is the input a simple collection that contains a list of allowed values?
 				LinkedList<InputStructure> inputs = new LinkedList<>();
 				inputs.add(new InputStructure(baseType.getName(), DroolsHelper.convertOptions(baseType.getName(), baseType.getAllowedValues())));
