@@ -8,8 +8,6 @@ import de.materna.jdec.dmn.DroolsListener;
 import de.materna.jdec.model.*;
 import de.materna.jdec.serialization.SerializationHelper;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.kie.api.builder.ReleaseId;
-import org.kie.api.builder.model.KieModuleModel;
 import org.kie.dmn.api.core.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -307,7 +305,7 @@ public class DMNDecisionSession implements DecisionSession {
 	public ExecutionResult executeExpression(String expression, Map<String, Object> inputs) throws ModelImportException {
 		List<FEELProfile> profiles = new ArrayList<>();
 		profiles.add(new KieExtendedFEELProfile());
-		FEEL feel = FEEL.newInstance(profiles);
+		FEEL feel = FEEL.newInstance(DMNDecisionSession.class.getClassLoader(), profiles);
 
 		List<Message> messages = new LinkedList<>();
 		feel.addListener(feelEvent -> messages.add(new Message(feelEvent.getMessage(), DroolsHelper.convertFEELEventLevel(feelEvent.getSeverity()))));
