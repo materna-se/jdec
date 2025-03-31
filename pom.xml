@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>org.kie</groupId>
 			<artifactId>kie-ci</artifactId>
-			<version>9.101.0.redhat-00003</version>
+			<version>9.102.0.redhat-00001</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.httpcomponents</groupId>
@@ -51,7 +51,7 @@
 		<dependency>
 			<groupId>org.kie</groupId>
 			<artifactId>kie-dmn-core</artifactId>
-			<version>9.101.0.redhat-00003</version>
+			<version>9.102.0.redhat-00001</version>
 		</dependency>
 
 		<!-- Jackson -->
@@ -185,6 +185,17 @@
 			<artifactId>xmlunit-matchers</artifactId>
 			<version>2.10.0</version>
 		</dependency>
+
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.47.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-core</artifactId>
+            <version>14.0.33.Final</version>
+        </dependency>
 	</dependencies>
 
 	<build>

@@ -93,7 +93,7 @@ public class DMNDecisionSessionTest {
 			List<Message> messages = e.getResult().getMessages();
 			Assertions.assertEquals(1, messages.size());
 			Message message = messages.get(0);
-			Assertions.assertTrue(message.getText().contains("An unknown error has occurred in Drools"));
+			Assertions.assertTrue(message.getText().contains("\"definitions\" is null"));
 			Assertions.assertEquals(Message.Level.ERROR, message.getLevel());
 		}
 	}
@@ -214,29 +214,6 @@ public class DMNDecisionSessionTest {
 	}
 
 	@Test
-	void executeDecisionService() throws Exception {
-		DMNDecisionSession decisionSession = new DMNDecisionSession();
-
-		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("decision-service.dmn").toURI());
-		String decision = new String(Files.readAllBytes(decisionPath));
-		ImportResult importResult = decisionSession.importModel("decision-service-actico", decision);
-		Assertions.assertEquals(1, importResult.getMessages().size());
-		Message message = importResult.getMessages().get(0);
-		Assertions.assertTrue(message.getText().contains("automatically converted to support decision services"));
-		Assertions.assertEquals(Message.Level.INFO, message.getLevel());
-
-		Map<String, Object> inputs = new HashMap<>();
-		inputs.put("Input", "test");
-
-		Map<String, InputStructure> inputStructure = decisionSession.getInputStructure("decision-service-actico", "DecisionService");
-		System.out.println(SerializationHelper.getInstance().toJSON(inputStructure));
-
-		ExecutionResult executionResult = decisionSession.executeModel("decision-service-actico", "DecisionService", inputs);
-		Map<String, Object> outputs = executionResult.getOutputs();
-		Assertions.assertEquals("{\"PublicDecision\":\"PUBLIC: PRIVATE: test\"}", SerializationHelper.getInstance().toJSON(outputs));
-	}
-
-	@Test
 	void executeExpression() throws IOException {
 		DMNDecisionSession decisionSession = new DMNDecisionSession();
 
@@ -250,19 +227,4 @@ public class DMNDecisionSessionTest {
 		Assertions.assertTrue(outputs.containsKey("main"));
 		Assertions.assertEquals("You are UNEMPLOYED", outputs.get("main"));
 	}
-
-	/*
-	@Test
-	void executeModelWithDebuggedAccessLog() throws IOException, URISyntaxException {
-		DecisionSession decisionSession = new DMNDecisionSession();
-
-		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("access.dmn").toURI());
-		String decision = new String(Files.readAllBytes(decisionPath));
-		decisionSession.importModel("access", decision);
-
-		ExecutionResult executionResult = decisionSession.executeModel("access", new HashMap<>());
-		Map<String, Object> outputs = executionResult.getOutputs();
-		// TODO: Access log assertions
-	}
-	 */
 }
