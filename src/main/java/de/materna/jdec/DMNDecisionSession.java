@@ -8,21 +8,28 @@ import de.materna.jdec.dmn.DroolsListener;
 import de.materna.jdec.model.*;
 import de.materna.jdec.serialization.SerializationHelper;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.kie.dmn.api.core.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
-import org.kie.api.builder.KieModule;
+import org.kie.api.builder.ReleaseId;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.dmn.api.core.DMNContext;
+import org.kie.dmn.api.core.DMNDecisionResult;
+import org.kie.dmn.api.core.DMNModel;
+import org.kie.dmn.api.core.DMNRuntime;
 import org.kie.dmn.api.core.ast.DecisionServiceNode;
+import org.kie.dmn.core.impl.DMNMessageImpl;
 import org.kie.dmn.feel.FEEL;
 import org.kie.dmn.feel.lang.FEELProfile;
 import org.kie.dmn.feel.parser.feel11.profiles.KieExtendedFEELProfile;
 import org.kie.dmn.model.api.DMNElementReference;
+import org.kie.dmn.model.api.DMNModelInstrumentedBase;
 import org.kie.dmn.model.api.DecisionService;
+import org.kie.internal.builder.IncrementalResults;
+import org.kie.internal.builder.InternalKieBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -31,23 +38,29 @@ import java.util.stream.Collectors;
 public class DMNDecisionSession implements DecisionSession {
 	private static final Logger log = LoggerFactory.getLogger(DMNDecisionSession.class);
 
-	public KieFileSystem kieFileSystem;
 	private KieServices kieServices;
+	public KieFileSystem kieFileSystem;
+	private ReleaseId kieReleaseId;
+	private KieBuilder kieBuilder;
 	private KieSession kieSession;
 	private KieContainer kieContainer;
 	private DMNRuntime kieRuntime;
+	private Set<org.kie.api.builder.Message> kieMessages;
 
 	/**
 	 * Creates a KieFileSystem to load decision models dynamically.
 	 */
 	public DMNDecisionSession() {
 		kieServices = KieServices.Factory.get();
+
 		kieFileSystem = kieServices.newKieFileSystem();
-		try {
-			compileModels(null);
-		}
-		catch (ModelImportException ignored) {
-		}
+		kieReleaseId = kieServices.newReleaseId("org.test", "foo", "1.0-SNAPSHOT");
+		kieFileSystem.generateAndWritePomXML(kieReleaseId);
+
+		kieBuilder = kieServices.newKieBuilder(kieFileSystem).buildAll();
+		kieMessages = new HashSet<>(kieBuilder.getResults().getMessages());
+
+		compileModels();
 	}
 
 	//
@@ -72,14 +85,14 @@ public class DMNDecisionSession implements DecisionSession {
 		byte[] source = kieFileSystem.read(getPath(namespace));
 
 		return new Model(
-				model.getNamespace(),
-				model.getName(),
-				new String(source, StandardCharsets.UTF_8),
-				model.getDecisions().stream().filter(decisionNode -> decisionNode.getModelNamespace().equals(model.getNamespace())).map(decisionNode -> decisionNode.getName()).collect(Collectors.toSet()),
-				model.getInputs().stream().filter(inputDataNode -> inputDataNode.getModelNamespace().equals(model.getNamespace())).map(inputDataNode -> inputDataNode.getName()).collect(Collectors.toSet()),
-				model.getBusinessKnowledgeModels().stream().filter(businessKnowledgeModelNode -> businessKnowledgeModelNode.getModelNamespace().equals(model.getNamespace())).map(businessKnowledgeModelNode -> businessKnowledgeModelNode.getName()).collect(Collectors.toSet()),
-				model.getDecisionServices().stream().filter(decisionServiceNode -> decisionServiceNode.getModelNamespace().equals(model.getNamespace())).map(decisionServiceNode -> decisionServiceNode.getName()).collect(Collectors.toSet()),
-				true
+			model.getNamespace(),
+			model.getName(),
+			new String(source, StandardCharsets.UTF_8),
+			model.getDecisions().stream().filter(decisionNode -> decisionNode.getModelNamespace().equals(model.getNamespace())).map(decisionNode -> decisionNode.getName()).collect(Collectors.toSet()),
+			model.getInputs().stream().filter(inputDataNode -> inputDataNode.getModelNamespace().equals(model.getNamespace())).map(inputDataNode -> inputDataNode.getName()).collect(Collectors.toSet()),
+			model.getBusinessKnowledgeModels().stream().filter(businessKnowledgeModelNode -> businessKnowledgeModelNode.getModelNamespace().equals(model.getNamespace())).map(businessKnowledgeModelNode -> businessKnowledgeModelNode.getName()).collect(Collectors.toSet()),
+			model.getDecisionServices().stream().filter(decisionServiceNode -> decisionServiceNode.getModelNamespace().equals(model.getNamespace())).map(decisionServiceNode -> decisionServiceNode.getName()).collect(Collectors.toSet()),
+			true
 		);
 	}
 
@@ -88,26 +101,59 @@ public class DMNDecisionSession implements DecisionSession {
 	 */
 	@Override
 	public ImportResult importModel(String namespace, String model) throws ModelImportException {
-		List<Message> messages = new LinkedList<>();
+		String path = getPath(namespace);
 
-		kieFileSystem.write(getPath(namespace), model);
+		// We want to check if the model has changed.
+		// To do this, we first read the current model from the virtual file system.
+		byte[] currentModel = kieFileSystem.read(path);
+		if (currentModel != null) {
+			String currentModelString = new String(currentModel, StandardCharsets.UTF_8);
+			if (currentModelString.equals(model)) {
+				// The model has not changed. We don't need to recompile.
+				return new ImportResult(convertMessages(kieMessages));
+			}
+		}
+
+		kieFileSystem.write(path, model);
 
 		try {
-			return compileModels(messages);
-		}
-		catch (ModelImportException exception) {
-			// Before we can throw the exception, we need to delete the imported model.
-			// By doing this, the execution of other models is not affected.
-			deleteModel(namespace);
+			IncrementalResults results = ((InternalKieBuilder) kieBuilder).createFileSet(path).build();
+			kieMessages.removeIf(new HashSet<>(results.getRemovedMessages())::contains);
+			kieMessages.addAll(results.getAddedMessages());
 
-			throw exception;
+			compileModels();
+
+			List<Message> messages = convertMessages(kieMessages);
+			if (messages.stream().anyMatch(message -> message.getLevel() == Message.Level.ERROR)) {
+				// Before we can throw the exception, we need to delete the imported model.
+				// By doing this, the execution of other models is not affected.
+				deleteModel(namespace);
+
+				throw new ModelImportException(new ImportResult(messages));
+			}
+
+			return new ImportResult(messages);
+		}
+		catch (Exception exception) {
+			List<Message> messages;
+
+			if (exception.getMessage() == null) {
+				messages = Collections.singletonList(new Message("An unknown error has occurred in Drools. Please refer to the logs for further information.", Message.Level.ERROR));
+			}
+			else {
+				messages = Collections.singletonList(new Message(exception.getMessage(), Message.Level.ERROR));
+			}
+
+			// If we panic, we don't care about the messages from the compilation.
+			// We only care about the exception message.
+			throw new ModelImportException(new ImportResult(messages));
 		}
 	}
 
 	@Override
-	public void deleteModel(String namespace) throws ModelImportException {
+	public void deleteModel(String namespace) {
 		kieFileSystem.delete(getPath(namespace));
-		compileModels(null);
+		compileModels();
 	}
 
 	//
@@ -119,6 +165,7 @@ public class DMNDecisionSession implements DecisionSession {
 	public ExecutionResult executeModel(String namespace, Map<String, Object> inputs) throws ModelNotFoundException {
 		return executeModel(namespace, inputs, false);
 	}
+
 	public ExecutionResult executeModel(String namespace, Map<String, Object> inputs, boolean debug) throws ModelNotFoundException {
 		return executeModel(DroolsHelper.getModel(kieRuntime, namespace), null, inputs, debug);
 	}
@@ -127,6 +174,7 @@ public class DMNDecisionSession implements DecisionSession {
 	public ExecutionResult executeModel(String namespace, Object input) throws ModelNotFoundException {
 		return executeModel(namespace, input, false);
 	}
+
 	public ExecutionResult executeModel(String namespace, Object input, boolean debug) throws ModelNotFoundException {
 		return executeModel(namespace, SerializationHelper.getInstance().getJSONMapper().convertValue(input, new TypeReference<Map<String, Object>>() {
 		}), debug);
@@ -148,12 +196,15 @@ public class DMNDecisionSession implements DecisionSession {
 	public ExecutionResult executeModel(String namespace, String decisionServiceName, Map<String, Object> input) throws ModelNotFoundException {
 		return executeModel(namespace, decisionServiceName, input, false);
 	}
+
 	public ExecutionResult executeModel(String namespace, String decisionServiceName, Map<String, Object> input, boolean debug) throws ModelNotFoundException {
 		return executeModel(DroolsHelper.getModel(kieRuntime, namespace), decisionServiceName, input, debug);
 	}
+
 	public ExecutionResult executeModel(String namespace, String decisionServiceName, Object input) throws ModelNotFoundException {
 		return executeModel(namespace, decisionServiceName, input, false);
 	}
+
 	public ExecutionResult executeModel(String namespace, String decisionServiceName, Object input, boolean debug) throws ModelNotFoundException {
 		return executeModel(DroolsHelper.getModel(kieRuntime, namespace), decisionServiceName, SerializationHelper.getInstance().getJSONMapper().convertValue(input, new TypeReference<Map<String, Object>>() {
 		}), debug);
@@ -197,14 +248,14 @@ public class DMNDecisionSession implements DecisionSession {
 		listener.start(model.getNamespace(), model.getName());
 
 		DroolsDebugger debugger = new DroolsDebugger(this);
-		if(debug) {
+		if (debug) {
 			debugger.start(model.getNamespace(), model.getName());
 		}
 
 		// By calling evaluateAll, the dmn model and the dmn context are sent to the drools engine
 		List<DMNDecisionResult> results = (decisionServiceName == null ? kieRuntime.evaluateAll(model, context) : kieRuntime.evaluateDecisionService(model, context, decisionServiceName)).getDecisionResults();
 		listener.stop();
-		if(debug) {
+		if (debug) {
 			debugger.stop();
 		}
 
@@ -230,72 +281,26 @@ public class DMNDecisionSession implements DecisionSession {
 	/**
 	 * Reloads the service by compiling the decision models.
 	 *
-	 * @param messages Warnings that occurred during compilation.
 	 * @return Warnings that occurred during compilation.
 	 */
-	private ImportResult compileModels(List<Message> messages) throws ModelImportException {
-		KieBuilder kieBuilder = null;
-
-		try {
-			// We'll dispose the old session before creating a new one.
-			if(kieSession != null) {
-				kieSession.dispose();
-			}
-			if(kieContainer != null) {
-				kieContainer.dispose();
-			}
-
-			// KieBuilder is a builder for the KieModule.
-			kieBuilder = kieServices.newKieBuilder(kieFileSystem).buildAll();
-
-			// KieModule is a container for the resources in the KieContainer.
-			KieModule kieModule = kieBuilder.getKieModule();
-
-			// KieContainer contains all KieBases of the models in the KieModule.
-			kieContainer = kieServices.newKieContainer(kieModule.getReleaseId());
-
-			// KieSession allows the application to establish a connection to the Drools engine.
-			// The state is kept across invocations.
-			kieSession = kieContainer.newKieSession();
-
-			// Get the KieRuntime through the established connection.
-			kieRuntime = kieSession.getKieRuntime(DMNRuntime.class);
-
-			if (messages == null) {
-				messages = convertMessages(kieBuilder.getResults().getMessages());
-			}
-			else {
-				messages.addAll(convertMessages(kieBuilder.getResults().getMessages()));
-			}
-
-			return new ImportResult(messages);
+	private void compileModels() {
+		// We'll dispose the old session before creating a new one.
+		if (kieSession != null) {
+			kieSession.dispose();
 		}
-		catch (Exception exception) {
-			try {
-				// kieBuilder.getResults() may produce a NullPointerException in org.kie.dmn.core.assembler.DMNAssemblerService.
-				if (messages == null) {
-					messages = convertMessages(kieBuilder.getResults().getMessages());
-				}
-				else {
-					messages.addAll(convertMessages(kieBuilder.getResults().getMessages()));
-				}
-			}
-			catch (Exception e) {
-				if (e.getMessage() == null) {
-					messages = Collections.singletonList(new Message("An unknown error has occurred in Drools. Please refer to the logs for further information.", Message.Level.ERROR));
-				}
-				else {
-					if (messages == null) {
-						messages = Collections.singletonList(new Message(e.getMessage(), Message.Level.ERROR));
-					}
-					else {
-						messages.addAll(Collections.singletonList(new Message(e.getMessage(), Message.Level.ERROR)));
-					}
-				}
-			}
-
-			throw new ModelImportException(new ImportResult(messages));
+		if (kieContainer != null) {
+			kieContainer.dispose();
 		}
+
+		kieContainer = kieServices.newKieContainer(kieReleaseId);
+
+		// KieSession allows the application to establish a connection to the Drools engine.
+		// The state is kept across invocations.
+		kieSession = kieContainer.newKieSession();
+
+		// Get the KieRuntime through the established connection.
+		kieRuntime = kieSession.getKieRuntime(DMNRuntime.class);
+		// TODO: Should we enable this? ((DMNRuntimeImpl) kieRuntime).setOption(new RuntimeTypeCheckOption(true));
 	}
 
 	public DMNRuntime getRuntime() {
@@ -316,11 +321,22 @@ public class DMNDecisionSession implements DecisionSession {
 		return new ExecutionResult(decisions, null, messages);
 	}
 
-	private List<Message> convertMessages(List<org.kie.api.builder.Message> messages) {
+	private List<Message> convertMessages(Set<org.kie.api.builder.Message> messages) {
 		List<Message> convertedMessages = new LinkedList<>();
 		for (org.kie.api.builder.Message message : messages) {
-			convertedMessages.add(new Message(message.getText(), Message.Level.valueOf(message.getLevel().name())));
+			List<String> path = new ArrayList<>();
+			try {
+				resolvePath(path, (DMNModelInstrumentedBase) ((DMNMessageImpl) message).getSourceReference());
+			}
+			catch (Exception e) {
+				log.error("Error resolving path for message: " + message.getText(), e);
+			}
+			convertedMessages.add(new Message(message.getText(), Message.Level.valueOf(message.getLevel().name()), path));
 		}
 		return convertedMessages;
+	}
+
+	private List<String> resolvePath(List<String> path, DMNModelInstrumentedBase source) {
+		return path;
 	}
 }
