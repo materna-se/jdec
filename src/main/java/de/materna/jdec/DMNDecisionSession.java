@@ -135,17 +135,20 @@ public class DMNDecisionSession implements DecisionSession {
 			return new ImportResult(messages);
 		}
 		catch (Exception exception) {
-			List<Message> messages;
+			if (exception instanceof ModelImportException) {
+				// This is a known exception. We can throw it directly.
+				throw (ModelImportException) exception;
+			}
 
+			// If we panic, we don't care about the messages from the compilation.
+			// We only care about the exception message.
+			List<Message> messages;
 			if (exception.getMessage() == null) {
 				messages = Collections.singletonList(new Message("An unknown error has occurred in Drools. Please refer to the logs for further information.", Message.Level.ERROR));
 			}
 			else {
 				messages = Collections.singletonList(new Message(exception.getMessage(), Message.Level.ERROR));
 			}
-
-			// If we panic, we don't care about the messages from the compilation.
-			// We only care about the exception message.
 			throw new ModelImportException(new ImportResult(messages));
 		}
 	}
@@ -325,12 +328,15 @@ public class DMNDecisionSession implements DecisionSession {
 		List<Message> convertedMessages = new LinkedList<>();
 		for (org.kie.api.builder.Message message : messages) {
 			List<String> path = new ArrayList<>();
+			/*
+			TODO: org.drools.drl.parser.MessageImpl and org.kie.dmn.core.impl.DMNMessageImpl
 			try {
 				resolvePath(path, (DMNModelInstrumentedBase) ((DMNMessageImpl) message).getSourceReference());
 			}
 			catch (Exception e) {
 				log.error("Error resolving path for message: " + message.getText(), e);
 			}
+			 */
 			convertedMessages.add(new Message(message.getText(), Message.Level.valueOf(message.getLevel().name()), path));
 		}
 		return convertedMessages;
