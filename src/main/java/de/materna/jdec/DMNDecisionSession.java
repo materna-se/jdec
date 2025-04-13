@@ -117,7 +117,8 @@ public class DMNDecisionSession implements DecisionSession {
 		kieFileSystem.write(path, model);
 
 		try {
-			IncrementalResults results = ((InternalKieBuilder) kieBuilder).createFileSet(path).build();
+			IncrementalResults results = ((InternalKieBuilder) kieBuilder).incrementalBuild();
+
 			kieMessages.removeIf(new HashSet<>(results.getRemovedMessages())::contains);
 			kieMessages.addAll(results.getAddedMessages());
 
@@ -125,10 +126,6 @@ public class DMNDecisionSession implements DecisionSession {
 
 			List<Message> messages = convertMessages(kieMessages);
 			if (messages.stream().anyMatch(message -> message.getLevel() == Message.Level.ERROR)) {
-				// Before we can throw the exception, we need to delete the imported model.
-				// By doing this, the execution of other models is not affected.
-				deleteModel(namespace);
-
 				throw new ModelImportException(new ImportResult(messages));
 			}
 
@@ -154,9 +151,41 @@ public class DMNDecisionSession implements DecisionSession {
 	}
 
 	@Override
-	public void deleteModel(String namespace) {
+	public ImportResult deleteModel(String namespace) throws ModelImportException {
 		kieFileSystem.delete(getPath(namespace));
-		compileModels();
+
+		try {
+			IncrementalResults results = ((InternalKieBuilder) kieBuilder).incrementalBuild();
+
+			kieMessages.removeIf(new HashSet<>(results.getRemovedMessages())::contains);
+			kieMessages.addAll(results.getAddedMessages());
+
+			compileModels();
+
+			List<Message> messages = convertMessages(kieMessages);
+			if (messages.stream().anyMatch(message -> message.getLevel() == Message.Level.ERROR)) {
+				throw new ModelImportException(new ImportResult(messages));
+			}
+
+			return new ImportResult(messages);
+		}
+		catch (Exception exception) {
+			if (exception instanceof ModelImportException) {
+				// This is a known exception. We can throw it directly.
+				throw (ModelImportException) exception;
+			}
+
+			// If we panic, we don't care about the messages from the compilation.
+			// We only care about the exception message.
+			List<Message> messages;
+			if (exception.getMessage() == null) {
+				messages = Collections.singletonList(new Message("An unknown error has occurred in Drools. Please refer to the logs for further information.", Message.Level.ERROR));
+			}
+			else {
+				messages = Collections.singletonList(new Message(exception.getMessage(), Message.Level.ERROR));
+			}
+			throw new ModelImportException(new ImportResult(messages));
+		}
 	}
 
 	//

@@ -87,9 +87,9 @@ public class JavaDecisionSession implements DecisionSession {
 	}
 
 	@Override
-	public void deleteModel(String namespace) throws ModelImportException {
+	public ImportResult deleteModel(String namespace) throws ModelImportException {
 		models.remove(getPath(namespace));
-		compileModels();
+		return compileModels();
 	}
 
 	//

@@ -66,18 +66,18 @@ public class HybridDecisionSession implements DecisionSession {
 	}
 
 	@Override
-	public void deleteModel(String namespace) throws ModelImportException {
+	public ImportResult deleteModel(String namespace) throws ModelImportException {
 		if (!decisionSessionMapping.containsKey(namespace)) {
-			return;
+			return null;
 		}
 
 		switch (decisionSessionMapping.get(namespace)) {
 			case DMN:
-				dmnDecisionSession.deleteModel(namespace);
+				return dmnDecisionSession.deleteModel(namespace);
 			case JAVA:
-				javaDecisionSession.deleteModel(namespace);
+				return javaDecisionSession.deleteModel(namespace);
 			default:
-				return;
+				return null;
 		}
 	}
 

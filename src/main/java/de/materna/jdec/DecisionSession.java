@@ -31,7 +31,7 @@ public interface DecisionSession {
 	 *
 	 * @param namespace Namespace of the decision model. It can be extracted with /definitions/@namespace.
 	 */
-	void deleteModel(String namespace) throws ModelImportException;
+	ImportResult deleteModel(String namespace) throws ModelImportException;
 
 	/**
 	 * Executes the decision model.
