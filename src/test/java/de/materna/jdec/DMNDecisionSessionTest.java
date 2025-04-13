@@ -68,16 +68,62 @@ public class DMNDecisionSessionTest {
 	}
 
 	@Test
+	void executeModelFirstWithValidAfterWithInvalidFEEL() throws IOException, URISyntaxException {
+		DecisionSession decisionSession = new DMNDecisionSession();
+
+		{
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("tck/0003-input-data-string-allowed-values.dmn").toURI());
+			String decision = new String(Files.readAllBytes(decisionPath));
+			ImportResult importResult = decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
+
+			Assertions.assertEquals(1, decisionSession.getModels().size());
+			Assertions.assertEquals(0, importResult.getMessages().size());
+		}
+
+		{
+			ModelImportException exception = Assertions.assertThrows(ModelImportException.class, () -> {
+				Path decisionPath = Paths.get(getClass().getClassLoader().getResource("tck/0003-input-data-string-allowed-values-invalid-feel.dmn").toURI());
+				String decision = new String(Files.readAllBytes(decisionPath));
+				decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
+			});
+
+			Assertions.assertEquals(0, decisionSession.getModels().size());
+			Assertions.assertEquals(1, exception.getResult().getMessages().size());
+		}
+
+		{
+			ModelImportException exception = Assertions.assertThrows(ModelImportException.class, () -> {
+				Path decisionPath = Paths.get(getClass().getClassLoader().getResource("tck/0003-input-data-string-allowed-values-invalid-feel.dmn").toURI());
+				String decision = new String(Files.readAllBytes(decisionPath));
+				decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
+			});
+
+			Assertions.assertEquals(0, decisionSession.getModels().size());
+			Assertions.assertEquals(1, exception.getResult().getMessages().size());
+		}
+
+		{
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("tck/0003-input-data-string-allowed-values.dmn").toURI());
+			String decision = new String(Files.readAllBytes(decisionPath));
+			ImportResult importResult = decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
+
+			Assertions.assertEquals(1, decisionSession.getModels().size());
+			Assertions.assertEquals(0, importResult.getMessages().size());
+		}
+	}
+
+	@Test
 	void executeModelWithInvalidFEEL() {
 		DecisionSession decisionSession = new DMNDecisionSession();
 
-		Assertions.assertThrows(ModelImportException.class, () -> {
+		ModelImportException exception = Assertions.assertThrows(ModelImportException.class, () -> {
 			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("tck/0003-input-data-string-allowed-values-invalid-feel.dmn").toURI());
 			String decision = new String(Files.readAllBytes(decisionPath));
 			decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
 		});
 
 		Assertions.assertEquals(0, decisionSession.getModels().size());
+		Assertions.assertEquals(1, exception.getResult().getMessages().size());
 	}
 
 	@Test

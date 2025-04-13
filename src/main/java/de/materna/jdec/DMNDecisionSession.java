@@ -119,13 +119,22 @@ public class DMNDecisionSession implements DecisionSession {
 		try {
 			IncrementalResults results = ((InternalKieBuilder) kieBuilder).incrementalBuild();
 
+			compileModels();
+
 			kieMessages.removeIf(new HashSet<>(results.getRemovedMessages())::contains);
 			kieMessages.addAll(results.getAddedMessages());
 
-			compileModels();
-
 			List<Message> messages = convertMessages(kieMessages);
 			if (messages.stream().anyMatch(message -> message.getLevel() == Message.Level.ERROR)) {
+				// Before we can throw the exception, we need to undo the import.
+
+				// We need to reset the kie messages.
+				kieMessages.removeIf(new HashSet<>(results.getAddedMessages())::contains);
+				kieMessages.addAll(results.getRemovedMessages());
+
+				// We need to delete the model from the file system.
+				deleteModel(namespace);
+
 				throw new ModelImportException(new ImportResult(messages));
 			}
 
