@@ -23,6 +23,7 @@ import org.kie.dmn.core.impl.DMNMessageImpl;
 import org.kie.dmn.feel.FEEL;
 import org.kie.dmn.feel.lang.FEELProfile;
 import org.kie.dmn.feel.parser.feel11.profiles.KieExtendedFEELProfile;
+import org.kie.dmn.model.api.DMNElement;
 import org.kie.dmn.model.api.DMNElementReference;
 import org.kie.dmn.model.api.DMNModelInstrumentedBase;
 import org.kie.dmn.model.api.DecisionService;
@@ -126,15 +127,16 @@ public class DMNDecisionSession implements DecisionSession {
 
 			List<Message> messages = convertMessages(kieMessages);
 			if (messages.stream().anyMatch(message -> message.getLevel() == Message.Level.ERROR)) {
-				// Before we can throw the exception, we need to undo the import.
+				// Before we can throw the exception, we need to undo the import:
 
-				// We need to reset the kie messages.
+				// 1. We need to reset the kie messages.
 				kieMessages.removeIf(new HashSet<>(results.getAddedMessages())::contains);
 				kieMessages.addAll(results.getRemovedMessages());
 
-				// We need to delete the model from the file system.
+				// 2. We need to delete the model from the file system.
 				deleteModel(namespace);
 
+				// 3. Now we can throw the exception.
 				throw new ModelImportException(new ImportResult(messages));
 			}
 
@@ -366,21 +368,32 @@ public class DMNDecisionSession implements DecisionSession {
 		List<Message> convertedMessages = new LinkedList<>();
 		for (org.kie.api.builder.Message message : messages) {
 			List<String> path = new ArrayList<>();
-			/*
-			TODO: org.drools.drl.parser.MessageImpl and org.kie.dmn.core.impl.DMNMessageImpl
 			try {
 				resolvePath(path, (DMNModelInstrumentedBase) ((DMNMessageImpl) message).getSourceReference());
 			}
 			catch (Exception e) {
-				log.error("Error resolving path for message: " + message.getText(), e);
+				log.error("Error resolving path for message: {}", message.getText(), e);
 			}
-			 */
+
 			convertedMessages.add(new Message(message.getText(), Message.Level.valueOf(message.getLevel().name()), path));
 		}
 		return convertedMessages;
 	}
 
-	private List<String> resolvePath(List<String> path, DMNModelInstrumentedBase source) {
-		return path;
+	private void resolvePath(List<String> path, DMNModelInstrumentedBase source) {
+		while (source != null) {
+			if (source instanceof DMNElement) {
+				path.add(((DMNElement) source).getId());
+				path.add(source.getClass().getSimpleName());
+			}
+			else {
+				throw new IllegalArgumentException("Source is not a DMNElement");
+			}
+
+			source = source.getParent();
+		}
+
+		// As we traveled from the child to the root, we need to reverse the path.
+		Collections.reverse(path);
 	}
 }

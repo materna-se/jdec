@@ -123,7 +123,13 @@ public class DMNDecisionSessionTest {
 		});
 
 		Assertions.assertEquals(0, decisionSession.getModels().size());
-		Assertions.assertEquals(1, exception.getResult().getMessages().size());
+		List<Message> messages = exception.getResult().getMessages();
+		Assertions.assertEquals(1, messages.size());
+		Message message = messages.get(0);
+		Assertions.assertTrue(message.getText().contains("Error compiling FEEL expression"));
+		Assertions.assertEquals(Message.Level.ERROR, message.getLevel());
+		List<String> expectedSource = Arrays.asList("TDefinitions", "_0003-input-data-string-allowed-values", "TDecision", "d_EmploymentStatusStatement", "TLiteralExpression", null);
+		Assertions.assertEquals(expectedSource, message.getSource());
 	}
 
 	@Test
