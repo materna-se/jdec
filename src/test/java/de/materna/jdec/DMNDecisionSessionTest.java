@@ -1,6 +1,5 @@
 package de.materna.jdec;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import de.materna.jdec.entities.EmploymentForm;
 import de.materna.jdec.model.*;
 import de.materna.jdec.serialization.SerializationHelper;
@@ -13,7 +12,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("ConstantConditions")
 public class DMNDecisionSessionTest {
@@ -45,6 +47,67 @@ public class DMNDecisionSessionTest {
 	}
 
 	@Test
+	void allowedValuesOfReferencedItemDefinitionAreVisible() throws IOException, URISyntaxException {
+		DecisionSession decisionSession = new DMNDecisionSession();
+
+		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("model-SryIqdizos.dmn").toURI());
+		String decision = new String(Files.readAllBytes(decisionPath));
+		decisionSession.importModel("https://declab.org/SryIqdizos", decision);
+
+		Assertions.assertEquals(1, decisionSession.getModels().size());
+
+		Map<String, InputStructure> inputStructure = decisionSession.getInputStructure("https://declab.org/SryIqdizos");
+
+		InputStructure rootType = inputStructure.get("Input 1");
+		Assertions.assertEquals("array", rootType.getType());
+		Assertions.assertEquals(null, rootType.getOptions());
+
+		List<InputStructure> childList = (List<InputStructure>) ((ComplexInputStructure) rootType).getValue();
+		Assertions.assertEquals(1, childList.size());
+
+		InputStructure childType = childList.get(0);
+		Assertions.assertEquals("string", childType.getType());
+		Assertions.assertEquals(2, childType.getOptions().size());
+		Assertions.assertEquals(Arrays.asList("a", "b"), childType.getOptions());
+	}
+
+	@Test
+	void parseItemDefinitionWithChildren() throws IOException, URISyntaxException {
+		DecisionSession decisionSession = new DMNDecisionSession();
+
+		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("model-sxZQRsuYZE.dmn").toURI());
+		String decision = new String(Files.readAllBytes(decisionPath));
+		decisionSession.importModel("https://declab.org/sxZQRsuYZE", decision);
+
+		Assertions.assertEquals(1, decisionSession.getModels().size());
+
+		Map<String, InputStructure> inputStructure = decisionSession.getInputStructure("https://declab.org/sxZQRsuYZE");
+
+		InputStructure rootType = inputStructure.get("Input 1");
+		Assertions.assertEquals("object", rootType.getType());
+		Assertions.assertEquals(null, rootType.getOptions());
+
+		HashMap<String, InputStructure> childMap = (HashMap<String, InputStructure>) ((ComplexInputStructure) rootType).getValue();
+		Assertions.assertEquals(2, childMap.size());
+
+		InputStructure firstChildType = childMap.get("Item Component 1");
+		Assertions.assertEquals("number", firstChildType.getType());
+		Assertions.assertEquals(3, firstChildType.getOptions().size());
+		Assertions.assertEquals(Arrays.asList(1.0, 2.0, 3.0), firstChildType.getOptions());
+
+		InputStructure secondChildType = childMap.get("Item Component 2");
+		Assertions.assertEquals("array", secondChildType.getType());
+		Assertions.assertEquals(null, secondChildType.getOptions());
+
+		List<InputStructure> grandChildList = (List<InputStructure>) ((ComplexInputStructure) secondChildType).getValue();
+		Assertions.assertEquals(1, grandChildList.size());
+
+		InputStructure grandChildType = grandChildList.get(0);
+		Assertions.assertEquals("string", grandChildType.getType());
+		Assertions.assertEquals(null, grandChildType.getOptions());
+	}
+
+	@Test
 	void executeModelWithSerialization() throws IOException, URISyntaxException {
 		DecisionSession decisionSession = new DMNDecisionSession();
 
@@ -53,6 +116,13 @@ public class DMNDecisionSessionTest {
 		decisionSession.importModel("https://github.com/agilepro/dmn-tck", decision);
 
 		Assertions.assertEquals(1, decisionSession.getModels().size());
+
+		Map<String, InputStructure> employmentStatus = decisionSession.getInputStructure("https://github.com/agilepro/dmn-tck");
+
+		InputStructure inputStructure = employmentStatus.get("Employment Status");
+		Assertions.assertEquals("string", inputStructure.getType());
+		Assertions.assertEquals(4, inputStructure.getOptions().size());
+		Assertions.assertEquals(Arrays.asList("UNEMPLOYED", "EMPLOYED", "SELF-EMPLOYED", "STUDENT"), inputStructure.getOptions());
 
 		EmploymentForm employmentForm = new EmploymentForm();
 		employmentForm.setEmploymentStatus("UNEMPLOYED");

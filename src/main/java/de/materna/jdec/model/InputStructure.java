@@ -7,7 +7,7 @@ import java.util.List;
 public class InputStructure {
 	private String type;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private List<Object> options;
+	private List<Object> options; // if there are no options, this field is null (not empty!)
 
 	public InputStructure(String type) {
 		this.type = type;

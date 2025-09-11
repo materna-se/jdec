@@ -37,26 +37,22 @@ public class DroolsHelper {
 	 * @param type    Correct type of the allowed values
 	 * @param options List of all allowed values
 	 */
-	public static List<Object> convertOptions(String type, List<DMNUnaryTest> options) {
+	public static List<Object> convertOptions(List<DMNUnaryTest> options) {
 		List<Object> convertedOptions = new LinkedList<>();
 		for (DMNUnaryTest option : options) {
-			switch (type) {
-				case "string":
-				case "date":
-				case "time":
-				case "dateTime":
-					// We need to remove the quotation marks from the allowed value
-					convertedOptions.add(option.toString().substring(1, option.toString().length() - 1));
-					continue;
-				case "number":
-					// According to the dmn specification, input ranges like [0..999] could be specified as an allowed value.
-					// We'll catch the exception for now.
-					try {
-						convertedOptions.add(Double.valueOf(option.toString()));
-					}
-					catch (NumberFormatException ignored) {
-					}
-					continue;
+			String stringifiedOption = option.toString();
+			if(stringifiedOption.startsWith("\"")) {
+				// We need to remove the quotation marks from the allowed value
+				convertedOptions.add(stringifiedOption.substring(1, stringifiedOption.length() - 1));
+			}
+			else {
+				// According to the dmn specification, input ranges like [0..999] could be specified as an allowed value.
+				// We'll catch the exception for now.
+				try {
+					convertedOptions.add(Double.valueOf(stringifiedOption));
+				}
+				catch (NumberFormatException ignored) {
+				}
 			}
 		}
 		return convertedOptions;

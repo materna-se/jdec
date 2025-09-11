@@ -73,12 +73,9 @@ public class DroolsAnalyzer {
 	}
 
 	public static InputStructure getInputStructure(DMNType type) {
-		// FIX: By explicitly using getBaseType, we avoid the wrong (?) type resolution of the drools engine.
-		DMNType baseType = getBaseType(type);
-
 		// In order to decide if the input is complex, we get the number of child inputs.
 		// If the input contains child inputs, we consider it complex.
-		if (type.getFields().size() != 0) { // Is it a complex input?
+		if (!type.getFields().isEmpty()) { // Is it a complex input?
 			if (type.isCollection()) { // Is the input a complex collection?
 				LinkedList<ComplexInputStructure> inputs = new LinkedList<>();
 				inputs.add(new ComplexInputStructure("object", getChildInputStructure(type.getFields())));
@@ -88,25 +85,29 @@ public class DroolsAnalyzer {
 			return new ComplexInputStructure("object", getChildInputStructure(type.getFields()));
 		}
 
-		if (type.getAllowedValues().size() != 0) { // Is it a simple input that contains a list of allowed values?
-			return new InputStructure(baseType.getName(), DroolsHelper.convertOptions(baseType.getName(), type.getAllowedValues()));
-		}
+		// If it's not a complex input, we're recursively resolving the base type and collecting information along the way.
 
-		if (type.isCollection() && !type.isInstanceOf(AliasFEELType.ANY)) { // Is the input a simple collection and not of type any?
-			if (baseType.getAllowedValues().size() != 0) { // Is the input a simple collection that contains a list of allowed values?
+		ResolvedType baseType = getBaseType(null, type);
+
+		if (baseType.isCollection()) { // Is the input a simple collection?
+			if (!baseType.getAllowedValues().isEmpty()) { // Is the input a simple collection that contains a list of allowed values?
 				LinkedList<InputStructure> inputs = new LinkedList<>();
-				inputs.add(new InputStructure(baseType.getName(), DroolsHelper.convertOptions(baseType.getName(), baseType.getAllowedValues())));
+				inputs.add(new InputStructure(baseType.getType().getName(), baseType.getAllowedValues()));
 				return new ComplexInputStructure("array", inputs);
 			}
 
 			// The input is a simple collection.
 			LinkedList<InputStructure> inputs = new LinkedList<>();
-			inputs.add(new InputStructure(baseType.getName()));
+			inputs.add(new InputStructure(baseType.getType().getName()));
 			return new ComplexInputStructure("array", inputs);
 		}
 
+		if (!baseType.getAllowedValues().isEmpty()) { // Is it a simple input that contains a list of allowed values?
+			return new InputStructure(baseType.getType().getName(), baseType.getAllowedValues());
+		}
+
 		// The input is as simple as it gets.
-		return new InputStructure(baseType.getName());
+		return new InputStructure(baseType.getType().getName());
 	}
 
 	/**
@@ -125,11 +126,69 @@ public class DroolsAnalyzer {
 		return inputs;
 	}
 
-	private static DMNType getBaseType(DMNType type) {
-		if (type.getBaseType() != null) {
-			return getBaseType(type.getBaseType());
+	// The type system is a little strange. Let's assume we have "Item Definition 1", which is a list of "Item Definition 2". "Item Definition 2" is a string and has allowed values.
+	// In this case, we want to get back that it is a list of strings with allowed values.
+	// To do this, we repeatedly query the underlying type in getBaseType() until we arrive at a (FEEL) base type.
+	// However, we need to collect information along the way:
+	//   If we find allowed values at any level, we need to keep note of that.
+	//   If we see at any level that it is a collection, we need to note that it is a collection.
+
+	/**
+	 * Resolves the base type, collecting information about whether it is a collection and any allowed values along the way.
+	 * @param resolvedType The resolved type so far. In the beginning, it should be set to null.
+	 * @param type The type to resolve.
+	 * @return The base type.
+	 */
+	private static ResolvedType getBaseType(ResolvedType resolvedType, DMNType type) {
+		if (resolvedType == null) {
+			resolvedType = new ResolvedType();
 		}
 
-		return type;
+		if (type.isCollection()) {
+			resolvedType.isCollection = true;
+		}
+
+		if (!type.getAllowedValues().isEmpty()) {
+			List<Object> objects = DroolsHelper.convertOptions(type.getAllowedValues());
+			resolvedType.allowedValues.addAll(objects);
+		}
+
+		if (type.getBaseType() != null) {
+			return getBaseType(resolvedType, type.getBaseType());
+		}
+		else {
+			resolvedType.type = type;
+			return resolvedType;
+		}
+	}
+
+	private static class ResolvedType {
+		private DMNType type;
+		private boolean isCollection = false;
+		private List<Object> allowedValues = new LinkedList<>();
+
+		public DMNType getType() {
+			return type;
+		}
+
+		public void setType(DMNType type) {
+			this.type = type;
+		}
+
+		public boolean isCollection() {
+			return isCollection;
+		}
+
+		public void setCollection(boolean collection) {
+			isCollection = collection;
+		}
+
+		public List<Object> getAllowedValues() {
+			return allowedValues;
+		}
+
+		public void setAllowedValues(List<Object> allowedValues) {
+			this.allowedValues = allowedValues;
+		}
 	}
 }
