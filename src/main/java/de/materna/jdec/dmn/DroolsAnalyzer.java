@@ -89,7 +89,9 @@ public class DroolsAnalyzer {
 
 		ResolvedType baseType = getBaseType(null, type);
 
-		if (baseType.isCollection()) { // Is the input a simple collection?
+		// Is the input a simple collection?
+		// Drools has a quirky way of representing Any, it's also marked as a collection. Let's handle that special case here.
+		if (baseType.isCollection() && !baseType.getType().getName().equals("Any")) {
 			if (!baseType.getAllowedValues().isEmpty()) { // Is the input a simple collection that contains a list of allowed values?
 				LinkedList<InputStructure> inputs = new LinkedList<>();
 				inputs.add(new InputStructure(baseType.getType().getName(), baseType.getAllowedValues()));

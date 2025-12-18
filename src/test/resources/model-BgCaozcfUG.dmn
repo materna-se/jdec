@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<dmn:definitions xmlns="https://declab.org/BgCaozcfUG" xmlns:dmn="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:feel="https://www.omg.org/spec/DMN/20230324/FEEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:di="https://www.omg.org/spec/DMN/20230324/DI/" xmlns:dc="https://www.omg.org/spec/DMN/20230324/DC/" id="CoMOcAFVRG" name="model-BgCaozcfUG" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" namespace="https://declab.org/BgCaozcfUG">
+	<dmn:decision id="EqupiaWatI" name="Decision 1">
+		<dmn:variable name="Decision 1"/>
+		<dmn:literalExpression id="niLApkmhAR">
+			<dmn:text>"Hello World!"</dmn:text>
+		</dmn:literalExpression>
+	</dmn:decision>
+	<dmndi:DMNDI>
+		<dmndi:DMNDiagram id="WatpbjoVqU" name="Diagram 1">
+			<dmndi:DMNShape id="QdPbzlDEbH" dmnElementRef="EqupiaWatI" isCollapsed="false">
+				<dmndi:DMNStyle>
+					<dmndi:FillColor red="255" green="255" blue="255"/>
+					<dmndi:StrokeColor red="0" green="0" blue="0"/>
+					<dmndi:FontColor red="0" green="0" blue="0"/>
+				</dmndi:DMNStyle>
+				<dc:Bounds x="596" y="219" width="100" height="50"/>
+				<dmndi:DMNLabel/>
+			</dmndi:DMNShape>
+		</dmndi:DMNDiagram>
+	</dmndi:DMNDI>
+	<dmn:inputData id="HHUrDWuJfZ" name="Input 1">
+		<dmn:variable name="Input 1" typeRef="Any"/>
+	</dmn:inputData>
+</dmn:definitions>

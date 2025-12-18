@@ -349,4 +349,18 @@ public class DMNDecisionSessionTest {
 		Assertions.assertTrue(outputs.containsKey("main"));
 		Assertions.assertEquals("You are UNEMPLOYED", outputs.get("main"));
 	}
+
+	@Test
+	void importModelWithAny() throws Exception {
+		DMNDecisionSession decisionSession = new DMNDecisionSession();
+
+		{
+			Path decisionPath = Paths.get(getClass().getClassLoader().getResource("model-BgCaozcfUG.dmn").toURI());
+			String decision = new String(Files.readAllBytes(decisionPath));
+			decisionSession.importModel("https://declab.org/BgCaozcfUG", decision);
+		}
+
+		Map<String, InputStructure> inputStructure = decisionSession.getInputStructure("https://declab.org/BgCaozcfUG");
+		Assertions.assertTrue(inputStructure.get("Input 1").getType().equals("Any"));
+	}
 }
