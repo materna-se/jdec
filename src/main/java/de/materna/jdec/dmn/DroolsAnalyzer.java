@@ -159,7 +159,7 @@ public class DroolsAnalyzer {
 	 * Resolves the base type, collecting information about whether it is a collection and any allowed values along the way.
 	 * @param resolvedType The resolved type so far. In the beginning, it should be set to null.
 	 * @param type The type to resolve.
-	 * @param visitedTypes Map to track visited types and prevent infinite loops.
+	 * @param visitedTypes Map to track visited types to prevent cycles.
 	 * @return The base type.
 	 */
 	private static ResolvedType getBaseType(ResolvedType resolvedType, DMNType type, Map<String, Boolean> visitedTypes) {
