@@ -1,9 +1,6 @@
 package de.materna.jdec.dmn;
 
-import de.materna.jdec.model.ComplexInputStructure;
-import de.materna.jdec.model.DecisionServiceReference;
-import de.materna.jdec.model.InputStructure;
-import de.materna.jdec.model.ModelNotFoundException;
+import de.materna.jdec.model.*;
 import org.kie.dmn.feel.lang.types.AliasFEELType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +25,7 @@ public class DroolsAnalyzer {
 	/**
 	 * Uses getInputs() to convert all inputs into our own class hierarchy
 	 */
-	public static ComplexInputStructure getComplexInputStructure(DMNRuntime runtime, String namespace, List<DecisionServiceReference> decisionServiceReferences) throws ModelNotFoundException {
+	public static ComplexInputStructure getComplexInputStructure(DMNRuntime runtime, String namespace, List<DecisionServiceReference> decisionServiceReferences) throws ModelNotFoundException, ModelIntrospectionException {
 		DMNModel model = DroolsHelper.getModel(runtime, namespace);
 
 		ComplexInputStructure modelInput = new ComplexInputStructure("object", false);
@@ -48,12 +45,22 @@ public class DroolsAnalyzer {
 				switch (decisionServiceReference.getEntityType()) {
 					case DECISION: {
 						DecisionNode decisionNode = model.getDecisionById(decisionServiceReference.getEntityReference());
-						inputs.put(decisionNode.getName(), getInputStructure(decisionNode.getResultType()));
+						try {
+							inputs.put(decisionNode.getName(), getInputStructure(decisionNode.getResultType()));
+						}
+						catch (ModelIntrospectionException e) {
+							log.error("Could not resolve input structure for decision: {}", decisionNode.getName(), e);
+						}
 						return;
 					}
 					case INPUT: {
 						InputDataNode inputNode = model.getInputById(decisionServiceReference.getEntityReference());
-						inputs.put(inputNode.getName(), getInputStructure(inputNode.getType()));
+						try {
+							inputs.put(inputNode.getName(), getInputStructure(inputNode.getType()));
+						}
+						catch (ModelIntrospectionException e) {
+							log.error("Could not resolve input structure for input: {}", inputNode.getName(), e);
+						}
 						return;
 					}
 				}
@@ -72,22 +79,35 @@ public class DroolsAnalyzer {
 		return modelInput;
 	}
 
-	public static InputStructure getInputStructure(DMNType type) {
+	public static InputStructure getInputStructure(DMNType type) throws ModelIntrospectionException {
+		return getInputStructure(type, new LinkedHashMap<>());
+	}
+
+	private static InputStructure getInputStructure(DMNType type, Map<String, Boolean> visitedTypes) throws ModelIntrospectionException {
+		// Cycle detection: if we've already visited this type, something is wrong.
+		String typeKey = type.getNamespace() + "#" + type.getName();
+		if (visitedTypes.containsKey(typeKey)) {
+			throw new ModelIntrospectionException("cycle detected for type: " + typeKey);
+		}
+
+		// Mark this type as visited.
+		visitedTypes.put(typeKey, true);
+
 		// In order to decide if the input is complex, we get the number of child inputs.
 		// If the input contains child inputs, we consider it complex.
 		if (!type.getFields().isEmpty()) { // Is it a complex input?
 			if (type.isCollection()) { // Is the input a complex collection?
 				LinkedList<ComplexInputStructure> inputs = new LinkedList<>();
-				inputs.add(new ComplexInputStructure("object", getChildInputStructure(type.getFields())));
+				inputs.add(new ComplexInputStructure("object", getChildInputStructure(type.getFields(), visitedTypes)));
 				return new ComplexInputStructure("array", inputs);
 			}
 
-			return new ComplexInputStructure("object", getChildInputStructure(type.getFields()));
+			return new ComplexInputStructure("object", getChildInputStructure(type.getFields(), visitedTypes));
 		}
 
 		// If it's not a complex input, we're recursively resolving the base type and collecting information along the way.
 
-		ResolvedType baseType = getBaseType(null, type);
+		ResolvedType baseType = getBaseType(null, type, visitedTypes);
 
 		// Is the input a simple collection?
 		// Drools has a quirky way of representing Any, it's also marked as a collection. Let's handle that special case here.
@@ -118,11 +138,11 @@ public class DroolsAnalyzer {
 	 *
 	 * @param fields Child Inputs
 	 */
-	private static Map<String, InputStructure> getChildInputStructure(Map<String, DMNType> fields) {
+	private static Map<String, InputStructure> getChildInputStructure(Map<String, DMNType> fields, Map<String, Boolean> visitedTypes) throws ModelIntrospectionException {
 		Map<String, InputStructure> inputs = new LinkedHashMap<>();
 
 		for (Map.Entry<String, DMNType> entry : fields.entrySet()) {
-			inputs.put(entry.getKey(), getInputStructure(entry.getValue()));
+			inputs.put(entry.getKey(), getInputStructure(entry.getValue(), visitedTypes));
 		}
 
 		return inputs;
@@ -139,9 +159,10 @@ public class DroolsAnalyzer {
 	 * Resolves the base type, collecting information about whether it is a collection and any allowed values along the way.
 	 * @param resolvedType The resolved type so far. In the beginning, it should be set to null.
 	 * @param type The type to resolve.
+	 * @param visitedTypes Map to track visited types and prevent infinite loops.
 	 * @return The base type.
 	 */
-	private static ResolvedType getBaseType(ResolvedType resolvedType, DMNType type) {
+	private static ResolvedType getBaseType(ResolvedType resolvedType, DMNType type, Map<String, Boolean> visitedTypes) {
 		if (resolvedType == null) {
 			resolvedType = new ResolvedType();
 		}
@@ -156,7 +177,7 @@ public class DroolsAnalyzer {
 		}
 
 		if (type.getBaseType() != null) {
-			return getBaseType(resolvedType, type.getBaseType());
+			return getBaseType(resolvedType, type.getBaseType(), visitedTypes);
 		}
 		else {
 			resolvedType.type = type;
