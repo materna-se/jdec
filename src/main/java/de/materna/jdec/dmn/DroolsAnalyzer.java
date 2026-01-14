@@ -80,7 +80,6 @@ public class DroolsAnalyzer {
 	}
 
 	public static InputStructure getInputStructure(DMNType type) throws ModelIntrospectionException {
-		System.out.println("XXXXXX" + type.getName());
 		return getInputStructure(type, new LinkedHashMap<>());
 	}
 

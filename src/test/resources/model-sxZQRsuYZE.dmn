@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<dmn:definitions xmlns="https://declab.org/MjLYNcTxEn" xmlns:dmn="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:feel="https://www.omg.org/spec/DMN/20230324/FEEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:di="https://www.omg.org/spec/DMN/20230324/DI/" xmlns:dc="https://www.omg.org/spec/DMN/20230324/DC/" id="GeXPtPZphh" name="model-MjLYNcTxEn" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" namespace="https://declab.org/MjLYNcTxEn">
+    <dmn:decision id="VJmZqYyuXs" name="Decision 1">
+        <dmn:variable name="Decision 1"/>
+        <dmn:literalExpression id="zRoMJXUYpU">
+            <dmn:text>"Hello World!"</dmn:text>
+        </dmn:literalExpression>
+    </dmn:decision>
+    <dmndi:DMNDI>
+        <dmndi:DMNDiagram id="ZGEYvDuszS" name="Diagram 1">
+            <dmndi:DMNShape id="pINIQQoUTJ" dmnElementRef="VJmZqYyuXs" isCollapsed="false">
+                <dmndi:DMNStyle>
+                    <dmndi:FillColor red="255" green="255" blue="255"/>
+                    <dmndi:StrokeColor red="0" green="0" blue="0"/>
+                    <dmndi:FontColor red="0" green="0" blue="0"/>
+                </dmndi:DMNStyle>
+                <dc:Bounds x="596" y="219" width="100" height="50"/>
+                <dmndi:DMNLabel/>
+            </dmndi:DMNShape>
+        </dmndi:DMNDiagram>
+    </dmndi:DMNDI>
+    <dmn:inputData id="mriArgaOxs" name="Input 1">
+        <dmn:variable name="Input 1" typeRef="Item Definition 1"/>
+    </dmn:inputData>
+    <dmn:itemDefinition id="ePhwnVOXpQ" name="Item Definition 1" isCollection="false">
+        <dmn:itemComponent id="EJefKWcHEp" name="Item Component 1" isCollection="false">
+            <dmn:typeRef>number</dmn:typeRef>
+            <dmn:allowedValues id="gfipMHasvr">
+                <dmn:text>1, 2, 3</dmn:text>
+            </dmn:allowedValues>
+        </dmn:itemComponent>
+        <dmn:itemComponent id="hqPyEKmczh" name="Item Component 2" isCollection="true">
+            <dmn:typeRef>string</dmn:typeRef>
+        </dmn:itemComponent>
+    </dmn:itemDefinition>
+</dmn:definitions>

@@ -52,11 +52,11 @@ public class DMNDecisionSessionTest {
 
 		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("model-SryIqdizos.dmn").toURI());
 		String decision = new String(Files.readAllBytes(decisionPath));
-		decisionSession.importModel("https://declab.org/SryIqdizos", decision);
+		decisionSession.importModel("https://declab.org/abKsnYJcDb", decision);
 
 		Assertions.assertEquals(1, decisionSession.getModels().size());
 
-		Map<String, InputStructure> inputStructure = decisionSession.getInputStructure("https://declab.org/SryIqdizos");
+		Map<String, InputStructure> inputStructure = decisionSession.getInputStructure("https://declab.org/abKsnYJcDb");
 
 		InputStructure rootType = inputStructure.get("Input 1");
 		Assertions.assertEquals("array", rootType.getType());
@@ -77,11 +77,11 @@ public class DMNDecisionSessionTest {
 
 		Path decisionPath = Paths.get(getClass().getClassLoader().getResource("model-sxZQRsuYZE.dmn").toURI());
 		String decision = new String(Files.readAllBytes(decisionPath));
-		decisionSession.importModel("https://declab.org/sxZQRsuYZE", decision);
+		decisionSession.importModel("https://declab.org/MjLYNcTxEn", decision);
 
 		Assertions.assertEquals(1, decisionSession.getModels().size());
 
-		Map<String, InputStructure> inputStructure = decisionSession.getInputStructure("https://declab.org/sxZQRsuYZE");
+		Map<String, InputStructure> inputStructure = decisionSession.getInputStructure("https://declab.org/MjLYNcTxEn");
 
 		InputStructure rootType = inputStructure.get("Input 1");
 		Assertions.assertEquals("object", rootType.getType());
