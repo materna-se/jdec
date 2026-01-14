@@ -44,13 +44,13 @@ public class GoldmanDecisionSession {
 			context.bind(entry.getKey(), DroolsHelper.enrichInput(convertInput(entry.getValue())));
 		}
 
-		ELInterpreter<Type, DMNContext> feelInterpreter = dialectDefinition.createFEELInterpreter(modelRepository, inputParameters);
+		ELInterpreter<Type, DMNContext> feelInterpreter = dialectDefinition.createELInterpreter(modelRepository, inputParameters);
 
 		try {
 			Result result = feelInterpreter.evaluateExpression(expression, context);
 
 			HashMap<String, Object> decisions = new LinkedHashMap<>();
-			decisions.put("main", DroolsHelper.cleanOutput(convertOutput(result.getValue())));
+			decisions.put("main", DroolsHelper.cleanOutput(convertOutput(Result.value(result))));
 
 			return new ExecutionResult(decisions, null, Collections.emptyList());
 		}
@@ -99,8 +99,6 @@ public class GoldmanDecisionSession {
 	}
 
 	private static Object convertOutput(Object value) {
-		System.out.println(value.getClass().getName());
-
 		if (value instanceof Context) {
 			Map<String, Object> convertedContext = new HashMap<>();
 

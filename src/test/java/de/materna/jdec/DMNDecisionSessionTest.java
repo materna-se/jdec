@@ -351,6 +351,21 @@ public class DMNDecisionSessionTest {
 	}
 
 	@Test
+	void executeGoldmanExpression() throws IOException {
+		GoldmanDecisionSession decisionSession = new GoldmanDecisionSession();
+
+		Map<String, Object> inputs = new HashMap<>();
+		inputs.put("EmploymentStatus", "UNEMPLOYED");
+
+		ExecutionResult executionResult = decisionSession.executeExpression("\"You are \" + EmploymentStatus", inputs);
+		Map<String, Object> outputs = executionResult.getOutputs();
+		System.out.println("executeHashMap(): " + outputs);
+
+		Assertions.assertTrue(outputs.containsKey("main"));
+		Assertions.assertEquals("You are UNEMPLOYED", outputs.get("main"));
+	}
+
+	@Test
 	void importModelWithAny() throws Exception {
 		DMNDecisionSession decisionSession = new DMNDecisionSession();
 
