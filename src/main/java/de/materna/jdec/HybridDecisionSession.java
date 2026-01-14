@@ -111,7 +111,7 @@ public class HybridDecisionSession implements DecisionSession {
 	//
 
 	@Override
-	public Map<String, InputStructure> getInputStructure(String namespace) throws ModelNotFoundException {
+	public Map<String, InputStructure> getInputStructure(String namespace) throws ModelNotFoundException, ModelIntrospectionException {
 		if (!decisionSessionMapping.containsKey(namespace)) {
 			throw new ModelNotFoundException();
 		}

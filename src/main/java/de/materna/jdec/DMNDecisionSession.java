@@ -228,7 +228,7 @@ public class DMNDecisionSession implements DecisionSession {
 	//
 
 	@Override
-	public Map<String, InputStructure> getInputStructure(String namespace) throws ModelNotFoundException {
+	public Map<String, InputStructure> getInputStructure(String namespace) throws ModelNotFoundException, ModelIntrospectionException {
 		return (Map<String, InputStructure>) DroolsAnalyzer.getComplexInputStructure(kieRuntime, namespace, null).getValue();
 	}
 
@@ -253,7 +253,7 @@ public class DMNDecisionSession implements DecisionSession {
 		}), debug);
 	}
 
-	public Map<String, InputStructure> getInputStructure(String namespace, String decisionServiceName) throws ModelNotFoundException {
+	public Map<String, InputStructure> getInputStructure(String namespace, String decisionServiceName) throws ModelNotFoundException, ModelIntrospectionException {
 		DMNModel model = DroolsHelper.getModel(kieRuntime, namespace);
 
 		Optional<DecisionServiceNode> optionalDecisionServiceNode = model.getDecisionServices().stream().filter(decisionServiceNode -> decisionServiceNode.getName().equals(decisionServiceName)).findFirst();

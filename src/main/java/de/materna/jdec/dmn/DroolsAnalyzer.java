@@ -80,34 +80,39 @@ public class DroolsAnalyzer {
 	}
 
 	public static InputStructure getInputStructure(DMNType type) throws ModelIntrospectionException {
+		System.out.println("XXXXXX" + type.getName());
 		return getInputStructure(type, new LinkedHashMap<>());
 	}
 
-	private static InputStructure getInputStructure(DMNType type, Map<String, Boolean> visitedTypes) throws ModelIntrospectionException {
-		// Cycle detection: if we've already visited this type, something is wrong.
+	private static InputStructure getInputStructure(DMNType type, Map<String, Boolean> currentPath) throws ModelIntrospectionException {
+		// cycle detection: if we've already visited this type in the current path, something is wrong.
 		String typeKey = type.getNamespace() + "#" + type.getName();
-		if (visitedTypes.containsKey(typeKey)) {
-			throw new ModelIntrospectionException("cycle detected for type: " + typeKey);
+		if (currentPath.containsKey(typeKey)) {
+			String cycle = String.join(" -> ", currentPath.keySet()) + " -> " + typeKey;
+			throw new ModelIntrospectionException("cycle detected: " + cycle);
 		}
 
-		// Mark this type as visited.
-		visitedTypes.put(typeKey, true);
+		// Mark this type as being processed in the current path.
+		currentPath.put(typeKey, true);
 
 		// In order to decide if the input is complex, we get the number of child inputs.
 		// If the input contains child inputs, we consider it complex.
 		if (!type.getFields().isEmpty()) { // Is it a complex input?
 			if (type.isCollection()) { // Is the input a complex collection?
 				LinkedList<ComplexInputStructure> inputs = new LinkedList<>();
-				inputs.add(new ComplexInputStructure("object", getChildInputStructure(type.getFields(), visitedTypes)));
+				inputs.add(new ComplexInputStructure("object", getChildInputStructure(type.getFields(), currentPath)));
+				currentPath.remove(typeKey);
 				return new ComplexInputStructure("array", inputs);
 			}
 
-			return new ComplexInputStructure("object", getChildInputStructure(type.getFields(), visitedTypes));
+			InputStructure result = new ComplexInputStructure("object", getChildInputStructure(type.getFields(), currentPath));
+			currentPath.remove(typeKey);
+			return result;
 		}
 
 		// If it's not a complex input, we're recursively resolving the base type and collecting information along the way.
 
-		ResolvedType baseType = getBaseType(null, type, visitedTypes);
+		ResolvedType baseType = getBaseType(null, type, currentPath);
 
 		// Is the input a simple collection?
 		// Drools has a quirky way of representing Any, it's also marked as a collection. Let's handle that special case here.
@@ -125,10 +130,12 @@ public class DroolsAnalyzer {
 		}
 
 		if (!baseType.getAllowedValues().isEmpty()) { // Is it a simple input that contains a list of allowed values?
+			currentPath.remove(typeKey);
 			return new InputStructure(baseType.getType().getName(), baseType.getAllowedValues());
 		}
 
 		// The input is as simple as it gets.
+		currentPath.remove(typeKey);
 		return new InputStructure(baseType.getType().getName());
 	}
 
@@ -138,11 +145,11 @@ public class DroolsAnalyzer {
 	 *
 	 * @param fields Child Inputs
 	 */
-	private static Map<String, InputStructure> getChildInputStructure(Map<String, DMNType> fields, Map<String, Boolean> visitedTypes) throws ModelIntrospectionException {
+	private static Map<String, InputStructure> getChildInputStructure(Map<String, DMNType> fields, Map<String, Boolean> currentPath) throws ModelIntrospectionException {
 		Map<String, InputStructure> inputs = new LinkedHashMap<>();
 
 		for (Map.Entry<String, DMNType> entry : fields.entrySet()) {
-			inputs.put(entry.getKey(), getInputStructure(entry.getValue(), visitedTypes));
+			inputs.put(entry.getKey(), getInputStructure(entry.getValue(), currentPath));
 		}
 
 		return inputs;
@@ -159,10 +166,10 @@ public class DroolsAnalyzer {
 	 * Resolves the base type, collecting information about whether it is a collection and any allowed values along the way.
 	 * @param resolvedType The resolved type so far. In the beginning, it should be set to null.
 	 * @param type The type to resolve.
-	 * @param visitedTypes Map to track visited types to prevent cycles.
+	 * @param currentPath Map to track types in the current recursion path for cycle detection.
 	 * @return The base type.
 	 */
-	private static ResolvedType getBaseType(ResolvedType resolvedType, DMNType type, Map<String, Boolean> visitedTypes) {
+	private static ResolvedType getBaseType(ResolvedType resolvedType, DMNType type, Map<String, Boolean> currentPath) {
 		if (resolvedType == null) {
 			resolvedType = new ResolvedType();
 		}
@@ -177,7 +184,7 @@ public class DroolsAnalyzer {
 		}
 
 		if (type.getBaseType() != null) {
-			return getBaseType(resolvedType, type.getBaseType(), visitedTypes);
+			return getBaseType(resolvedType, type.getBaseType(), currentPath);
 		}
 		else {
 			resolvedType.type = type;
