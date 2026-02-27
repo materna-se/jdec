@@ -67,27 +67,27 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.18.2</version>
+			<version>2.21.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-parameter-names</artifactId>
-			<version>2.18.2</version>
+			<version>2.21.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jdk8</artifactId>
-			<version>2.18.2</version>
+			<version>2.21.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
-			<version>2.18.2</version>
+			<version>2.21.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-xml</artifactId>
-			<version>2.18.2</version>
+			<version>2.21.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.woodstox</groupId>
@@ -98,7 +98,7 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.5.18</version>
+			<version>1.5.32</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -165,7 +165,18 @@
 			<groupId>com.goldmansachs.jdmn</groupId>
 			<artifactId>jdmn-core</artifactId>
 			<version>8.7.5</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.thoughtworks.xstream</groupId>
+                    <artifactId>xstream</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.21</version>
+        </dependency>
 	</dependencies>
 
 	<build>
@@ -202,7 +213,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.1.1</version>
+				<version>3.11.2</version>
+                <configuration>
+                    <failOnError>false</failOnError>
+                    <additionalJOptions>
+                        <additionalJOption>-Xdoclint:none</additionalJOption>
+                    </additionalJOptions>
+                </configuration>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
@@ -211,12 +228,6 @@
 						</goals>
 					</execution>
 				</executions>
-                <configuration>
-                    <failOnError>false</failOnError>
-                    <additionalJOptions>
-                        <additionalJOption>-Xdoclint:none</additionalJOption>
-                    </additionalJOptions>
-                </configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
