@@ -26,7 +26,7 @@ jobs:
           scan-ref: .
           scanners: vuln
           vuln-type: library
-          severity: HIGH,CRITICAL
+          severity: MEDIUM,HIGH,CRITICAL
           ignore-unfixed: true
           format: table
           exit-code: "1"
@@ -39,7 +39,7 @@ jobs:
           scan-ref: .
           scanners: vuln
           vuln-type: library
-          severity: HIGH,CRITICAL
+          severity: MEDIUM,HIGH,CRITICAL
           ignore-unfixed: true
           format: sarif
           output: trivy-results.sarif

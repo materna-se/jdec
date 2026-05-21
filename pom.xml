@@ -62,6 +62,11 @@
 			<artifactId>kie-dmn-core</artifactId>
 			<version>9.102.0.redhat-00001</version>
 		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-utils</artifactId>
+			<version>3.6.1</version>
+		</dependency>
 
 		<!-- Jackson -->
 		<dependency>
@@ -110,6 +115,11 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.20.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.18.0</version>
 		</dependency>
 
 		<!-- JUnit -->
@@ -165,12 +175,6 @@
 			<groupId>com.goldmansachs.jdmn</groupId>
 			<artifactId>jdmn-core</artifactId>
 			<version>8.7.5</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.thoughtworks.xstream</groupId>
-                    <artifactId>xstream</artifactId>
-                </exclusion>
-            </exclusions>
 		</dependency>
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
