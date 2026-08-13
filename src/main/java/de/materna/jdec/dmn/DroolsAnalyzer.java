@@ -94,48 +94,48 @@ public class DroolsAnalyzer {
 		// Mark this type as being processed in the current path.
 		currentPath.put(typeKey, true);
 
-		// In order to decide if the input is complex, we get the number of child inputs.
-		// If the input contains child inputs, we consider it complex.
-		if (!type.getFields().isEmpty()) { // Is it a complex input?
-			if (type.isCollection()) { // Is the input a complex collection?
-				LinkedList<ComplexInputStructure> inputs = new LinkedList<>();
-				inputs.add(new ComplexInputStructure("object", getChildInputStructure(type.getFields(), currentPath)));
-				currentPath.remove(typeKey);
-				return new ComplexInputStructure("array", inputs);
+		try {
+			// In order to decide if the input is complex, we get the number of child inputs.
+			// If the input contains child inputs, we consider it complex.
+			if (!type.getFields().isEmpty()) { // Is it a complex input?
+				if (type.isCollection()) { // Is the input a complex collection?
+					LinkedList<ComplexInputStructure> inputs = new LinkedList<>();
+					inputs.add(new ComplexInputStructure("object", getChildInputStructure(type.getFields(), currentPath)));
+					return new ComplexInputStructure("array", inputs);
+				}
+
+				return new ComplexInputStructure("object", getChildInputStructure(type.getFields(), currentPath));
 			}
 
-			InputStructure result = new ComplexInputStructure("object", getChildInputStructure(type.getFields(), currentPath));
-			currentPath.remove(typeKey);
-			return result;
-		}
+			// If it's not a complex input, we're recursively resolving the base type and collecting information along the way.
 
-		// If it's not a complex input, we're recursively resolving the base type and collecting information along the way.
+			ResolvedType baseType = getBaseType(null, type, currentPath);
 
-		ResolvedType baseType = getBaseType(null, type, currentPath);
+			// Is the input a simple collection?
+			// Drools has a quirky way of representing Any, it's also marked as a collection. Let's handle that special case here.
+			if (baseType.isCollection() && !baseType.getType().getName().equals("Any")) {
+				if (!baseType.getAllowedValues().isEmpty()) { // Is the input a simple collection that contains a list of allowed values?
+					LinkedList<InputStructure> inputs = new LinkedList<>();
+					inputs.add(new InputStructure(baseType.getType().getName(), baseType.getAllowedValues()));
+					return new ComplexInputStructure("array", inputs);
+				}
 
-		// Is the input a simple collection?
-		// Drools has a quirky way of representing Any, it's also marked as a collection. Let's handle that special case here.
-		if (baseType.isCollection() && !baseType.getType().getName().equals("Any")) {
-			if (!baseType.getAllowedValues().isEmpty()) { // Is the input a simple collection that contains a list of allowed values?
+				// The input is a simple collection.
 				LinkedList<InputStructure> inputs = new LinkedList<>();
-				inputs.add(new InputStructure(baseType.getType().getName(), baseType.getAllowedValues()));
+				inputs.add(new InputStructure(baseType.getType().getName()));
 				return new ComplexInputStructure("array", inputs);
 			}
 
-			// The input is a simple collection.
-			LinkedList<InputStructure> inputs = new LinkedList<>();
-			inputs.add(new InputStructure(baseType.getType().getName()));
-			return new ComplexInputStructure("array", inputs);
-		}
+			if (!baseType.getAllowedValues().isEmpty()) { // Is it a simple input that contains a list of allowed values?
+				return new InputStructure(baseType.getType().getName(), baseType.getAllowedValues());
+			}
 
-		if (!baseType.getAllowedValues().isEmpty()) { // Is it a simple input that contains a list of allowed values?
+			// The input is as simple as it gets.
+			return new InputStructure(baseType.getType().getName());
+		}
+		finally {
 			currentPath.remove(typeKey);
-			return new InputStructure(baseType.getType().getName(), baseType.getAllowedValues());
 		}
-
-		// The input is as simple as it gets.
-		currentPath.remove(typeKey);
-		return new InputStructure(baseType.getType().getName());
 	}
 
 	/**
